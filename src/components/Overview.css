@@ -1,61 +1,71 @@
 .overview {
   padding: 6rem 2rem;
-  background: #f9fafb;
+  background: white;
 }
 
 .overview h2 {
-  text-align: center;
+  text-align: left;
   font-size: 2.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   color: #1f2937;
 }
 
-.section-description {
-  text-align: center;
-  font-size: 1.125rem;
+.overview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+}
+
+.overview-header h3 {
+  font-size: 1.75rem;
+  color: #1f2937;
+  white-space: nowrap;
+}
+
+.overview-header p {
+  font-size: 1rem;
   color: #6b7280;
-  max-width: 700px;
-  margin: 0 auto 3rem;
+  line-height: 1.8;
+  max-width: 400px;
 }
 
 .overview-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-top: 3rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
 }
 
 .overview-card {
-  background: white;
+  background: #f9fafb;
   padding: 2rem;
-  border-radius: 12px;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s, box-shadow 0.3s;
+  border-radius: 6px;
+  min-height: 250px;
 }
 
-.overview-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
-
-.icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.overview-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+.overview-card h4 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
   color: #1f2937;
 }
 
 .overview-card p {
   color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 @media (max-width: 768px) {
   .overview h2 {
     font-size: 2rem;
+  }
+
+  .overview-header {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .overview-grid {
+    grid-template-columns: 1fr;
   }
 }

@@ -4,19 +4,16 @@ import './Overview.css';
 function Overview() {
   const features = [
     {
-      icon: "📊",
-      title: "Analytics",
-      description: "Track your progress with powerful analytics and insights"
+      title: "Feature One",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt."
     },
     {
-      icon: "🚀",
-      title: "Performance",
-      description: "Lightning-fast performance that scales with your needs"
+      title: "Feature Two",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt."
     },
     {
-      icon: "🔒",
-      title: "Security",
-      description: "Enterprise-grade security to keep your data safe"
+      title: "Feature Three",
+      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt."
     }
   ];
 
@@ -24,15 +21,14 @@ function Overview() {
     <section id="overview" className="overview">
       <div className="container">
         <h2>Overview</h2>
-        <p className="section-description">
-          Our platform provides everything you need to streamline your workflow,
-          boost productivity, and achieve your goals faster than ever before.
-        </p>
+        <div className="overview-header">
+          <h3>What is Billy?</h3>
+          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.</p>
+        </div>
         <div className="overview-grid">
           {features.map((feature, index) => (
             <div key={index} className="overview-card">
-              <div className="icon">{feature.icon}</div>
-              <h3>{feature.title}</h3>
+              <h4>{feature.title}</h4>
               <p>{feature.description}</p>
             </div>
           ))}
