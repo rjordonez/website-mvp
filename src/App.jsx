@@ -6,6 +6,7 @@ import Overview from './components/Overview';
 import Problem from './components/Problem';
 import Highlights from './components/Highlights';
 import FAQ from './components/FAQ';
+import CTA from './components/CTA';
 import Footer from './components/Footer';
 import './App.css';
 
@@ -19,6 +20,7 @@ function App() {
       <Overview />
       <Highlights />
       <FAQ />
+      <CTA />
       <Footer />
     </div>
   );

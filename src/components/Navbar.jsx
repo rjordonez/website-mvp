@@ -5,14 +5,20 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="nav-container">
-        <div className="logo">YourBrand</div>
+        <div className="logo">
+          <div className="logo-dots">
+            <span className="dot"></span>
+            <span className="dot"></span>
+            <span className="dot"></span>
+          </div>
+          Trilio
+        </div>
         <ul className="nav-links">
           <li><a href="#hero">Home</a></li>
-          <li><a href="#overview">Overview</a></li>
           <li><a href="#problem">Problem</a></li>
+          <li><a href="#overview">Overview</a></li>
           <li><a href="#highlights">Highlights</a></li>
           <li><a href="#faq">FAQ</a></li>
-          <li><a href="#footer">Contact</a></li>
         </ul>
         <button className="cta-button">Get Started</button>
       </div>

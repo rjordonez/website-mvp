@@ -118,8 +118,12 @@
 }
 
 @media (max-width: 768px) {
+  .problem {
+    padding: 4rem 1rem;
+  }
+
   .problem h2 {
-    font-size: 2rem;
+    font-size: 0.875rem;
   }
 
   .problem-header {
@@ -128,7 +132,29 @@
     gap: 1rem;
   }
 
+  .problem-header h3 {
+    font-size: 1.75rem;
+    white-space: normal;
+  }
+
   .problem-header p {
     max-width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .problem-card {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+    min-height: auto;
+    gap: 1.5rem;
+  }
+
+  .problem-card h4 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .problem-card p {
+    font-size: 1rem;
   }
 }

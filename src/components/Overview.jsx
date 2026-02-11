@@ -22,7 +22,7 @@ function Overview() {
       <div className="container">
         <h2>Overview</h2>
         <div className="overview-header">
-          <h3>What is Billy?</h3>
+          <h3>What is Trilio?</h3>
           <p>From the first phone call to the day they move in, we help you</p>
         </div>
         <div className="overview-grid">

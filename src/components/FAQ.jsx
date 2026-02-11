@@ -10,20 +10,16 @@ function FAQ() {
 
   const faqs = [
     {
-      question: "What makes your product unique?",
-      answer: "Our product stands out through innovative features and user-centric design."
+      question: "How does the 24/7 call agent work?",
+      answer: "Our AI-powered agent answers every call and voicemail, even after hours. Every inquiry is automatically logged as a lead in your system, so you never miss an opportunity, whether it's 3pm or 3am."
     },
     {
-      question: "How do I get started?",
-      answer: "Simply sign up for an account and follow our onboarding guide."
+      question: "Can I use voice to capture notes instead of typing?",
+      answer: "Yes! Simply record your notes by voice after tours or calls. Everything is automatically transcribed and saved to the contact's profile. Works on your phone, tablet, or iPad. If you can say it, it's captured."
     },
     {
-      question: "What is your pricing model?",
-      answer: "We offer flexible pricing plans to suit different needs and budgets."
-    },
-    {
-      question: "Do you offer customer support?",
-      answer: "Yes, we provide 24/7 customer support via email and chat."
+      question: "How does autopilot mode help with follow-ups?",
+      answer: "Autopilot mode creates personalized follow-up reminders based on real context from your conversations. It suggests the right message, timing, and communication channel for each family, so you can stay present without being pushy."
     }
   ];
 
@@ -41,11 +37,11 @@ function FAQ() {
                 <span>{faq.question}</span>
                 <span className="faq-icon">{openFaq === index ? '−' : '+'}</span>
               </button>
-              {openFaq === index && (
-                <div className="faq-answer">
+              <div className={`faq-answer ${openFaq === index ? 'open' : ''}`}>
+                <div className="faq-answer-content">
                   <p>{faq.answer}</p>
                 </div>
-              )}
+              </div>
             </div>
           ))}
         </div>

@@ -46,38 +46,34 @@ function Footer() {
           <div className="container">
             <div className="footer-grid">
               <div className="footer-column">
-                <h3>YourBrand</h3>
-                <p>Building the future of productivity</p>
-              </div>
-              <div className="footer-column">
-                <h4>Product</h4>
+                <h4>Pages</h4>
                 <ul>
-                  <li><a href="#features">Features</a></li>
-                  <li><a href="#pricing">Pricing</a></li>
-                  <li><a href="#updates">Updates</a></li>
+                  <li><a href="#hero">Home</a></li>
+                  <li><a href="#problem">Problem</a></li>
+                  <li><a href="#overview">Overview</a></li>
+                  <li><a href="#highlights">Highlights</a></li>
                 </ul>
               </div>
               <div className="footer-column">
-                <h4>Company</h4>
+                <h4>Resources</h4>
                 <ul>
-                  <li><a href="#about">About</a></li>
-                  <li><a href="#careers">Careers</a></li>
-                  <li><a href="#blog">Blog</a></li>
-                </ul>
-              </div>
-              <div className="footer-column">
-                <h4>Connect</h4>
-                <ul>
-                  <li><a href="#twitter">Twitter</a></li>
-                  <li><a href="#linkedin">LinkedIn</a></li>
-                  <li><a href="#github">GitHub</a></li>
+                  <li><a href="#faq">FAQ</a></li>
+                  <li><a href="mailto:jessie.growth@gmail.com">Contact</a></li>
                 </ul>
               </div>
             </div>
             <div className="footer-bottom">
-              <p>&copy; 2024 YourBrand. All rights reserved.</p>
+              <p>&copy; 2026 Trilio</p>
             </div>
           </div>
+        </div>
+        <div className="footer-logo-large">
+          <div className="footer-logo-dots-large">
+            <span className="footer-dot-large"></span>
+            <span className="footer-dot-large"></span>
+            <span className="footer-dot-large"></span>
+          </div>
+          Trilio
         </div>
       </div>
     </footer>

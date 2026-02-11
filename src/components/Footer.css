@@ -7,7 +7,7 @@
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
   overflow: hidden;
-  padding-bottom: 4rem;
+  padding-bottom: 0;
   border-radius: 12px 12px 0 0;
 }
 
@@ -45,8 +45,9 @@
 
 .footer-inner {
   background: white;
-  margin: 4rem 2rem 2rem;
-  padding: 4rem 2rem 2rem;
+  margin: 4rem auto 2rem;
+  max-width: 1200px;
+  padding: 2rem;
   border-radius: 6px;
   position: relative;
   z-index: 10;
@@ -54,29 +55,67 @@
 
 .footer-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
-  margin-bottom: 2rem;
+  grid-template-columns: auto auto;
+  gap: 3rem;
 }
 
-.footer-column h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: #1f2937;
+.footer-logo-large {
+  font-size: 6rem;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2rem;
+  padding: 0 4rem 2rem 4rem;
+  position: relative;
+  z-index: 10;
+}
+
+.footer-logo-dots-large {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-logo-dots-large .footer-dot-large {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+}
+
+.footer-logo-dots-large .footer-dot-large:nth-child(1) {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.footer-logo-dots-large .footer-dot-large:nth-child(2) {
+  bottom: 0;
+  left: 0;
+}
+
+.footer-logo-dots-large .footer-dot-large:nth-child(3) {
+  bottom: 0;
+  right: 0;
 }
 
 .footer-column h4 {
-  font-size: 1.125rem;
-  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
   color: #6b7280;
-}
-
-.footer-column p {
-  color: #6b7280;
+  font-weight: 600;
 }
 
 .footer-column ul {
   list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .footer-column li {
@@ -87,6 +126,7 @@
   color: #6b7280;
   text-decoration: none;
   transition: color 0.3s;
+  font-size: 0.875rem;
 }
 
 .footer-column a:hover {
@@ -94,8 +134,13 @@
 }
 
 .footer-bottom {
-  border-top: 1px solid #e5e7eb;
-  padding-top: 2rem;
-  text-align: center;
+  padding-top: 1rem;
+  margin-top: 2rem;
+  text-align: left;
   color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.footer-bottom p {
+  margin: 0;
 }

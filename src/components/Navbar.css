@@ -20,7 +20,43 @@
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #2563eb;
+  color: #000000;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-dots {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-dots .dot {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: black;
+  border-radius: 50%;
+}
+
+.logo-dots .dot:nth-child(1) {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.logo-dots .dot:nth-child(2) {
+  bottom: 0;
+  left: 0;
+}
+
+.logo-dots .dot:nth-child(3) {
+  bottom: 0;
+  right: 0;
 }
 
 .nav-links {
@@ -37,22 +73,23 @@
 }
 
 .nav-links a:hover {
-  color: #2563eb;
+  color: #000000;
 }
 
 .cta-button {
-  background: #2563eb;
+  background: black;
   color: white;
-  border: none;
+  border: 1px solid white;
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s;
 }
 
 .cta-button:hover {
-  background: #1d4ed8;
+  background: white;
+  color: black;
 }
 
 @media (max-width: 768px) {
