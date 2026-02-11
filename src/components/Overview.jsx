@@ -4,16 +4,16 @@ import './Overview.css';
 function Overview() {
   const features = [
     {
-      title: "Feature One",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt."
+      title: "Capture every lead",
+      description: "Remember what actually matters. Build rich profiles that go beyond basic contact info to capture the details that help you connect."
     },
     {
-      title: "Feature Two",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt."
+      title: "Follow up the right way, at the right time",
+      description: "Stay present even when families aren't ready yet. Personalized reminders help you nurture relationships without letting anyone slip away."
     },
     {
-      title: "Feature Three",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt."
+      title: "All without adding more work to your day",
+      description: "We make sure nothing falls through the cracks. Voice-first design means updates happen naturally, not as another task on your list."
     }
   ];
 
@@ -23,7 +23,7 @@ function Overview() {
         <h2>Overview</h2>
         <div className="overview-header">
           <h3>What is Billy?</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt.</p>
+          <p>From the first phone call to the day they move in, we help you</p>
         </div>
         <div className="overview-grid">
           {features.map((feature, index) => (

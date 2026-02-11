@@ -1,0 +1,26 @@
+.backed {
+  padding: 3rem 2rem 0 2rem;
+  background: white;
+}
+
+.backed-label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+
+.backed-logos {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+}
+
+.backed-logo {
+  height: 40px;
+  object-fit: contain;
+  opacity: 0.7;
+  filter: grayscale(100%) brightness(0);
+}

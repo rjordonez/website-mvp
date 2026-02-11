@@ -5,9 +5,10 @@
 
 .overview h2 {
   text-align: left;
-  font-size: 2.5rem;
+  font-size: 1rem;
   margin-bottom: 2rem;
-  color: #1f2937;
+  color: #4B6EF5;
+  font-weight: 400;
 }
 
 .overview-header {
@@ -18,9 +19,10 @@
 }
 
 .overview-header h3 {
-  font-size: 1.75rem;
+  font-size: 2.5rem;
   color: #1f2937;
   white-space: nowrap;
+  font-weight: 300;
 }
 
 .overview-header p {
@@ -40,7 +42,7 @@
   background: #f9fafb;
   padding: 2rem;
   border-radius: 6px;
-  min-height: 250px;
+  min-height: 350px;
 }
 
 .overview-card h4 {
