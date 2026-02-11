@@ -173,13 +173,6 @@ function Highlights() {
                     <div className="followup-card">
                       <div className="followup-header">
                         <div className="followup-title">Upcoming Follow-ups</div>
-                        <div className="autopilot-toggle">
-                          <div className="toggle-switch">
-                            <div className="toggle-track">
-                              <div className="toggle-thumb"></div>
-                            </div>
-                          </div>
-                        </div>
                       </div>
                       <div className="reminder-item">
                         <div className="reminder-time">Monday, 9:00 AM</div>
