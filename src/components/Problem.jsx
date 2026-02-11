@@ -5,15 +5,18 @@ function Problem() {
   const problems = [
     {
       title: "Senior living decisions don't happen on a schedule.",
-      description: "Families call when something changes. A fall. A scare. A moment of clarity."
+      description: "Families call when something changes. A fall. A scare. A moment of clarity.",
+      image: "/1.png"
     },
     {
       title: "But sales teams:",
-      description: "Miss after-hours calls\nForget tour details\nLose context between shifts\nStruggle with long-term follow-up\n\nTraditional CRMs log data, not relationships."
+      description: "Miss after-hours calls\nForget tour details\nLose context between shifts\nStruggle with long-term follow-up\n\nTraditional CRMs log data, not relationships.",
+      image: "/2.png"
     },
     {
       title: "So leads slip through the cracks",
-      description: "Not because you didn't care, but because the system wasn't built for this job."
+      description: "Not because you didn't care, but because the system wasn't built for this job.",
+      image: "/3.png"
     }
   ];
 
@@ -33,7 +36,7 @@ function Problem() {
                 <p>{problem.description}</p>
               </div>
               <div className="problem-image-container">
-                <div className="problem-image-placeholder">Image</div>
+                <img src={problem.image} alt={problem.title} className="problem-image" />
               </div>
             </div>
           ))}

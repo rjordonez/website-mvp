@@ -41,7 +41,7 @@
 .problem-card {
   padding: 2rem;
   border-radius: 6px;
-  min-height: 600px;
+  min-height: 500px;
   position: sticky;
   margin-bottom: 2rem;
   display: grid;
@@ -62,16 +62,11 @@
   justify-content: center;
 }
 
-.problem-image-placeholder {
+.problem-image {
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.2);
+  object-fit: cover;
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.5rem;
 }
 
 .problem-card:nth-child(1) {
@@ -108,7 +103,7 @@
 }
 
 .problem-card h4 {
-  font-size: 3.5rem;
+  font-size: 3rem;
   margin-bottom: 2rem;
   font-weight: 400;
   line-height: 1.3;
@@ -116,7 +111,7 @@
 }
 
 .problem-card p {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   line-height: 1.8;
   white-space: pre-line;
   font-family: 'Playfair Display', serif;
