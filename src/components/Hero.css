@@ -231,6 +231,6 @@
   }
 
   .scroll-indicator {
-    animation: none;
+    display: none;
   }
 }
