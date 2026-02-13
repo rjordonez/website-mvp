@@ -92,8 +92,24 @@
   color: black;
 }
 
+.mobile-cta-button {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .nav-links {
     display: none;
+  }
+
+  .mobile-cta-button {
+    display: block;
+    background: black;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
   }
 }
