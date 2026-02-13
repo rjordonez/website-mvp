@@ -241,9 +241,15 @@
 
 @media (max-width: 768px) {
   .lead-card {
-    grid-template-columns: 80px 100px 70px;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 0.25rem;
     padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .lead-cards-responsive {
+    width: 100%;
+    max-width: 100%;
   }
 }
 
@@ -521,10 +527,16 @@
 }
 
 @media (max-width: 768px) {
+  .crm-container {
+    padding: 0.5rem;
+  }
+
   .crm-profile {
     padding: 0.75rem;
     gap: 1rem;
-    min-width: 300px;
+    min-width: auto;
+    max-width: 100%;
+    width: 100%;
   }
 }
 
