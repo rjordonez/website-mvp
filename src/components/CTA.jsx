@@ -29,7 +29,7 @@ function CTA() {
               <li>High-performing sales directors inside communities</li>
             </ul>
           </div>
-          <button className="cta-button">Book Call</button>
+          <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="cta-button">Book Call</a>
         </motion.div>
       </div>
     </section>

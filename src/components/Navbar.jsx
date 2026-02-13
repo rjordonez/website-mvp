@@ -20,7 +20,7 @@ function Navbar() {
           <li><a href="#features">Features</a></li>
           <li><a href="#faq">FAQ</a></li>
         </ul>
-        <button className="mobile-cta-button">Request Demo</button>
+        <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="mobile-cta-button">Request Demo</a>
       </div>
     </nav>
   );

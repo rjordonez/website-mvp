@@ -111,5 +111,10 @@
     font-weight: 600;
     font-size: 0.875rem;
     cursor: pointer;
+    text-decoration: none;
+  }
+
+  .mobile-cta-button:hover {
+    background: #333;
   }
 }

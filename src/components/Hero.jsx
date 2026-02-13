@@ -91,7 +91,7 @@ function Hero() {
           <div className="hero-bottom">
             <p className="hero-description">The final step in your sales workflow for retirement homes.</p>
             <div className="hero-buttons">
-              <button className="hero-btn">Request a demo</button>
+              <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="hero-btn">Request a demo</a>
             </div>
           </div>
         </div>
