@@ -186,33 +186,29 @@ function Features() {
                   </div>
                 ) : index === 3 ? (
                   <div className="followup-container">
-                    <div className="followup-card">
-                      <div className="followup-header">
-                        <div className="followup-title">Upcoming Follow-ups</div>
-                      </div>
-                      <div className="reminder-item">
-                        <div className="reminder-time">Monday, 9:00 AM</div>
-                        <div className="reminder-contact">Sarah Johnson</div>
-                        <div className="reminder-context">Follow up after family discussion regarding memory care placement. Daughter mentioned they would decide over the weekend about timeline and budget finalization.</div>
-                        <div className="reminder-action">
-                          <span className="action-badge">Call</span>
+                    <div className="timeline-card">
+                      <div className="timeline-row">
+                        <div className="timeline-step">
+                          <div className="timeline-description">Trilio detects Martha (85, Female) may be needing senior living in 3 months</div>
+                        </div>
+                        <div className="timeline-step">
+                          <div className="timeline-description">Martha mentioned she loves gardening and classical music during the call</div>
+                        </div>
+                        <div className="timeline-step">
+                          <div className="timeline-description">Reminder sent 3 days after tour to check on decision timeline</div>
+                        </div>
+                        <div className="timeline-step">
+                          <div className="timeline-description">Scheduled for private room with garden view based on her preferences</div>
                         </div>
                       </div>
-                      <div className="reminder-item">
-                        <div className="reminder-time">Wednesday, 2:00 PM</div>
-                        <div className="reminder-contact">Barbara Johnson</div>
-                        <div className="reminder-context">Check in 3 days after facility tour. Barbara expressed strong interest in garden activities and private room options. Good time to discuss next steps.</div>
-                        <div className="reminder-action">
-                          <span className="action-badge">Text</span>
-                        </div>
-                      </div>
-                      <div className="reminder-item">
-                        <div className="reminder-time">Friday, 10:00 AM</div>
-                        <div className="reminder-contact">Michael Johnson</div>
-                        <div className="reminder-context">Financial decision maker review. Send detailed pricing breakdown and available move-in dates. Prefers email communication for documentation.</div>
-                        <div className="reminder-action">
-                          <span className="action-badge">Email</span>
-                        </div>
+                      <div className="timeline-circles-row">
+                        <div className="timeline-circle timeline-circle-active">Call</div>
+                        <div className="timeline-connector"></div>
+                        <div className="timeline-circle timeline-circle-active">Tour</div>
+                        <div className="timeline-connector"></div>
+                        <div className="timeline-circle timeline-circle-followup">Follow up</div>
+                        <div className="timeline-connector"></div>
+                        <div className="timeline-circle timeline-circle-active">Move-in</div>
                       </div>
                     </div>
                   </div>
