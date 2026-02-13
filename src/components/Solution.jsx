@@ -1,7 +1,7 @@
 import React from 'react';
-import './Overview.css';
+import './Solution.css';
 
-function Overview() {
+function Solution() {
   const features = [
     {
       title: "Capture every lead",
@@ -18,16 +18,16 @@ function Overview() {
   ];
 
   return (
-    <section id="overview" className="overview">
+    <section id="solution" className="solution">
       <div className="container">
-        <h2>Overview</h2>
-        <div className="overview-header">
+        <h2>Solution</h2>
+        <div className="solution-header">
           <h3>What is Trilio?</h3>
           <p>From the first phone call to the day they move in, we help you</p>
         </div>
-        <div className="overview-grid">
+        <div className="solution-grid">
           {features.map((feature, index) => (
-            <div key={index} className="overview-card">
+            <div key={index} className="solution-card">
               <h4>{feature.title}</h4>
               <p>{feature.description}</p>
             </div>
@@ -38,4 +38,4 @@ function Overview() {
   );
 }
 
-export default Overview;
+export default Solution;

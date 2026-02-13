@@ -12,7 +12,7 @@
 .hero-inner {
   width: calc(100% - 1rem);
   height: calc(100% - 1rem);
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #4B6EF5;
   border-radius: 6px;
   position: relative;
   overflow: hidden;
@@ -166,6 +166,34 @@
   background: rgba(110, 150, 200, 0.25);
   top: 30%;
   right: 35%;
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: calc(2rem + 60px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 30;
+  transition: all 0.3s ease;
+}
+
+.scroll-indicator:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+.scroll-indicator svg {
+  width: 24px;
+  height: 24px;
 }
 
 @media (max-width: 768px) {

@@ -11,7 +11,7 @@ function FAQ() {
   const faqs = [
     {
       question: "How does the 24/7 call agent work?",
-      answer: "Our AI-powered agent answers every call and voicemail, even after hours. Every inquiry is automatically logged as a lead in your system, so you never miss an opportunity, whether it's 3pm or 3am."
+      answer: "Our AI-powered agent answers every call, even after hours. Every inquiry is automatically logged as a lead in your system, so you never miss an opportunity, whether it's 3pm or 3am."
     },
     {
       question: "Can I use voice to capture notes instead of typing?",

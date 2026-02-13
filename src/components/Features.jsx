@@ -1,28 +1,37 @@
-import React from 'react';
-import './Highlights.css';
+import React, { useState, useEffect } from 'react';
+import './Features.css';
 
-function Highlights() {
-  const highlights = [
+function Features() {
+  const [recordingTime, setRecordingTime] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRecordingTime((prev) => (prev >= 10 ? 0 : prev + 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const features = [
     {
       title: "Never miss a call",
       description: "Our 24/7 agent ensures every inquiry becomes a lead in your system.",
-      imageTitle: "Capture everything, instantly",
-      imageDescription: "24/7 call agent answers every call and voicemail. Leads are logged automatically. No more 'we missed them after 5pm.' Every opportunity starts in the system."
+      imageTitle: "Capture everything",
+      imageDescription: "The call agent listens in or answers the phone if you can't. Then it uploads key details into the CRM, so you never have to write out full details again and your sales team can work more on closing leads."
     },
     {
-      title: "Voice-first updates",
+      title: "Instant Conversation Notes",
       description: "Capture what matters while it's fresh, without typing a word.",
-      imageTitle: "Speak your notes, don't type them",
-      imageDescription: "Record notes by voice after tours or calls. Automatically transcribed and saved. Works on phone, tablet, or iPad between appointments. If you can say it, it's captured."
+      imageTitle: "Notes saved automatically to the CRM",
+      imageDescription: "Speak your notes after tours or calls. They're automatically saved to the CRM, so you can refer back to specific details about each individual whenever you need them."
     },
     {
-      title: "Rich family profiles",
+      title: "Detailed Family Profiles",
       description: "Track the context that helps you connect and convert.",
       imageTitle: "Build rich profiles that actually help you close",
       imageDescription: "Go beyond names and phone numbers. Capture decision makers, timeline, care needs, interests, and communication preferences. Because the details are what turn hesitation into a move-in."
     },
     {
-      title: "Smart follow-ups",
+      title: "Personalized follow-ups",
       description: "Stay present without being pushy.",
       imageTitle: "Follow up, personally, not pushy",
       imageDescription: "Automated reminders based on real context. Personalized outreach tied to interests and timing. Respect how families want to communicate. Right message. Right time. Right channel."
@@ -30,19 +39,19 @@ function Highlights() {
   ];
 
   return (
-    <section id="highlights" className="highlights">
+    <section id="features" className="features">
       <div className="container">
-        <h2>Highlights</h2>
-        <div className="highlights-list">
-          {highlights.map((highlight, index) => (
-            <div key={index} className="highlight-item">
-              <div className="highlight-header">
-                <h3><span className="highlight-number">{index + 1}</span> {highlight.title}</h3>
-                <p>{highlight.description}</p>
+        <h2>Features</h2>
+        <div className="features-list">
+          {features.map((feature, index) => (
+            <div key={index} className="feature-item">
+              <div className="feature-header">
+                <h3><span className="feature-number">{index + 1}</span> {feature.title}</h3>
+                <p>{feature.description}</p>
               </div>
-              <div className="highlight-image">
+              <div className="feature-image">
                 {index === 0 ? (
-                  <div className="first-highlight-container">
+                  <div className="first-feature-container">
                     <div className="blob-section">
                       <div className="blob-container">
                         <div className="blob blob-1"></div>
@@ -79,41 +88,48 @@ function Highlights() {
                     </div>
                   </div>
                 ) : index === 1 ? (
-                  <div className="notes-container">
-                    <div className="note-card">
-                      <div className="note-header">Initial Call - Sarah Johnson</div>
-                      <div className="note-timestamp">Today at 10:30 AM</div>
-                      <div className="note-content">
-                        <p className="note-paragraph">
-                          Sarah called regarding memory care placement for her mother, Barbara (82). Key requirements:
-                        </p>
-                        <ul className="note-list">
-                          <li>Needs specialized memory care support</li>
-                          <li>Strong preference for private room</li>
-                          <li>Budget: $5,000-$6,000/month</li>
-                          <li>Timeline: Within next 2-3 weeks</li>
-                        </ul>
-                        <p className="note-paragraph">
-                          Daughter will attend tour to help with decision. Scheduled for tomorrow at 2:00 PM.
-                        </p>
+                  <div className="notes-container-responsive">
+                    <div className="audio-with-profile">
+                      <div className="profile-circle">
+                        <img src="/image2.png" alt="Barbara Johnson" className="profile-image" />
+                      </div>
+                      <div className="audio-visualizer">
+                        <div className="audio-bar"></div>
+                        <div className="audio-bar"></div>
+                        <div className="audio-bar"></div>
+                        <div className="audio-bar"></div>
+                        <div className="audio-bar"></div>
+                        <div className="audio-bar"></div>
+                        <div className="audio-bar"></div>
+                        <div className="audio-bar"></div>
+                      </div>
+                      <div className="recording-indicator">
+                        <div className="recording-dot"></div>
+                        <div className="recording-timer">{recordingTime}s</div>
                       </div>
                     </div>
-                    <div className="note-card">
-                      <div className="note-header">Tour Follow-Up - Barbara Johnson</div>
-                      <div className="note-timestamp">Today at 3:45 PM</div>
-                      <div className="note-content">
-                        <p className="note-paragraph">
-                          Completed facility tour with Barbara and Sarah. Very positive reception:
-                        </p>
-                        <ul className="note-list">
-                          <li>Spent extended time in garden area - Barbara loved it</li>
-                          <li>Asked detailed questions about meal plans and dietary options</li>
-                          <li>Reviewed memory care programming - both impressed</li>
-                          <li>Discussed move-in timeline</li>
-                        </ul>
-                        <p className="note-paragraph">
-                          <strong>Next steps:</strong> Sarah will discuss with family this weekend. Follow up Monday morning.
-                        </p>
+                    <div className="arrow-container-notes">
+                      <div className="arrow-right-responsive">→</div>
+                      <div className="arrow-down-responsive">↓</div>
+                    </div>
+                    <div className="tour-notes-responsive">
+                      <div className="note-card">
+                        <div className="note-header">Tour Follow-Up - Barbara Johnson</div>
+                        <div className="note-timestamp">Today at 3:45 PM</div>
+                        <div className="note-content">
+                          <p className="note-paragraph">
+                            Completed facility tour with Barbara and Sarah. Very positive reception:
+                          </p>
+                          <ul className="note-list">
+                            <li>Spent extended time in garden area - Barbara loved it</li>
+                            <li>Asked detailed questions about meal plans and dietary options</li>
+                            <li>Reviewed memory care programming - both impressed</li>
+                            <li>Discussed move-in timeline</li>
+                          </ul>
+                          <p className="note-paragraph">
+                            <strong>Next steps:</strong> Sarah will discuss with family this weekend. Follow up Monday morning.
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -204,9 +220,9 @@ function Highlights() {
                   "Image Placeholder"
                 )}
               </div>
-              <div className="highlight-text">
-                <h4>{highlight.imageTitle}</h4>
-                <p>{highlight.imageDescription}</p>
+              <div className="feature-text">
+                <h4>{feature.imageTitle}</h4>
+                <p>{feature.imageDescription}</p>
               </div>
             </div>
           ))}
@@ -216,4 +232,4 @@ function Highlights() {
   );
 }
 
-export default Highlights;
+export default Features;

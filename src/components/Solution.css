@@ -1,9 +1,9 @@
-.overview {
+.solution {
   padding: 6rem 2rem;
   background: white;
 }
 
-.overview h2 {
+.solution h2 {
   text-align: left;
   font-size: 1rem;
   margin-bottom: 2rem;
@@ -11,63 +11,63 @@
   font-weight: 400;
 }
 
-.overview-header {
+.solution-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 3rem;
 }
 
-.overview-header h3 {
+.solution-header h3 {
   font-size: 2.5rem;
   color: #1f2937;
   white-space: nowrap;
   font-weight: 300;
 }
 
-.overview-header p {
+.solution-header p {
   font-size: 1rem;
   color: #6b7280;
   line-height: 1.8;
   max-width: 400px;
 }
 
-.overview-grid {
+.solution-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
 
-.overview-card {
+.solution-card {
   background: #f9fafb;
   padding: 2rem;
   border-radius: 6px;
   min-height: 350px;
 }
 
-.overview-card h4 {
+.solution-card h4 {
   font-size: 1.25rem;
   margin-bottom: 0.75rem;
   color: #1f2937;
 }
 
-.overview-card p {
+.solution-card p {
   color: #6b7280;
   font-size: 0.95rem;
   line-height: 1.6;
 }
 
 @media (max-width: 768px) {
-  .overview h2 {
+  .solution h2 {
     font-size: 2rem;
   }
 
-  .overview-header {
+  .solution-header {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
 
-  .overview-grid {
+  .solution-grid {
     grid-template-columns: 1fr;
   }
 }

@@ -3,7 +3,7 @@ import './Backed.css';
 
 function Backed() {
   return (
-    <section className="backed">
+    <section id="backed" className="backed">
       <div className="container">
         <p className="backed-label">BACKED BY:</p>
         <div className="backed-logos">

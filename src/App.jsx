@@ -2,9 +2,9 @@ import React from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Backed from './components/Backed';
-import Overview from './components/Overview';
+import Solution from './components/Solution';
 import Problem from './components/Problem';
-import Highlights from './components/Highlights';
+import Features from './components/Features';
 import FAQ from './components/FAQ';
 import CTA from './components/CTA';
 import Footer from './components/Footer';
@@ -17,8 +17,8 @@ function App() {
       <Hero />
       <Backed />
       <Problem />
-      <Overview />
-      <Highlights />
+      <Solution />
+      <Features />
       <FAQ />
       <CTA />
       <Footer />
