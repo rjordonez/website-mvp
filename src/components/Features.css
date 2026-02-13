@@ -1030,6 +1030,11 @@
     gap: 1rem;
   }
 
+  .feature-header h3 {
+    white-space: normal;
+    font-size: 1.75rem;
+  }
+
   .feature-header p {
     max-width: 100%;
   }
