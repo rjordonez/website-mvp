@@ -95,7 +95,7 @@ function HeaderFilter({ label, value, options, onChange }) {
   );
 }
 
-export default function LeadsPage({ demoLead, autoOpenLead }) {
+export default function LeadsPage({ demoLead, autoOpenLead, onAutoOpened }) {
   const [leads, setLeads] = useState(() => {
     // Add demo lead after Donald Brown (last lead) if it exists
     return demoLead ? [...mockPipelineLeads, demoLead] : mockPipelineLeads;
@@ -113,8 +113,9 @@ export default function LeadsPage({ demoLead, autoOpenLead }) {
   useEffect(() => {
     if (autoOpenLead) {
       setSelectedLead(autoOpenLead);
+      onAutoOpened?.();
     }
-  }, [autoOpenLead]);
+  }, [autoOpenLead, onAutoOpened]);
 
   const salesRepOptions = useMemo(() => [...new Set(leads.map((l) => l.salesRep))], [leads]);
 

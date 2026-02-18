@@ -15,6 +15,11 @@ const queryClient = new QueryClient();
 function CRMView({ onBack, formData, recordingData, summaryData }) {
   const [currentPage, setCurrentPage] = useState('leads');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [hasAutoOpenedLead, setHasAutoOpenedLead] = useState(false);
+
+  const handleAutoOpened = React.useCallback(() => {
+    setHasAutoOpenedLead(true);
+  }, []);
 
   // Create demo lead from session data
   const demoLead = React.useMemo(() => {
@@ -76,7 +81,11 @@ function CRMView({ onBack, formData, recordingData, summaryData }) {
       case 'dashboard':
         return <Dashboard />;
       case 'leads':
-        return <LeadsPage demoLead={demoLead} autoOpenLead={demoLead} />;
+        return <LeadsPage
+          demoLead={demoLead}
+          autoOpenLead={!hasAutoOpenedLead ? demoLead : null}
+          onAutoOpened={handleAutoOpened}
+        />;
       case 'tours':
         return <ToursPage />;
       case 'follow-up':
