@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(npm create:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(for file in *.tsx)",
+      "Bash(do mv \"$file\" \"$file%.tsx.jsx\")",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

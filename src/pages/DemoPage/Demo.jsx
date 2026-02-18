@@ -1,0 +1,104 @@
+import React, { useState } from 'react';
+import './Demo.css';
+import ListenModeForm from './ListenModeForm';
+import ListenModeRecording from './ListenModeRecording';
+import DropFile from './DropFile';
+import TourSummary from './TourSummary';
+import SectionDetail from './SectionDetail';
+
+function Demo() {
+  const [currentStep, setCurrentStep] = useState('home'); // home, form, recording, dropFile, summary, detail
+  const [formData, setFormData] = useState(null);
+  const [recordingData, setRecordingData] = useState(null); // { audioBlob, transcription, confidence, provider }
+  const [summaryData, setSummaryData] = useState(null); // { keyPoints, concerns, smallThings, transcription }
+  const [currentSection, setCurrentSection] = useState(null);
+  const [flowType, setFlowType] = useState(null); // 'listen' or 'dropFile'
+
+  const handleListenModeClick = () => {
+    setFlowType('listen');
+    setCurrentStep('form');
+  };
+
+  const handleDropFileClick = () => {
+    setFlowType('dropFile');
+    setCurrentStep('dropFile');
+  };
+
+  const handleFormSubmit = (data) => {
+    setFormData(data);
+    if (flowType === 'listen') {
+      setCurrentStep('recording');
+    } else if (flowType === 'dropFile') {
+      // For drop file, we already have recording data, go straight to summary
+      setCurrentStep('summary');
+    }
+  };
+
+  const handleRecordingSubmit = (data) => {
+    setRecordingData(data); // { audioBlob, transcription, confidence, provider }
+    setCurrentStep('summary');
+  };
+
+  const handleDropFileTranscriptionComplete = (data) => {
+    setRecordingData(data); // { audioBlob, transcription, confidence, provider }
+    setCurrentStep('form'); // After transcription, go to form
+  };
+
+  const handleSectionClick = (section) => {
+    setCurrentSection(section);
+    setCurrentStep('detail');
+  };
+
+  const handleBackToSummary = () => {
+    setCurrentStep('summary');
+    setCurrentSection(null);
+  };
+
+  const handleBackToHome = () => {
+    setCurrentStep('home');
+    setFormData(null);
+    setRecordingData(null);
+    setSummaryData(null);
+    setCurrentSection(null);
+    setFlowType(null);
+  };
+
+  const handleSummaryAnalyzed = (data) => {
+    setSummaryData(data);
+  };
+
+  if (currentStep === 'dropFile') {
+    return <DropFile onTranscriptionComplete={handleDropFileTranscriptionComplete} onBack={handleBackToHome} />;
+  }
+
+  if (currentStep === 'form') {
+    return <ListenModeForm onSubmit={handleFormSubmit} onBack={handleBackToHome} />;
+  }
+
+  if (currentStep === 'recording') {
+    return <ListenModeRecording formData={formData} onSubmit={handleRecordingSubmit} onBack={() => setCurrentStep('form')} />;
+  }
+
+  if (currentStep === 'summary') {
+    return <TourSummary formData={formData} recordingData={recordingData} summaryData={summaryData} onSummaryAnalyzed={handleSummaryAnalyzed} onSectionClick={handleSectionClick} onBack={handleBackToHome} />;
+  }
+
+  if (currentStep === 'detail') {
+    return <SectionDetail section={currentSection} formData={formData} onBack={handleBackToSummary} />;
+  }
+
+  return (
+    <div className="demo">
+      <div className="demo-container">
+        <h1>Demo</h1>
+        <div className="demo-buttons">
+          <button className="demo-btn">Audio Sample</button>
+          <button className="demo-btn" onClick={handleListenModeClick}>Listen Mode</button>
+          <button className="demo-btn" onClick={handleDropFileClick}>Drop Your File</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Demo;
