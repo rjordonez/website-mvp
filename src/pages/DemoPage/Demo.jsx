@@ -6,14 +6,22 @@ import DropFile from './DropFile';
 import TourSummary from './TourSummary';
 import SectionDetail from './SectionDetail';
 import CRMView from './CRMView';
+import AudioSampleIntro from './AudioSampleIntro';
+import AudioSampleForm from './AudioSampleForm';
+import { audioSampleMockData } from '../../data/mockAudioSampleData';
 
 function Demo() {
-  const [currentStep, setCurrentStep] = useState('home'); // home, form, recording, dropFile, summary, detail, crm
+  const [currentStep, setCurrentStep] = useState('home'); // home, audioSampleIntro, audioSampleForm, form, recording, dropFile, summary, detail, crm
   const [formData, setFormData] = useState(null);
   const [recordingData, setRecordingData] = useState(null); // { audioBlob, transcription, confidence, provider }
   const [summaryData, setSummaryData] = useState(null); // { keyPoints, concerns, smallThings, transcription }
   const [currentSection, setCurrentSection] = useState(null);
-  const [flowType, setFlowType] = useState(null); // 'listen' or 'dropFile'
+  const [flowType, setFlowType] = useState(null); // 'listen', 'dropFile', or 'audioSample'
+
+  const handleAudioSampleClick = () => {
+    setFlowType('audioSample');
+    setCurrentStep('audioSampleIntro');
+  };
 
   const handleListenModeClick = () => {
     setFlowType('listen');
@@ -76,6 +84,27 @@ function Demo() {
     setCurrentStep('summary');
   };
 
+  const handleAudioSampleIntroNext = () => {
+    // Load mock data and go to form
+    setFormData(audioSampleMockData.formData);
+    setCurrentStep('audioSampleForm');
+  };
+
+  const handleAudioSampleFormNext = () => {
+    // Load mock recording and summary data, then go to summary
+    setRecordingData(audioSampleMockData.recordingData);
+    setSummaryData(audioSampleMockData.summaryData);
+    setCurrentStep('summary');
+  };
+
+  if (currentStep === 'audioSampleIntro') {
+    return <AudioSampleIntro onNext={handleAudioSampleIntroNext} onBack={handleBackToHome} />;
+  }
+
+  if (currentStep === 'audioSampleForm') {
+    return <AudioSampleForm formData={formData} onNext={handleAudioSampleFormNext} onBack={() => setCurrentStep('audioSampleIntro')} />;
+  }
+
   if (currentStep === 'dropFile') {
     return <DropFile onTranscriptionComplete={handleDropFileTranscriptionComplete} onBack={handleBackToHome} />;
   }
@@ -105,7 +134,7 @@ function Demo() {
       <div className="demo-container">
         <h1>Demo</h1>
         <div className="demo-buttons">
-          <button className="demo-btn">Audio Sample</button>
+          <button className="demo-btn" onClick={handleAudioSampleClick}>Audio Sample</button>
           <button className="demo-btn" onClick={handleListenModeClick}>Listen Mode</button>
           <button className="demo-btn" onClick={handleDropFileClick}>Drop Your File</button>
         </div>

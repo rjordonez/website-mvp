@@ -18,7 +18,8 @@
       "Bash(then echo \"=== $file ===\" head -20 \"$file\")",
       "Bash(curl:*)",
       "Bash(lsof:*)",
-      "Bash(src/pages/CRM/FollowUpPage.jsx)"
+      "Bash(src/pages/CRM/FollowUpPage.jsx)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []
