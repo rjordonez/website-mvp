@@ -175,7 +175,7 @@ function TourSummary({ formData, recordingData, summaryData: persistedSummaryDat
 
         {!isAnalyzing && !analysisError && (
           <button className="finish-btn" onClick={onSeeCRM}>
-            See CRM
+            Save Details
           </button>
         )}
       </div>

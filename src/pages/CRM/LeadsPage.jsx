@@ -95,12 +95,12 @@ function HeaderFilter({ label, value, options, onChange }) {
   );
 }
 
-export default function LeadsPage({ demoLead }) {
+export default function LeadsPage({ demoLead, autoOpenLead }) {
   const [leads, setLeads] = useState(() => {
     // Add demo lead after Donald Brown (last lead) if it exists
     return demoLead ? [...mockPipelineLeads, demoLead] : mockPipelineLeads;
   });
-  const [view, setView] = useState("kanban");
+  const [view, setView] = useState("table");
   const [selectedLead, setSelectedLead] = useState(null);
   const [addOpen, setAddOpen] = useState(false);
   const [filters, setFilters] = useState({ stage: "all", source: "all", careLevel: "all", salesRep: "all" });
@@ -108,6 +108,13 @@ export default function LeadsPage({ demoLead }) {
   // Call & Email dialog state
   const [callTarget, setCallTarget] = useState(null);
   const [emailTarget, setEmailTarget] = useState(null);
+
+  // Auto-open lead detail dialog if autoOpenLead is provided
+  useEffect(() => {
+    if (autoOpenLead) {
+      setSelectedLead(autoOpenLead);
+    }
+  }, [autoOpenLead]);
 
   const salesRepOptions = useMemo(() => [...new Set(leads.map((l) => l.salesRep))], [leads]);
 

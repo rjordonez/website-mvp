@@ -13,7 +13,7 @@ import '../../crm.css';
 const queryClient = new QueryClient();
 
 function CRMView({ onBack, formData, recordingData, summaryData }) {
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  const [currentPage, setCurrentPage] = useState('leads');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Create demo lead from session data
@@ -76,7 +76,7 @@ function CRMView({ onBack, formData, recordingData, summaryData }) {
       case 'dashboard':
         return <Dashboard />;
       case 'leads':
-        return <LeadsPage demoLead={demoLead} />;
+        return <LeadsPage demoLead={demoLead} autoOpenLead={demoLead} />;
       case 'tours':
         return <ToursPage />;
       case 'follow-up':
