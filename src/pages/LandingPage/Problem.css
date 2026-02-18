@@ -71,24 +71,24 @@
 
 .problem-card:nth-child(1) {
   top: 100px;
-  background: #000000;
+  background: #1e293b;
   z-index: 1;
 }
 
 .problem-card:nth-child(1) h4,
 .problem-card:nth-child(1) p {
-  color: white;
+  color: #f1f5f9;
 }
 
 .problem-card:nth-child(2) {
   top: 100px;
-  background: #F9B475;
+  background: #e8edfd;
   z-index: 2;
 }
 
 .problem-card:nth-child(2) h4,
 .problem-card:nth-child(2) p {
-  color: black;
+  color: #1e293b;
 }
 
 .problem-card:nth-child(3) {
@@ -99,7 +99,7 @@
 
 .problem-card:nth-child(3) h4,
 .problem-card:nth-child(3) p {
-  color: black;
+  color: #ffffff;
 }
 
 .problem-card h4 {

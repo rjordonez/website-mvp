@@ -13,14 +13,14 @@ function Features() {
 
   const features = [
     {
-      title: "Never miss a call",
+      title: "Never Miss A Call",
       description: "Our 24/7 agent ensures every inquiry becomes a lead in your system.",
       imageTitle: "Capture everything",
       imageDescription: "The call agent listens in or answers the phone if you can't. Then it uploads key details into the CRM, so you never have to write out full details again and your sales team can work more on closing leads."
     },
     {
-      title: "Instant Conversation Notes",
-      description: "Capture what matters while it's fresh, without typing a word.",
+      title: "Voice-first Note Taking",
+      description: "Capture what matters instantly, without typing a word.",
       imageTitle: "Notes saved automatically to the CRM",
       imageDescription: "Speak your notes after tours or calls. They're automatically saved to the CRM, so you can refer back to specific details about each individual whenever you need them."
     },
@@ -31,7 +31,7 @@ function Features() {
       imageDescription: "Go beyond names and phone numbers. Capture decision makers, timeline, care needs, interests, and communication preferences. Because the details are what turn hesitation into a move-in."
     },
     {
-      title: "Personalized follow-ups",
+      title: "Personalized Follow-ups",
       description: "Stay present without being pushy.",
       imageTitle: "Follow up, personally, not pushy",
       imageDescription: "Automated reminders based on real context. Personalized outreach tied to interests and timing. Respect how families want to communicate. Right message. Right time. Right channel."
@@ -195,10 +195,10 @@ function Features() {
                           <div className="timeline-description">Martha mentioned she loves gardening and classical music during the call</div>
                         </div>
                         <div className="timeline-step">
-                          <div className="timeline-description">Reminder sent 3 days after tour to check on decision timeline</div>
+                          <div className="timeline-description">Include invitation on music related community event or gardening workshop to engage Martha and her family</div>
                         </div>
                         <div className="timeline-step">
-                          <div className="timeline-description">Scheduled for private room with garden view based on her preferences</div>
+                          <div className="timeline-description"></div>
                         </div>
                       </div>
                       <div className="timeline-circles-row">
@@ -206,9 +206,9 @@ function Features() {
                         <div className="timeline-connector"></div>
                         <div className="timeline-circle timeline-circle-active">Tour</div>
                         <div className="timeline-connector"></div>
-                        <div className="timeline-circle timeline-circle-followup">Follow up</div>
+                        <div className="timeline-circle timeline-circle-followup">Multiple follow-ups</div>
                         <div className="timeline-connector"></div>
-                        <div className="timeline-circle timeline-circle-active">Move-in</div>
+                        <div className="timeline-circle timeline-circle-movein">Move in</div>
                       </div>
                     </div>
                   </div>

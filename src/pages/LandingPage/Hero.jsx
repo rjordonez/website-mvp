@@ -89,7 +89,6 @@ function Hero() {
           <p className="hero-subtitle">Voice-first CRM built for senior living sales teams.</p>
           <h1>Never miss a lead, from first call to move-in</h1>
           <div className="hero-bottom">
-            <p className="hero-description">The final step in your sales workflow for retirement homes.</p>
             <div className="hero-buttons">
               <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="hero-btn">Request a demo</a>
             </div>

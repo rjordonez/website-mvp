@@ -94,6 +94,7 @@
   display: flex;
   gap: 0.75rem;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .hero-btn {

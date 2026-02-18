@@ -29,7 +29,7 @@
   font-size: 1rem;
   color: #6b7280;
   line-height: 1.8;
-  max-width: 400px;
+  white-space: nowrap;
 }
 
 .solution-grid {
@@ -39,10 +39,18 @@
 }
 
 .solution-card {
-  background: #f9fafb;
+  background: #ffffff;
   padding: 2rem;
-  border-radius: 6px;
+  border-radius: 10px;
   min-height: 350px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.solution-card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
 .solution-card h4 {

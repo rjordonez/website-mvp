@@ -26,7 +26,6 @@ function Problem() {
         <h2>Problem</h2>
         <div className="problem-header">
           <h3>Why leads slip through the cracks</h3>
-          <p>Every day, families reach out during their most difficult moments, looking for the right place for their loved ones.</p>
         </div>
         <div className="problem-grid">
           {problems.map((problem, index) => (
