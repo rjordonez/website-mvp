@@ -8,14 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Mic, Upload, FileAudio } from "lucide-react";
 
-interface Props {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-export default function AddLeadDialog({ open, onOpenChange }: Props) {
+export default function AddLeadDialog({ open, onOpenChange }) {
   const [tab, setTab] = useState("manual");
-  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [audioFile, setAudioFile] = useState(null);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

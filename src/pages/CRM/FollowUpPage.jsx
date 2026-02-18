@@ -30,30 +30,12 @@ import {
   Copy,
   Loader2,
 } from "lucide-react";
-import { mockPipelineLeads, type PipelineLead } from "@/data/mockData";
+import { mockPipelineLeads } from "@/data/mockData";
 import { toast } from "@/hooks/use-toast";
+// End Props
 
-interface EmailTemplate {
-  id: string;
-  name: string;
-  subject: string;
-  body: string;
-  createdAt: string;
-}
 
-interface EmailCampaign {
-  id: string;
-  name: string;
-  templateId: string;
-  recipients: string[];
-  status: "draft" | "scheduled" | "sent";
-  scheduledAt?: string;
-  sentAt?: string;
-  openRate?: number;
-  clickRate?: number;
-}
-
-const defaultTemplates: EmailTemplate[] = [
+const defaultTemplates = [
   {
     id: "t1",
     name: "Post-Inquiry Welcome",
@@ -185,7 +167,7 @@ Trilio CRM`,
   },
 ];
 
-const defaultCampaigns: EmailCampaign[] = [
+const defaultCampaigns = [
   { id: "c1", name: "February Inquiry Welcome Blast", templateId: "t1", recipients: ["p1", "p2", "p3", "p4", "p17"], status: "sent", sentAt: "2026-02-10", openRate: 72, clickRate: 34 },
   { id: "c2", name: "Post-Tour Follow-Up Batch", templateId: "t2", recipients: ["p11", "p12", "p13"], status: "sent", sentAt: "2026-02-09", openRate: 85, clickRate: 45 },
   { id: "c3", name: "Weekly Check-In", templateId: "t3", recipients: ["p5", "p6", "p7", "p8", "p9"], status: "scheduled", scheduledAt: "2026-02-15" },
@@ -193,7 +175,7 @@ const defaultCampaigns: EmailCampaign[] = [
   { id: "c5", name: "Spring Open House Invitation", templateId: "t5", recipients: ["p1", "p2", "p3", "p5", "p6", "p14", "p15", "p16", "p17"], status: "scheduled", scheduledAt: "2026-02-18" },
 ];
 
-function personalizeContent(body: string, lead: PipelineLead): string {
+function personalizeContent(body, lead) {
   const contactName = lead.contactPerson === "Self" ? lead.name : lead.contactPerson;
   let text = body
     .replace(/\{\{name\}\}/g, lead.name)
@@ -203,7 +185,7 @@ function personalizeContent(body: string, lead: PipelineLead): string {
     .replace(/\{\{care_level\}\}/g, lead.careLevel);
 
   // Generate personalized note from intake/post-tour data
-  const notes: string[] = [];
+  const notes = [];
   if (lead.intakeNote.preferences.length > 0) {
     notes.push(`I remember you mentioned interest in ${lead.intakeNote.preferences[0].toLowerCase()}`);
   }
@@ -220,9 +202,9 @@ function personalizeContent(body: string, lead: PipelineLead): string {
 }
 
 export default function FollowUpPage() {
-  const [templates, setTemplates] = useState<EmailTemplate[]>(defaultTemplates);
-  const [campaigns, setCampaigns] = useState<EmailCampaign[]>(defaultCampaigns);
-  const [editingTemplate, setEditingTemplate] = useState<EmailTemplate | null>(null);
+  const [templates, setTemplates] = useState(defaultTemplates);
+  const [campaigns, setCampaigns] = useState(defaultCampaigns);
+  const [editingTemplate, setEditingTemplate] = useState(null);
   const [editOpen, setEditOpen] = useState(false);
   const [campaignOpen, setCampaignOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -232,7 +214,7 @@ export default function FollowUpPage() {
   // Campaign creation state
   const [campaignName, setCampaignName] = useState("");
   const [selectedTemplateId, setSelectedTemplateId] = useState("");
-  const [selectedRecipients, setSelectedRecipients] = useState<string[]>([]);
+  const [selectedRecipients, setSelectedRecipients] = useState([]);
   const [filterStage, setFilterStage] = useState("all");
 
   const leads = mockPipelineLeads;
@@ -264,18 +246,18 @@ export default function FollowUpPage() {
     setEditOpen(true);
   };
 
-  const handleDeleteTemplate = (id: string) => {
+  const handleDeleteTemplate = (id) => {
     setTemplates((prev) => prev.filter((t) => t.id !== id));
     toast({ title: "Template deleted" });
   };
 
-  const handleDuplicateTemplate = (t: EmailTemplate) => {
+  const handleDuplicateTemplate = (t) => {
     const dup = { ...t, id: `t${Date.now()}`, name: `${t.name} (Copy)` };
     setTemplates((prev) => [...prev, dup]);
     toast({ title: "Template duplicated" });
   };
 
-  const toggleRecipient = (id: string) => {
+  const toggleRecipient = (id) => {
     setSelectedRecipients((prev) =>
       prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]
     );
@@ -293,7 +275,7 @@ export default function FollowUpPage() {
 
   const handleCreateCampaign = () => {
     if (!campaignName || !selectedTemplateId || selectedRecipients.length === 0) return;
-    const campaign: EmailCampaign = {
+    const campaign = {
       id: `c${Date.now()}`,
       name: campaignName,
       templateId: selectedTemplateId,
@@ -308,18 +290,18 @@ export default function FollowUpPage() {
     toast({ title: "Campaign created as draft" });
   };
 
-  const handleSendCampaign = (id: string) => {
+  const handleSendCampaign = (id) => {
     setCampaigns((prev) =>
       prev.map((c) =>
         c.id === id
-          ? { ...c, status: "sent" as const, sentAt: new Date().toISOString().slice(0, 10), openRate: Math.floor(Math.random() * 30) + 60, clickRate: Math.floor(Math.random() * 20) + 25 }
+          ? { ...c, status: "sent", sentAt: new Date().toISOString().slice(0, 10), openRate: Math.floor(Math.random() * 30) + 60, clickRate: Math.floor(Math.random() * 20) + 25 }
           : c
       )
     );
     toast({ title: "Campaign sent!", description: "Emails are being delivered." });
   };
 
-  const handlePersonalizePreview = (templateId: string, leadId: string) => {
+  const handlePersonalizePreview = (templateId, leadId) => {
     setPersonalizing(true);
     setPreviewOpen(true);
     const template = templates.find((t) => t.id === templateId);
@@ -332,7 +314,7 @@ export default function FollowUpPage() {
     }, 800);
   };
 
-  const statusColors: Record<string, string> = {
+  const statusColors = {
     draft: "bg-muted text-muted-foreground",
     scheduled: "bg-warning/10 text-warning",
     sent: "bg-success/10 text-success",

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './TourSummary.css';
 import { analyzeTourTranscription } from '../../services/aiService';
 
-function TourSummary({ formData, recordingData, summaryData: persistedSummaryData, onSummaryAnalyzed, onSectionClick, onBack }) {
+function TourSummary({ formData, recordingData, summaryData: persistedSummaryData, onSummaryAnalyzed, onSectionClick, onBack, onSeeCRM }) {
   const [expandedSection, setExpandedSection] = useState(null);
   const [audioURL] = useState(recordingData?.audioBlob ? URL.createObjectURL(recordingData.audioBlob) : null);
   const [summaryData, setSummaryData] = useState(persistedSummaryData);
@@ -174,7 +174,7 @@ function TourSummary({ formData, recordingData, summaryData: persistedSummaryDat
         )}
 
         {!isAnalyzing && !analysisError && (
-          <button className="finish-btn" onClick={onBack}>
+          <button className="finish-btn" onClick={onSeeCRM}>
             See CRM
           </button>
         )}

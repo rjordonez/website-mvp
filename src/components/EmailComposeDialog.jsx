@@ -6,14 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Send, Paperclip } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
-interface Props {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  name: string;
-  email: string;
-}
-
-export default function EmailComposeDialog({ open, onOpenChange, name, email }: Props) {
+export default function EmailComposeDialog({ open, onOpenChange, name, email }) {
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);

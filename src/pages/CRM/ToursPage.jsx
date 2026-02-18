@@ -10,11 +10,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-type ViewMode = "week" | "month";
-
 const hours = Array.from({ length: 10 }, (_, i) => i + 8);
 
-function getWeekDates(baseDate: Date): Date[] {
+function getWeekDates(baseDate) {
   const start = new Date(baseDate);
   const day = start.getDay();
   const diff = day === 0 ? -6 : 1 - day;
@@ -26,7 +24,7 @@ function getWeekDates(baseDate: Date): Date[] {
   });
 }
 
-function getMonthDates(baseDate: Date): Date[] {
+function getMonthDates(baseDate) {
   const year = baseDate.getFullYear();
   const month = baseDate.getMonth();
   const firstDay = new Date(year, month, 1);
@@ -39,11 +37,11 @@ function getMonthDates(baseDate: Date): Date[] {
   });
 }
 
-function formatDate(d: Date): string {
+function formatDate(d) {
   return d.toISOString().split("T")[0];
 }
 
-function formatHour(h: number): string {
+function formatHour(h) {
   return h <= 12 ? `${h}AM` : `${h - 12}PM`;
 }
 
@@ -51,11 +49,11 @@ const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 export default function ToursPage() {
-  const [view, setView] = useState<ViewMode>("week");
+  const [view, setView] = useState("week");
   const [baseDate, setBaseDate] = useState(new Date(2026, 1, 11));
-  const [staffFilter, setStaffFilter] = useState<string>("all");
+  const [staffFilter, setStaffFilter] = useState("all");
 
-  const navigate = (dir: number) => {
+  const navigate = (dir) => {
     const d = new Date(baseDate);
     if (view === "week") d.setDate(d.getDate() + dir * 7);
     else d.setMonth(d.getMonth() + dir);
@@ -153,7 +151,7 @@ export default function ToursPage() {
   );
 }
 
-function WeekView({ dates, tours }: { dates: Date[]; tours: typeof mockCalendarTours }) {
+function WeekView({ dates, tours }) {
   return (
     <div className="flex h-full">
       <div className="w-16 flex-shrink-0 border-r border-border bg-card">
@@ -210,7 +208,7 @@ function WeekView({ dates, tours }: { dates: Date[]; tours: typeof mockCalendarT
   );
 }
 
-function MonthView({ dates, currentMonth, tours }: { dates: Date[]; currentMonth: number; tours: typeof mockCalendarTours }) {
+function MonthView({ dates, currentMonth, tours }) {
   return (
     <div className="p-4">
       <div className="grid grid-cols-7 mb-1">

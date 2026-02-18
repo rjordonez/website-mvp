@@ -64,7 +64,7 @@ export default function Dashboard() {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value: number, name: string) => [`${value} leads (${((value / totalLeads) * 100).toFixed(0)}%)`, name]}
+                    formatter={(value, name) => [`${value} leads (${((value / totalLeads) * 100).toFixed(0)}%)`, name]}
                     contentStyle={{
                       borderRadius: "8px",
                       border: "1px solid hsl(var(--border))",
@@ -139,7 +139,7 @@ export default function Dashboard() {
   );
 }
 
-function ConversionCard({ label, value, goal }: { label: string; value: number; goal: number }) {
+function ConversionCard({ label, value, goal }) {
   const aboveGoal = value >= goal;
   return (
     <div className="rounded-lg border border-border bg-card p-4 shadow-crm-sm text-center">

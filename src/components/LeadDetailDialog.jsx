@@ -5,20 +5,20 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Phone, Mail, Calendar, User, DollarSign, Heart, AlertTriangle, TrendingUp, ArrowRight, Sparkles, Loader2, Eye, ThumbsUp, ThumbsDown, Target, BarChart3, CheckCircle2, MessageSquare, ArrowRightLeft, Users, Plus, Headphones } from "lucide-react";
-import type { PipelineLead, InteractionEntry } from "@/data/mockData";
+
 import { toast } from "@/hooks/use-toast";
 import AudioNoteRecorder from "@/components/lead-detail/AudioNoteRecorder";
 import EditableIntakeContent from "@/components/lead-detail/EditableIntakeContent";
 import CallTranscriptContent from "@/components/lead-detail/CallTranscriptContent";
 
-const careLevelColors: Record<string, string> = {
+const careLevelColors = {
   "Assisted Living": "bg-info/10 text-info border-info/20",
   "Independent Living": "bg-success/10 text-success border-success/20",
   "Memory Care": "bg-warning/10 text-warning border-warning/20",
   "Skilled Nursing": "bg-destructive/10 text-destructive border-destructive/20",
 };
 
-const stageLabel: Record<string, string> = {
+const stageLabel = {
   inquiry: "Inquiry",
   connection: "Connection",
   pre_tour: "Pre-Tour",
@@ -27,15 +27,7 @@ const stageLabel: Record<string, string> = {
   move_in: "Move-in",
 };
 
-interface Props {
-  lead: PipelineLead | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  onCall?: (lead: PipelineLead) => void;
-  onEmail?: (lead: PipelineLead) => void;
-}
-
-function Section({ icon: Icon, title, children }: { icon: React.ElementType; title: string; children: React.ReactNode }) {
+function Section({ icon: Icon, title, children }) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-2">
@@ -47,7 +39,7 @@ function Section({ icon: Icon, title, children }: { icon: React.ElementType; tit
   );
 }
 
-function BulletList({ items }: { items: string[] }) {
+function BulletList({ items }) {
   return (
     <ul className="space-y-1">
       {items.map((item, i) => (
@@ -60,7 +52,7 @@ function BulletList({ items }: { items: string[] }) {
   );
 }
 
-function generateMockSummary(lead: PipelineLead): string {
+function generateMockSummary(lead) {
   const n = lead.intakeNote;
   const pt = lead.postTourNote;
 
@@ -89,7 +81,7 @@ function generateMockSummary(lead: PipelineLead): string {
 
 // IntakeNoteContent moved to EditableIntakeContent component
 
-function PostTourNoteContent({ lead }: { lead: PipelineLead }) {
+function PostTourNoteContent({ lead }) {
   const pt = lead.postTourNote;
   if (!pt) return <p className="text-sm text-muted-foreground italic">No post-tour note available.</p>;
   return (
@@ -115,7 +107,7 @@ function PostTourNoteContent({ lead }: { lead: PipelineLead }) {
   );
 }
 
-const interactionIcons: Record<InteractionEntry["type"], React.ElementType> = {
+const interactionIcons = {
   call: Phone,
   email: Mail,
   tour: Eye,
@@ -124,7 +116,7 @@ const interactionIcons: Record<InteractionEntry["type"], React.ElementType> = {
   meeting: Users,
 };
 
-const interactionColors: Record<InteractionEntry["type"], string> = {
+const interactionColors = {
   call: "bg-info/10 text-info",
   email: "bg-primary/10 text-primary",
   tour: "bg-success/10 text-success",
@@ -133,7 +125,7 @@ const interactionColors: Record<InteractionEntry["type"], string> = {
   meeting: "bg-accent text-accent-foreground",
 };
 
-function formatTimelineDate(dateStr: string): string {
+function formatTimelineDate(dateStr) {
   const d = new Date(dateStr);
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
@@ -141,7 +133,7 @@ function formatTimelineDate(dateStr: string): string {
   return `${mm}/${dd}/${yy}`;
 }
 
-function TimelineContent({ interactions, onAddNote }: { interactions: InteractionEntry[]; onAddNote: (note: InteractionEntry) => void }) {
+function TimelineContent({ interactions, onAddNote }) {
   const [addingNote, setAddingNote] = useState(false);
 
   return (
@@ -181,10 +173,10 @@ function TimelineContent({ interactions, onAddNote }: { interactions: Interactio
   );
 }
 
-export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onEmail }: Props) {
-  const [aiSummary, setAiSummary] = useState<string | null>(null);
+export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onEmail }) {
+  const [aiSummary, setAiSummary] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
-  const [localInteractions, setLocalInteractions] = useState<InteractionEntry[]>([]);
+  const [localInteractions, setLocalInteractions] = useState([]);
 
   // Sync interactions when lead changes
   const interactions = lead ? [...localInteractions.filter(n => n.id.startsWith("note-")), ...lead.interactions] : [];
@@ -202,7 +194,7 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
     }, 1500);
   };
 
-  const handleClose = (openState: boolean) => {
+  const handleClose = (openState) => {
     if (!openState) {
       setAiSummary(null);
       setAiLoading(false);
@@ -210,7 +202,7 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
     onOpenChange(openState);
   };
 
-  const handleAddNote = (note: InteractionEntry) => {
+  const handleAddNote = (note) => {
     setLocalInteractions((prev) => [note, ...prev]);
   };
 

@@ -1,13 +1,7 @@
 import { Bell, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface TopBarProps {
-  title: string;
-  subtitle?: string;
-  action?: { label: string; onClick: () => void };
-}
-
-export default function TopBar({ title, subtitle, action }: TopBarProps) {
+export default function TopBar({ title, subtitle, action }) {
   return (
     <header className="flex h-14 items-center justify-between border-b border-border bg-card px-6">
       <div>

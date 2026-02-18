@@ -1,4 +1,3 @@
-import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   UserPlus,
@@ -10,20 +9,13 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { to: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { to: "/leads", icon: UserPlus, label: "Leads" },
-  { to: "/tours", icon: CalendarDays, label: "Tours" },
-  { to: "/follow-up", icon: Mail, label: "Follow-Up" },
+  { id: "dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { id: "leads", icon: UserPlus, label: "Leads" },
+  { id: "tours", icon: CalendarDays, label: "Tours" },
+  { id: "follow-up", icon: Mail, label: "Follow-Up" },
 ];
 
-interface Props {
-  collapsed: boolean;
-  onToggle: () => void;
-}
-
-export default function AppSidebar({ collapsed, onToggle }: Props) {
-  const location = useLocation();
-
+export default function AppSidebar({ collapsed, onToggle, currentPage, onNavigate }) {
   return (
     <aside
       className={`flex flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300 ${
@@ -57,13 +49,13 @@ export default function AppSidebar({ collapsed, onToggle }: Props) {
 
       {/* Nav */}
       <nav className="mt-3 flex-1 space-y-0.5 px-2">
-        {navItems.map(({ to, icon: Icon, label }) => {
-          const active = location.pathname === to;
+        {navItems.map(({ id, icon: Icon, label }) => {
+          const active = currentPage === id;
           return (
-            <NavLink
-              key={to}
-              to={to}
-              className={`flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors ${
+            <button
+              key={id}
+              onClick={() => onNavigate(id)}
+              className={`flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-sm font-medium transition-colors ${
                 active
                   ? "bg-sidebar-accent text-sidebar-accent-foreground"
                   : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
@@ -71,7 +63,7 @@ export default function AppSidebar({ collapsed, onToggle }: Props) {
             >
               <Icon className="h-4 w-4 shrink-0" />
               {!collapsed && <span>{label}</span>}
-            </NavLink>
+            </button>
           );
         })}
       </nav>

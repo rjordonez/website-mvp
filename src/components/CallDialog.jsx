@@ -3,15 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX, Clock } from "lucide-react";
 
-interface Props {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  name: string;
-  phone: string;
-}
-
-export default function CallDialog({ open, onOpenChange, name, phone }: Props) {
-  const [status, setStatus] = useState<"ringing" | "connected" | "ended">("ringing");
+export default function CallDialog({ open, onOpenChange, name, phone }) {
+  const [status, setStatus] = useState("ringing");
   const [muted, setMuted] = useState(false);
   const [speakerOn, setSpeakerOn] = useState(false);
   const [elapsed, setElapsed] = useState(0);
@@ -34,7 +27,7 @@ export default function CallDialog({ open, onOpenChange, name, phone }: Props) {
     return () => clearInterval(interval);
   }, [status]);
 
-  const formatTime = (s: number) =>
+  const formatTime = (s) =>
     `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 
   const handleEnd = () => {

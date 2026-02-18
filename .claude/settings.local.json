@@ -1,11 +1,24 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm create:*)",
-      "Bash(npm install:*)",
-      "Bash(for file in *.tsx)",
-      "Bash(do mv \"$file\" \"$file%.tsx.jsx\")",
-      "Bash(done)"
+      "Bash(for file in src/components/*.jsx src/pages/CRM/*.jsx)",
+      "Bash(do [ -f \"$file\" ])",
+      "Bash(npm uninstall:*)",
+      "Bash(cat:*)",
+      "Bash(find:*)",
+      "Bash(for file in src/components/EmailComposeDialog.jsx src/components/AddLeadDialog.jsx src/components/CallDialog.jsx src/components/LeadDetailDialog.jsx)",
+      "Bash(do sed -i '' 's|^// End Props$|}|g' \"$file\")",
+      "Bash(pkill:*)",
+      "Bash(npm run dev:*)",
+      "Bash(for file in src/components/ui/*.jsx)",
+      "Bash(do)",
+      "Bash(sed-i:*)",
+      "Bash(for:*)",
+      "Bash(do if [ -f \"$file\" ])",
+      "Bash(then echo \"=== $file ===\" head -20 \"$file\")",
+      "Bash(curl:*)",
+      "Bash(lsof:*)",
+      "Bash(src/pages/CRM/FollowUpPage.jsx)"
     ],
     "deny": [],
     "ask": []

@@ -5,9 +5,10 @@ import ListenModeRecording from './ListenModeRecording';
 import DropFile from './DropFile';
 import TourSummary from './TourSummary';
 import SectionDetail from './SectionDetail';
+import CRMView from './CRMView';
 
 function Demo() {
-  const [currentStep, setCurrentStep] = useState('home'); // home, form, recording, dropFile, summary, detail
+  const [currentStep, setCurrentStep] = useState('home'); // home, form, recording, dropFile, summary, detail, crm
   const [formData, setFormData] = useState(null);
   const [recordingData, setRecordingData] = useState(null); // { audioBlob, transcription, confidence, provider }
   const [summaryData, setSummaryData] = useState(null); // { keyPoints, concerns, smallThings, transcription }
@@ -67,6 +68,14 @@ function Demo() {
     setSummaryData(data);
   };
 
+  const handleSeeCRM = () => {
+    setCurrentStep('crm');
+  };
+
+  const handleBackFromCRM = () => {
+    setCurrentStep('summary');
+  };
+
   if (currentStep === 'dropFile') {
     return <DropFile onTranscriptionComplete={handleDropFileTranscriptionComplete} onBack={handleBackToHome} />;
   }
@@ -80,7 +89,11 @@ function Demo() {
   }
 
   if (currentStep === 'summary') {
-    return <TourSummary formData={formData} recordingData={recordingData} summaryData={summaryData} onSummaryAnalyzed={handleSummaryAnalyzed} onSectionClick={handleSectionClick} onBack={handleBackToHome} />;
+    return <TourSummary formData={formData} recordingData={recordingData} summaryData={summaryData} onSummaryAnalyzed={handleSummaryAnalyzed} onSectionClick={handleSectionClick} onBack={handleBackToHome} onSeeCRM={handleSeeCRM} />;
+  }
+
+  if (currentStep === 'crm') {
+    return <CRMView onBack={handleBackFromCRM} formData={formData} recordingData={recordingData} summaryData={summaryData} />;
   }
 
   if (currentStep === 'detail') {

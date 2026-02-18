@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import TopBar from "@/components/TopBar";
-import { mockPipelineLeads, type PipelineLead } from "@/data/mockData";
-import { DragDropContext, Droppable, Draggable, type DropResult } from "@hello-pangea/dnd";
+import { mockPipelineLeads } from "@/data/mockData";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { User, Calendar, Heart, LayoutGrid, Table as TableIcon, ChevronDown, X, Phone, Mail, StickyNote } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { Progress } from "@/components/ui/progress";
@@ -25,17 +25,17 @@ const stages = [
   { key: "post_tour", label: "Post-Tour" },
   { key: "deposit", label: "Deposit" },
   { key: "move_in", label: "Move-in" },
-] as const;
+];
 
-const stageProgress: Record<string, number> = {
+const stageProgress = {
   inquiry: 10, connection: 25, pre_tour: 45, post_tour: 65, deposit: 85, move_in: 100,
 };
 
-const stageLabel: Record<string, string> = {
+const stageLabel = {
   inquiry: "Inquiry", connection: "Connection", pre_tour: "Pre-Tour", post_tour: "Post-Tour", deposit: "Deposit", move_in: "Move-in",
 };
 
-const careLevelColors: Record<string, string> = {
+const careLevelColors = {
   "Assisted Living": "bg-info/10 text-info",
   "Independent Living": "bg-success/10 text-success",
   "Memory Care": "bg-warning/10 text-warning",
@@ -45,16 +45,7 @@ const careLevelColors: Record<string, string> = {
 const sourceOptions = ["Digital Ads", "Website", "Phone Call", "Walk-in", "Referral"];
 const careOptions = ["Assisted Living", "Independent Living", "Memory Care", "Skilled Nursing"];
 
-type ViewMode = "kanban" | "table";
-
-interface Filters {
-  stage: string;
-  source: string;
-  careLevel: string;
-  salesRep: string;
-}
-
-function formatDate(dateStr: string): string {
+function formatDate(dateStr) {
   const d = new Date(dateStr);
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const dd = String(d.getDate()).padStart(2, "0");
@@ -62,15 +53,13 @@ function formatDate(dateStr: string): string {
   return `${mm}/${dd}/${yy}`;
 }
 
-function HeaderFilter({
-  label, value, options, onChange,
-}: { label: string; value: string; options: string[]; onChange: (v: string) => void; }) {
+function HeaderFilter({ label, value, options, onChange }) {
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef(null);
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -106,16 +95,19 @@ function HeaderFilter({
   );
 }
 
-export default function LeadsPage() {
-  const [leads, setLeads] = useState<PipelineLead[]>(mockPipelineLeads);
-  const [view, setView] = useState<ViewMode>("kanban");
-  const [selectedLead, setSelectedLead] = useState<PipelineLead | null>(null);
+export default function LeadsPage({ demoLead }) {
+  const [leads, setLeads] = useState(() => {
+    // Add demo lead after Donald Brown (last lead) if it exists
+    return demoLead ? [...mockPipelineLeads, demoLead] : mockPipelineLeads;
+  });
+  const [view, setView] = useState("kanban");
+  const [selectedLead, setSelectedLead] = useState(null);
   const [addOpen, setAddOpen] = useState(false);
-  const [filters, setFilters] = useState<Filters>({ stage: "all", source: "all", careLevel: "all", salesRep: "all" });
+  const [filters, setFilters] = useState({ stage: "all", source: "all", careLevel: "all", salesRep: "all" });
 
   // Call & Email dialog state
-  const [callTarget, setCallTarget] = useState<{ name: string; phone: string } | null>(null);
-  const [emailTarget, setEmailTarget] = useState<{ name: string; email: string } | null>(null);
+  const [callTarget, setCallTarget] = useState(null);
+  const [emailTarget, setEmailTarget] = useState(null);
 
   const salesRepOptions = useMemo(() => [...new Set(leads.map((l) => l.salesRep))], [leads]);
 
@@ -129,7 +121,7 @@ export default function LeadsPage() {
     });
   }, [leads, filters]);
 
-  const onDragEnd = (result: DropResult) => {
+  const onDragEnd = (result) => {
     if (!result.destination) return;
     const { source, destination } = result;
     const sourceStage = source.droppableId;
@@ -137,7 +129,7 @@ export default function LeadsPage() {
     const updated = [...leads];
     const sourceItems = updated.filter((l) => l.stage === sourceStage);
     const [moved] = sourceItems.splice(source.index, 1);
-    moved.stage = destStage as PipelineLead["stage"];
+    moved.stage = destStage;
     const withoutMoved = updated.filter((l) => l.id !== moved.id);
     const destItems = withoutMoved.filter((l) => l.stage === destStage);
     destItems.splice(destination.index, 0, moved);
@@ -145,11 +137,11 @@ export default function LeadsPage() {
     setLeads([...otherLeads, ...destItems]);
   };
 
-  const handleCall = (lead: PipelineLead) => {
+  const handleCall = (lead) => {
     setCallTarget({ name: lead.name, phone: lead.contactPhone });
   };
 
-  const handleEmail = (lead: PipelineLead) => {
+  const handleEmail = (lead) => {
     setEmailTarget({ name: lead.name, email: lead.contactEmail });
   };
 
