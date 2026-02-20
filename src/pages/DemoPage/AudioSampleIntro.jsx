@@ -1,22 +1,22 @@
 import React from 'react';
-import './Demo.css';
+import './DropFile.css';
 
 function AudioSampleIntro({ onNext, onBack }) {
   return (
-    <div className="demo">
-      <div className="demo-container" style={{ maxWidth: '700px' }}>
-        <button className="back-button" onClick={onBack}>
-          ← Back
-        </button>
+    <div className="drop-file-page">
+      <div className="drop-file-container">
+        <button className="back-button" onClick={onBack}>← Back</button>
 
         <h1>Audio Sample Demo</h1>
+        <p className="drop-file-subtitle">Listen to a sample conversation and see how our AI analyzes it</p>
 
         <div style={{
           padding: '24px',
           backgroundColor: '#f8f9fa',
           borderRadius: '12px',
           marginBottom: '24px',
-          lineHeight: '1.6'
+          lineHeight: '1.6',
+          textAlign: 'left'
         }}>
           <p style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#2c3e50' }}>
             This is a sample conversation between a senior living advisor and a prospective resident's
@@ -54,11 +54,11 @@ function AudioSampleIntro({ onNext, onBack }) {
             color: '#6c757d',
             fontStyle: 'italic'
           }}>
-            Duration: ~2 minutes • A conversation about assisted living options
+            Duration: ~3 minutes • A conversation about assisted living options
           </p>
         </div>
 
-        <button className="finish-btn" onClick={onNext}>
+        <button className="transcribe-btn" onClick={onNext}>
           Next: See Information Capture →
         </button>
       </div>

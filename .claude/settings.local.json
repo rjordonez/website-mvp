@@ -19,7 +19,9 @@
       "Bash(curl:*)",
       "Bash(lsof:*)",
       "Bash(src/pages/CRM/FollowUpPage.jsx)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "WebFetch(domain:ai-sdk.dev)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

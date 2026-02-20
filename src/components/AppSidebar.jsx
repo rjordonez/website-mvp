@@ -6,6 +6,7 @@ import {
   PanelLeft,
   Sparkles,
   Mail,
+  MessageSquare,
 } from "lucide-react";
 
 const navItems = [
@@ -13,6 +14,7 @@ const navItems = [
   { id: "leads", icon: UserPlus, label: "Leads" },
   { id: "tours", icon: CalendarDays, label: "Tours" },
   { id: "follow-up", icon: Mail, label: "Follow-Up" },
+  { id: "chatbot", icon: MessageSquare, label: "Chatbot" },
 ];
 
 export default function AppSidebar({ collapsed, onToggle, currentPage, onNavigate }) {

@@ -8,6 +8,7 @@ import Dashboard from "@/pages/CRM/Dashboard";
 import LeadsPage from "@/pages/CRM/LeadsPage";
 import ToursPage from "@/pages/CRM/ToursPage";
 import FollowUpPage from "@/pages/CRM/FollowUpPage";
+import ChatbotPage from "@/pages/CRM/ChatbotPage";
 import '../../crm.css';
 
 const queryClient = new QueryClient();
@@ -90,6 +91,8 @@ function CRMView({ onBack, formData, recordingData, summaryData }) {
         return <ToursPage />;
       case 'follow-up':
         return <FollowUpPage />;
+      case 'chatbot':
+        return <ChatbotPage demoLead={demoLead} />;
       default:
         return <Dashboard />;
     }
