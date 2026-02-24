@@ -44,6 +44,80 @@ Help the user with questions about their leads pipeline, provide insights, and s
   }
 });
 
+app.post('/api/analyze', async (req, res) => {
+  console.log('Received /api/analyze request');
+  try {
+    const { transcription, context } = req.body;
+    console.log('API Key present:', !!process.env.OPENAI_API_KEY);
+    console.log('Transcription length:', transcription?.length);
+
+    const prompt = `You are an AI assistant analyzing conversations to extract structured insights.
+
+Analyze the following conversation transcript and extract:
+
+1. **Key Points**: The most important takeaways, main topics discussed, or key information mentioned (3-5 items). Extract any significant statements, goals, preferences, or requirements mentioned.
+
+2. **Concerns**: Any worries, questions, objections, or issues raised (2-4 items). If none exist, extract things that might need follow-up or clarification.
+
+3. **Small Things**: Minor details, personal preferences, or interesting facts mentioned that could be useful for personalization (2-4 items). This includes hobbies, locations, relationships, or specific likes/dislikes.
+
+IMPORTANT: Even if this is a brief or casual conversation, extract at least 2-3 items for each category based on what was actually said. Be creative and extract value from whatever information is provided.
+
+Context:
+- Person: ${context.firstName} ${context.lastName}
+- Situation: ${context.situation}
+- Email: ${context.email}
+- Phone: ${context.phone}
+
+Transcript:
+${transcription}
+
+Return ONLY a valid JSON object with this exact structure (no markdown, no code blocks):
+{
+  "keyPoints": ["point 1", "point 2", ...],
+  "concerns": ["concern 1", "concern 2", ...],
+  "smallThings": ["detail 1", "detail 2", ...]
+}`;
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: process.env.VITE_AI_MODEL || 'gpt-4-turbo-preview',
+        messages: [
+          { role: 'system', content: 'You are an AI assistant that analyzes senior living tour conversations and extracts structured insights. Always respond with valid JSON only.' },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.7,
+        response_format: { type: 'json_object' }
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('OpenAI API error:', errorData);
+      throw new Error(`OpenAI API error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    const result = JSON.parse(data.choices[0].message.content);
+
+    res.json({
+      keyPoints: result.keyPoints || [],
+      concerns: result.concerns || [],
+      smallThings: result.smallThings || [],
+      provider: 'openai',
+      model: process.env.VITE_AI_MODEL || 'gpt-4-turbo-preview'
+    });
+  } catch (error) {
+    console.error('Analyze API error:', error);
+    res.status(500).json({ error: 'Failed to analyze transcription' });
+  }
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`API server running on http://localhost:${PORT}`);

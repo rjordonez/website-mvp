@@ -283,8 +283,8 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
           <TabsList className={`w-full grid ${hasPostTour ? "grid-cols-4" : "grid-cols-3"}`}>
             {hasPostTour && <TabsTrigger value="post_tour">🏡 Post-Tour</TabsTrigger>}
             <TabsTrigger value="intake">☎️ Intake</TabsTrigger>
-            <TabsTrigger value="recordings">🎧 Recordings</TabsTrigger>
             <TabsTrigger value="timeline">📋 Activity Log</TabsTrigger>
+            <TabsTrigger value="recordings">🎧 Recordings</TabsTrigger>
           </TabsList>
           {hasPostTour && (
             <TabsContent value="post_tour" className="mt-4">
@@ -294,11 +294,11 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
           <TabsContent value="intake" className="mt-4">
             <EditableIntakeContent lead={lead} />
           </TabsContent>
-          <TabsContent value="recordings" className="mt-4">
-            <CallTranscriptContent transcripts={lead.callTranscripts || []} />
-          </TabsContent>
           <TabsContent value="timeline" className="mt-4">
             <TimelineContent interactions={interactions} onAddNote={handleAddNote} />
+          </TabsContent>
+          <TabsContent value="recordings" className="mt-4">
+            <CallTranscriptContent transcripts={lead.callTranscripts || []} />
           </TabsContent>
         </Tabs>
       </DialogContent>

@@ -76,48 +76,20 @@ Return ONLY a valid JSON object with this exact structure (no markdown, no code 
  * Docs: https://platform.openai.com/docs/api-reference/chat
  */
 async function analyzeWithOpenAI(transcription, context) {
-  const config = getConfig();
-  const apiKey = config.ai.apiKey;
-  const model = config.ai.model || 'gpt-4-turbo-preview';
-
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('/api/analyze', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        model: model,
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an AI assistant that analyzes senior living tour conversations and extracts structured insights. Always respond with valid JSON only.'
-          },
-          {
-            role: 'user',
-            content: getAnalysisPrompt(transcription, context)
-          }
-        ],
-        temperature: 0.7,
-        response_format: { type: 'json_object' }
-      })
+      body: JSON.stringify({ transcription, context })
     });
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.statusText}`);
+      throw new Error(`Analysis API error: ${response.statusText}`);
     }
 
-    const data = await response.json();
-    const result = JSON.parse(data.choices[0].message.content);
-
-    return {
-      keyPoints: result.keyPoints || [],
-      concerns: result.concerns || [],
-      smallThings: result.smallThings || [],
-      provider: 'openai',
-      model: model
-    };
+    return await response.json();
   } catch (error) {
     console.error('OpenAI analysis error:', error);
     throw error;
