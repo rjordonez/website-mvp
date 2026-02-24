@@ -5,7 +5,7 @@ function Solution() {
   const features = [
     {
       title: "Mobile-first & easy to use",
-      description: <>Log tours, calls, or meetings in just 1–2 taps — capturing every detail has never been easier.<br /><br />Whether you're on the road or visiting places, all important info is recorded without extra time on the desk.</>
+      description: <>Log a tour, call, or meeting in just a couple taps or just speak your notes.<br /><br />It all gets saved automatically, so even when you're on the road, you won't be stuck at your desk catching up later.</>
     },
     {
       title: "AI assistant, acts on your data",
