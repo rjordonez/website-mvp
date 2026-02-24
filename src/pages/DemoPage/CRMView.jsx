@@ -72,7 +72,8 @@ function CRMView({ onBack, formData, recordingData, summaryData }) {
       callTranscripts: recordingData ? [{
         transcript: recordingData.transcription || summaryData.transcription || "No transcript available",
         timestamp: timeStr,
-        duration: "N/A"
+        duration: "N/A",
+        audioBlob: recordingData.audioBlob || null
       }] : []
     };
   }, [formData, recordingData, summaryData]);

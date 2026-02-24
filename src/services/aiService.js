@@ -39,41 +39,21 @@ export async function analyzeTourTranscription(transcription, context = {}) {
 }
 
 /**
- * Creates the system prompt for analysis
+ * Creates the analysis prompt (used by Anthropic/Google/Azure providers)
  */
 function getAnalysisPrompt(transcription, context) {
-  return `You are an AI assistant analyzing conversations to extract structured insights.
+  return `Analyze this conversation transcript and extract structured insights.
 
-Analyze the following conversation transcript and extract:
-
-1. **Key Points**: The most important takeaways, main topics discussed, or key information mentioned (3-5 items). Extract any significant statements, goals, preferences, or requirements mentioned.
-
-2. **Concerns**: Any worries, questions, objections, or issues raised (2-4 items). If none exist, extract things that might need follow-up or clarification.
-
-3. **Small Things**: Minor details, personal preferences, or interesting facts mentioned that could be useful for personalization (2-4 items). This includes hobbies, locations, relationships, or specific likes/dislikes.
-
-IMPORTANT: Even if this is a brief or casual conversation, extract at least 2-3 items for each category based on what was actually said. Be creative and extract value from whatever information is provided.
-
-Context:
-- Person: ${context.firstName} ${context.lastName}
-- Situation: ${context.situation}
-- Email: ${context.email}
-- Phone: ${context.phone}
+Context: ${context.firstName} ${context.lastName} - ${context.situation}
 
 Transcript:
 ${transcription}
 
-Return ONLY a valid JSON object with this exact structure (no markdown, no code blocks):
-{
-  "keyPoints": ["point 1", "point 2", ...],
-  "concerns": ["concern 1", "concern 2", ...],
-  "smallThings": ["detail 1", "detail 2", ...]
-}`;
+Return ONLY valid JSON: { "keyPoints": [...], "concerns": [...], "smallThings": [...] }`;
 }
 
 /**
- * OpenAI Implementation (GPT-4 or GPT-3.5)
- * Docs: https://platform.openai.com/docs/api-reference/chat
+ * OpenAI Implementation — proxied through /api/analyze to avoid CORS
  */
 async function analyzeWithOpenAI(transcription, context) {
   try {

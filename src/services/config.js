@@ -26,10 +26,8 @@ export function getConfig() {
     ai: {
       // Choose provider: 'openai', 'anthropic', 'google', 'azure', 'mock'
       provider: import.meta.env.VITE_AI_PROVIDER || 'mock',
-      apiKey: import.meta.env.OPENAI_KEY || import.meta.env.VITE_AI_API_KEY || '',
-
-      // Model selection (optional, uses defaults if not specified)
-      model: import.meta.env.VITE_AI_MODEL || '',
+      // API key only needed for non-OpenAI providers (OpenAI goes through server proxy)
+      apiKey: import.meta.env.VITE_AI_API_KEY || '',
 
       // Azure-specific settings (only needed if using Azure)
       azureEndpoint: import.meta.env.VITE_AZURE_ENDPOINT || '',

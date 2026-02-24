@@ -45,11 +45,8 @@ Help the user with questions about their leads pipeline, provide insights, and s
 });
 
 app.post('/api/analyze', async (req, res) => {
-  console.log('Received /api/analyze request');
   try {
     const { transcription, context } = req.body;
-    console.log('API Key present:', !!process.env.OPENAI_API_KEY);
-    console.log('Transcription length:', transcription?.length);
 
     const prompt = `You are an AI assistant analyzing conversations to extract structured insights.
 
@@ -86,7 +83,7 @@ Return ONLY a valid JSON object with this exact structure (no markdown, no code 
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: process.env.VITE_AI_MODEL || 'gpt-4-turbo-preview',
+        model: process.env.OPENAI_MODEL || 'gpt-4-turbo-preview',
         messages: [
           { role: 'system', content: 'You are an AI assistant that analyzes senior living tour conversations and extracts structured insights. Always respond with valid JSON only.' },
           { role: 'user', content: prompt }
@@ -110,7 +107,7 @@ Return ONLY a valid JSON object with this exact structure (no markdown, no code 
       concerns: result.concerns || [],
       smallThings: result.smallThings || [],
       provider: 'openai',
-      model: process.env.VITE_AI_MODEL || 'gpt-4-turbo-preview'
+      model: process.env.OPENAI_MODEL || 'gpt-4-turbo-preview'
     });
   } catch (error) {
     console.error('Analyze API error:', error);
