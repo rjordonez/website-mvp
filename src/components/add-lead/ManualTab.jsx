@@ -78,7 +78,7 @@ export default function ManualTab({ onLeadCreated }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label className="text-xs">Prospect Name</Label>
           <Input placeholder="e.g. Margaret Chen" className="h-9 text-sm" value={form.name} onChange={(e) => set("name", e.target.value)} />
@@ -89,7 +89,7 @@ export default function ManualTab({ onLeadCreated }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label className="text-xs">Relation</Label>
           <Input placeholder="e.g. Daughter" className="h-9 text-sm" value={form.relation} onChange={(e) => set("relation", e.target.value)} />
@@ -100,7 +100,7 @@ export default function ManualTab({ onLeadCreated }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label className="text-xs">Email</Label>
           <Input placeholder="email@example.com" className="h-9 text-sm" value={form.email} onChange={(e) => set("email", e.target.value)} />
@@ -111,7 +111,7 @@ export default function ManualTab({ onLeadCreated }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label className="text-xs">Care Type</Label>
           <Select value={form.careType} onValueChange={(v) => set("careType", v)}>
@@ -143,7 +143,7 @@ export default function ManualTab({ onLeadCreated }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label className="text-xs">Facility</Label>
           <Select value={form.facility} onValueChange={(v) => set("facility", v)}>
@@ -184,7 +184,7 @@ export default function ManualTab({ onLeadCreated }) {
         <Textarea placeholder="Brief description of the prospect's situation..." className="text-sm min-h-[60px]" value={form.situation} onChange={(e) => set("situation", e.target.value)} />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label className="text-xs">Budget Range</Label>
           <Input placeholder="e.g. $4,000-$6,000/mo" className="h-9 text-sm" value={form.budget} onChange={(e) => set("budget", e.target.value)} />

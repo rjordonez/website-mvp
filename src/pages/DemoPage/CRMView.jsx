@@ -10,6 +10,7 @@ import ToursPage from "@/pages/CRM/ToursPage";
 import FollowUpPage from "@/pages/CRM/FollowUpPage";
 import ChatbotPage from "@/pages/CRM/ChatbotPage";
 import { mockPipelineLeads } from "@/data/mockData";
+import { useIsMobile } from "@/hooks/use-mobile";
 import '../../crm.css';
 
 const queryClient = new QueryClient();
@@ -19,6 +20,7 @@ function CRMView() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [leads, setLeads] = useState(mockPipelineLeads);
   const [autoOpenLeadId, setAutoOpenLeadId] = useState(null);
+  const isMobile = useIsMobile();
 
   const handleAddLead = useCallback((lead, { autoOpen } = {}) => {
     setLeads((prev) => [...prev, lead]);
@@ -32,6 +34,17 @@ function CRMView() {
   }, []);
 
   const renderPage = () => {
+    if (isMobile) {
+      return (
+        <LeadsPage
+          leads={leads}
+          setLeads={setLeads}
+          onAddLead={handleAddLead}
+          autoOpenLeadId={autoOpenLeadId}
+          onAutoOpenHandled={handleAutoOpenHandled}
+        />
+      );
+    }
     switch (currentPage) {
       case 'dashboard':
         return <Dashboard />;
@@ -62,12 +75,14 @@ function CRMView() {
         <Toaster />
         <Sonner />
         <div className="flex h-screen overflow-hidden bg-background">
-          <AppSidebar
-            collapsed={sidebarCollapsed}
-            onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-            currentPage={currentPage}
-            onNavigate={setCurrentPage}
-          />
+          {!isMobile && (
+            <AppSidebar
+              collapsed={sidebarCollapsed}
+              onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+              currentPage={currentPage}
+              onNavigate={setCurrentPage}
+            />
+          )}
           <main className="flex-1 overflow-auto">
             {renderPage()}
           </main>

@@ -1,9 +1,11 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import TopBar from "@/components/TopBar";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { User, Calendar, Heart, LayoutGrid, Table as TableIcon, ChevronDown, X, Phone, Mail, StickyNote } from "lucide-react";
+import { User, Calendar, Heart, LayoutGrid, Table as TableIcon, ChevronDown, X, Phone, Mail, StickyNote, ArrowRightLeft, Check } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -12,6 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import LeadDetailDialog from "@/components/LeadDetailDialog";
 import AddLeadDialog from "@/components/AddLeadDialog";
 import CallDialog from "@/components/CallDialog";
@@ -94,11 +98,68 @@ function HeaderFilter({ label, value, options, onChange }) {
   );
 }
 
+function StageChangeModal({ lead, open, onOpenChange, onStageChange, isMobile }) {
+  if (!lead) return null;
+
+  const stageList = (
+    <div className="space-y-1 p-4">
+      {stages.map((stage) => (
+        <button
+          key={stage.key}
+          onClick={() => {
+            onStageChange(lead.id, stage.key);
+            onOpenChange(false);
+          }}
+          className={`w-full flex items-center justify-between rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+            lead.stage === stage.key
+              ? "bg-primary text-primary-foreground"
+              : "hover:bg-muted text-foreground"
+          }`}
+        >
+          <span>{stage.label}</span>
+          {lead.stage === stage.key && <Check className="h-4 w-4" />}
+        </button>
+      ))}
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <Drawer open={open} onOpenChange={onOpenChange}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Move {lead.name}</DrawerTitle>
+          </DrawerHeader>
+          {stageList}
+          <div className="p-4 pt-0">
+            <Button variant="outline" className="w-full" onClick={() => onOpenChange(false)}>
+              Cancel
+            </Button>
+          </div>
+        </DrawerContent>
+      </Drawer>
+    );
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Move {lead.name}</DialogTitle>
+        </DialogHeader>
+        {stageList}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, onAutoOpenHandled }) {
+  const isMobile = useIsMobile();
   const [view, setView] = useState("table");
   const [selectedLead, setSelectedLead] = useState(null);
   const [addOpen, setAddOpen] = useState(false);
   const [filters, setFilters] = useState({ stage: "all", source: "all", careLevel: "all", salesRep: "all" });
+  const [stageChangeLead, setStageChangeLead] = useState(null);
 
   // Call & Email dialog state
   const [callTarget, setCallTarget] = useState(null);
@@ -142,6 +203,12 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
     setLeads([...otherLeads, ...destItems]);
   };
 
+  const handleStageChange = (leadId, newStage) => {
+    setLeads((prev) =>
+      prev.map((l) => (l.id === leadId ? { ...l, stage: newStage } : l))
+    );
+  };
+
   const handleCall = (lead) => {
     setCallTarget({ name: lead.name, phone: lead.contactPhone });
   };
@@ -150,12 +217,92 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
     setEmailTarget({ name: lead.name, email: lead.contactEmail });
   };
 
+  // --- Mobile Kanban ---
+  const renderMobileKanban = () => (
+    <div className="space-y-4">
+      {stages.map((stage) => {
+        const stageLeads = filteredLeads.filter((l) => l.stage === stage.key);
+        return (
+          <div key={stage.key}>
+            <div className="flex items-center gap-2 mb-2 px-1">
+              <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide">{stage.label}</h3>
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-[10px] font-medium text-muted-foreground">{stageLeads.length}</span>
+            </div>
+            <div className="space-y-2">
+              {stageLeads.map((lead) => (
+                <div
+                  key={lead.id}
+                  className="rounded-lg border border-border bg-card p-3 shadow-crm-sm"
+                >
+                  <div className="flex items-center justify-between">
+                    <p
+                      className="text-sm font-semibold text-foreground cursor-pointer"
+                      onClick={() => setSelectedLead(lead)}
+                    >
+                      {lead.name}
+                    </p>
+                    <button
+                      onClick={() => setStageChangeLead(lead)}
+                      className="p-1.5 rounded hover:bg-muted transition-colors"
+                    >
+                      <ArrowRightLeft className="h-3.5 w-3.5 text-muted-foreground" />
+                    </button>
+                  </div>
+                  <div className="mt-2 space-y-1.5">
+                    <div className="flex items-center gap-1.5 text-xs">
+                      <Heart className="h-3 w-3 text-muted-foreground" />
+                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${careLevelColors[lead.careLevel]}`}>{lead.careLevel}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Calendar className="h-3 w-3" />
+                      <span>{formatDate(lead.lastContactDate)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {stageLeads.length === 0 && (
+                <div className="rounded-lg bg-muted/30 p-4 text-center text-xs text-muted-foreground">No leads</div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  // --- Mobile Table (card list) ---
+  const renderMobileTable = () => (
+    <div className="space-y-2">
+      {filteredLeads.map((lead) => (
+        <div
+          key={lead.id}
+          onClick={() => setSelectedLead(lead)}
+          className="rounded-lg border border-border bg-card p-3 shadow-crm-sm cursor-pointer active:bg-muted/50 transition-colors"
+        >
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-sm font-semibold text-foreground">{lead.name}</p>
+            <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${careLevelColors[lead.careLevel]}`}>{lead.careLevel}</span>
+          </div>
+          <div className="flex items-center gap-2 mb-1.5">
+            <Progress value={stageProgress[lead.stage]} className="h-2 flex-1" />
+            <span className="text-[10px] text-muted-foreground whitespace-nowrap">{stageLabel[lead.stage]}</span>
+          </div>
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span>{lead.source}</span>
+            <span>{formatDate(lead.lastContactDate)}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className="flex flex-col h-full">
       <TopBar
         title="Leads Pipeline"
         subtitle={`${filteredLeads.length} prospects`}
         action={{ label: "Add Lead", onClick: () => setAddOpen(true) }}
+        isMobile={isMobile}
       />
 
       {/* View toggle */}
@@ -180,155 +327,163 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
 
       <div className="flex-1 overflow-auto p-4">
         {view === "kanban" ? (
-          <DragDropContext onDragEnd={onDragEnd}>
-            <div className="flex gap-3 min-w-max">
-              {stages.map((stage) => {
-                const stageLeads = filteredLeads.filter((l) => l.stage === stage.key);
-                return (
-                  <div key={stage.key} className="w-64 flex-shrink-0">
-                    <div className="flex items-center gap-2 mb-3 px-1">
-                      <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide">{stage.label}</h3>
-                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-[10px] font-medium text-muted-foreground">{stageLeads.length}</span>
-                    </div>
-                    <Droppable droppableId={stage.key}>
-                      {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.droppableProps}
-                          className={`space-y-2 min-h-[200px] rounded-lg p-2 transition-colors ${snapshot.isDraggingOver ? "bg-primary/5" : "bg-muted/30"}`}
-                        >
-                          {stageLeads.map((lead, index) => (
-                            <Draggable key={lead.id} draggableId={lead.id} index={index}>
-                              {(provided, snapshot) => (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  onClick={() => setSelectedLead(lead)}
-                                  className={`rounded-lg border border-border bg-card p-3 shadow-crm-sm cursor-grab active:cursor-grabbing transition-shadow ${
-                                    snapshot.isDragging ? "shadow-crm-lg rotate-1" : "hover:shadow-crm-md"
-                                  }`}
-                                >
-                                  <div className="flex items-center justify-between">
-                                    <p className="text-sm font-semibold text-foreground">{lead.name}</p>
-                                    <div className="flex items-center gap-0.5">
-                                      <TooltipProvider delayDuration={200}>
-                                        <Tooltip>
-                                          <TooltipTrigger asChild>
-                                            <button
-                                              onClick={(e) => { e.stopPropagation(); handleCall(lead); }}
-                                              className="p-1 rounded hover:bg-muted transition-colors"
-                                            >
-                                              <Phone className="h-3 w-3 text-muted-foreground hover:text-primary" />
-                                            </button>
-                                          </TooltipTrigger>
-                                          <TooltipContent side="top" className="text-xs">{lead.contactPhone}</TooltipContent>
-                                        </Tooltip>
-                                        <Tooltip>
-                                          <TooltipTrigger asChild>
-                                            <button
-                                              onClick={(e) => { e.stopPropagation(); handleEmail(lead); }}
-                                              className="p-1 rounded hover:bg-muted transition-colors"
-                                            >
-                                              <Mail className="h-3 w-3 text-muted-foreground hover:text-primary" />
-                                            </button>
-                                          </TooltipTrigger>
-                                          <TooltipContent side="top" className="text-xs">{lead.contactEmail}</TooltipContent>
-                                        </Tooltip>
-                                        <Tooltip>
-                                          <TooltipTrigger asChild>
-                                            <button
-                                              onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); }}
-                                              className="p-1 rounded hover:bg-muted transition-colors"
-                                            >
-                                              <StickyNote className="h-3 w-3 text-muted-foreground hover:text-primary" />
-                                            </button>
-                                          </TooltipTrigger>
-                                          <TooltipContent side="top" className="text-xs">View notes</TooltipContent>
-                                        </Tooltip>
-                                      </TooltipProvider>
-                                    </div>
-                                  </div>
-                                  <div className="mt-2 space-y-1.5">
-                                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                      <User className="h-3 w-3" />
-                                      <span>{lead.contactPerson}{lead.contactRelation && ` (${lead.contactRelation})`}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1.5 text-xs">
-                                      <Heart className="h-3 w-3 text-muted-foreground" />
-                                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${careLevelColors[lead.careLevel]}`}>{lead.careLevel}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                      <Calendar className="h-3 w-3" />
-                                      <span>{formatDate(lead.lastContactDate)}</span>
-                                    </div>
-                                    <div className="text-[10px] text-muted-foreground/70">PIC: {lead.salesRep}</div>
-                                  </div>
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </div>
-                );
-              })}
-            </div>
-          </DragDropContext>
-        ) : (
-          <div className="rounded-lg border border-border bg-card overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="min-w-[150px] sticky left-0 bg-card z-10 whitespace-nowrap">Prospect Name</TableHead>
-                  <TableHead className="min-w-[170px] whitespace-nowrap">
-                    <HeaderFilter label="Stage" value={filters.stage} options={stages.map((s) => s.key)} onChange={(v) => setFilters((f) => ({ ...f, stage: v }))} />
-                  </TableHead>
-                  <TableHead className="min-w-[110px] whitespace-nowrap">
-                    <HeaderFilter label="Source" value={filters.source} options={sourceOptions} onChange={(v) => setFilters((f) => ({ ...f, source: v }))} />
-                  </TableHead>
-                  <TableHead className="min-w-[130px] whitespace-nowrap">
-                    <HeaderFilter label="Care Type" value={filters.careLevel} options={careOptions} onChange={(v) => setFilters((f) => ({ ...f, careLevel: v }))} />
-                  </TableHead>
-                  <TableHead className="min-w-[110px] whitespace-nowrap">
-                    <HeaderFilter label="PIC" value={filters.salesRep} options={salesRepOptions} onChange={(v) => setFilters((f) => ({ ...f, salesRep: v }))} />
-                  </TableHead>
-                  <TableHead className="min-w-[120px] whitespace-nowrap">Point of Contact</TableHead>
-                  <TableHead className="min-w-[95px] whitespace-nowrap">Inquiry Date</TableHead>
-                  <TableHead className="min-w-[95px] whitespace-nowrap">Initial Contact</TableHead>
-                  <TableHead className="min-w-[95px] whitespace-nowrap">Last Contact</TableHead>
-                  <TableHead className="min-w-[180px] whitespace-nowrap">Next Activity</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredLeads.map((lead) => (
-                  <TableRow key={lead.id} className="cursor-pointer" onClick={() => setSelectedLead(lead)}>
-                    <TableCell className="font-medium text-foreground sticky left-0 bg-card z-10 whitespace-nowrap">{lead.name}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Progress value={stageProgress[lead.stage]} className="h-2 w-16" />
-                        <span className="text-xs text-muted-foreground whitespace-nowrap">{stageLabel[lead.stage]}</span>
+          isMobile ? (
+            renderMobileKanban()
+          ) : (
+            <DragDropContext onDragEnd={onDragEnd}>
+              <div className="flex gap-3 min-w-max">
+                {stages.map((stage) => {
+                  const stageLeads = filteredLeads.filter((l) => l.stage === stage.key);
+                  return (
+                    <div key={stage.key} className="w-64 flex-shrink-0">
+                      <div className="flex items-center gap-2 mb-3 px-1">
+                        <h3 className="text-xs font-semibold text-foreground uppercase tracking-wide">{stage.label}</h3>
+                        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-[10px] font-medium text-muted-foreground">{stageLeads.length}</span>
                       </div>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground whitespace-nowrap">{lead.source}</TableCell>
-                    <TableCell>
-                      <span className={`px-2 py-0.5 rounded text-[11px] font-medium whitespace-nowrap ${careLevelColors[lead.careLevel]}`}>{lead.careLevel}</span>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground whitespace-nowrap">{lead.salesRep}</TableCell>
-                    <TableCell className="text-muted-foreground whitespace-nowrap">
-                      {lead.contactPerson}{lead.contactRelation ? ` (${lead.contactRelation})` : ""}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground whitespace-nowrap">{formatDate(lead.inquiryDate)}</TableCell>
-                    <TableCell className="text-muted-foreground whitespace-nowrap">{formatDate(lead.initialContact)}</TableCell>
-                    <TableCell className="text-muted-foreground whitespace-nowrap">{formatDate(lead.lastContactDate)}</TableCell>
-                    <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{lead.nextActivity}</TableCell>
+                      <Droppable droppableId={stage.key}>
+                        {(provided, snapshot) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.droppableProps}
+                            className={`space-y-2 min-h-[200px] rounded-lg p-2 transition-colors ${snapshot.isDraggingOver ? "bg-primary/5" : "bg-muted/30"}`}
+                          >
+                            {stageLeads.map((lead, index) => (
+                              <Draggable key={lead.id} draggableId={lead.id} index={index}>
+                                {(provided, snapshot) => (
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    onClick={() => setSelectedLead(lead)}
+                                    className={`rounded-lg border border-border bg-card p-3 shadow-crm-sm cursor-grab active:cursor-grabbing transition-shadow ${
+                                      snapshot.isDragging ? "shadow-crm-lg rotate-1" : "hover:shadow-crm-md"
+                                    }`}
+                                  >
+                                    <div className="flex items-center justify-between">
+                                      <p className="text-sm font-semibold text-foreground">{lead.name}</p>
+                                      <div className="flex items-center gap-0.5">
+                                        <TooltipProvider delayDuration={200}>
+                                          <Tooltip>
+                                            <TooltipTrigger asChild>
+                                              <button
+                                                onClick={(e) => { e.stopPropagation(); handleCall(lead); }}
+                                                className="p-1 rounded hover:bg-muted transition-colors"
+                                              >
+                                                <Phone className="h-3 w-3 text-muted-foreground hover:text-primary" />
+                                              </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="top" className="text-xs">{lead.contactPhone}</TooltipContent>
+                                          </Tooltip>
+                                          <Tooltip>
+                                            <TooltipTrigger asChild>
+                                              <button
+                                                onClick={(e) => { e.stopPropagation(); handleEmail(lead); }}
+                                                className="p-1 rounded hover:bg-muted transition-colors"
+                                              >
+                                                <Mail className="h-3 w-3 text-muted-foreground hover:text-primary" />
+                                              </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="top" className="text-xs">{lead.contactEmail}</TooltipContent>
+                                          </Tooltip>
+                                          <Tooltip>
+                                            <TooltipTrigger asChild>
+                                              <button
+                                                onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); }}
+                                                className="p-1 rounded hover:bg-muted transition-colors"
+                                              >
+                                                <StickyNote className="h-3 w-3 text-muted-foreground hover:text-primary" />
+                                              </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="top" className="text-xs">View notes</TooltipContent>
+                                          </Tooltip>
+                                        </TooltipProvider>
+                                      </div>
+                                    </div>
+                                    <div className="mt-2 space-y-1.5">
+                                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                        <User className="h-3 w-3" />
+                                        <span>{lead.contactPerson}{lead.contactRelation && ` (${lead.contactRelation})`}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1.5 text-xs">
+                                        <Heart className="h-3 w-3 text-muted-foreground" />
+                                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${careLevelColors[lead.careLevel]}`}>{lead.careLevel}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                        <Calendar className="h-3 w-3" />
+                                        <span>{formatDate(lead.lastContactDate)}</span>
+                                      </div>
+                                      <div className="text-[10px] text-muted-foreground/70">PIC: {lead.salesRep}</div>
+                                    </div>
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                          </div>
+                        )}
+                      </Droppable>
+                    </div>
+                  );
+                })}
+              </div>
+            </DragDropContext>
+          )
+        ) : (
+          isMobile ? (
+            renderMobileTable()
+          ) : (
+            <div className="rounded-lg border border-border bg-card overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="min-w-[150px] sticky left-0 bg-card z-10 whitespace-nowrap">Prospect Name</TableHead>
+                    <TableHead className="min-w-[170px] whitespace-nowrap">
+                      <HeaderFilter label="Stage" value={filters.stage} options={stages.map((s) => s.key)} onChange={(v) => setFilters((f) => ({ ...f, stage: v }))} />
+                    </TableHead>
+                    <TableHead className="min-w-[110px] whitespace-nowrap">
+                      <HeaderFilter label="Source" value={filters.source} options={sourceOptions} onChange={(v) => setFilters((f) => ({ ...f, source: v }))} />
+                    </TableHead>
+                    <TableHead className="min-w-[130px] whitespace-nowrap">
+                      <HeaderFilter label="Care Type" value={filters.careLevel} options={careOptions} onChange={(v) => setFilters((f) => ({ ...f, careLevel: v }))} />
+                    </TableHead>
+                    <TableHead className="min-w-[110px] whitespace-nowrap">
+                      <HeaderFilter label="PIC" value={filters.salesRep} options={salesRepOptions} onChange={(v) => setFilters((f) => ({ ...f, salesRep: v }))} />
+                    </TableHead>
+                    <TableHead className="min-w-[120px] whitespace-nowrap">Point of Contact</TableHead>
+                    <TableHead className="min-w-[95px] whitespace-nowrap">Inquiry Date</TableHead>
+                    <TableHead className="min-w-[95px] whitespace-nowrap">Initial Contact</TableHead>
+                    <TableHead className="min-w-[95px] whitespace-nowrap">Last Contact</TableHead>
+                    <TableHead className="min-w-[180px] whitespace-nowrap">Next Activity</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {filteredLeads.map((lead) => (
+                    <TableRow key={lead.id} className="cursor-pointer" onClick={() => setSelectedLead(lead)}>
+                      <TableCell className="font-medium text-foreground sticky left-0 bg-card z-10 whitespace-nowrap">{lead.name}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Progress value={stageProgress[lead.stage]} className="h-2 w-16" />
+                          <span className="text-xs text-muted-foreground whitespace-nowrap">{stageLabel[lead.stage]}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground whitespace-nowrap">{lead.source}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-0.5 rounded text-[11px] font-medium whitespace-nowrap ${careLevelColors[lead.careLevel]}`}>{lead.careLevel}</span>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground whitespace-nowrap">{lead.salesRep}</TableCell>
+                      <TableCell className="text-muted-foreground whitespace-nowrap">
+                        {lead.contactPerson}{lead.contactRelation ? ` (${lead.contactRelation})` : ""}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground whitespace-nowrap">{formatDate(lead.inquiryDate)}</TableCell>
+                      <TableCell className="text-muted-foreground whitespace-nowrap">{formatDate(lead.initialContact)}</TableCell>
+                      <TableCell className="text-muted-foreground whitespace-nowrap">{formatDate(lead.lastContactDate)}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{lead.nextActivity}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )
         )}
       </div>
 
@@ -338,9 +493,10 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
         onOpenChange={(open) => !open && setSelectedLead(null)}
         onCall={(lead) => handleCall(lead)}
         onEmail={(lead) => handleEmail(lead)}
+        isMobile={isMobile}
       />
 
-      <AddLeadDialog open={addOpen} onOpenChange={setAddOpen} onLeadCreated={onAddLead} />
+      <AddLeadDialog open={addOpen} onOpenChange={setAddOpen} onLeadCreated={onAddLead} isMobile={isMobile} />
 
       <CallDialog
         open={!!callTarget}
@@ -356,7 +512,15 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
         email={emailTarget?.email || ""}
       />
 
-      {view === "kanban" && (
+      <StageChangeModal
+        lead={stageChangeLead}
+        open={!!stageChangeLead}
+        onOpenChange={(open) => !open && setStageChangeLead(null)}
+        onStageChange={handleStageChange}
+        isMobile={isMobile}
+      />
+
+      {view === "kanban" && !isMobile && (
         <p className="fixed bottom-4 left-1/2 -translate-x-1/2 text-xs text-muted-foreground/60 bg-muted/50 px-4 py-1.5 rounded-full backdrop-blur-sm">Drag and drop prospects to update their pipeline stage</p>
       )}
     </div>

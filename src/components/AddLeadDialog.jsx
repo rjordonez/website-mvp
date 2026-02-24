@@ -6,7 +6,7 @@ import ManualTab from "@/components/add-lead/ManualTab";
 import RecordingTab from "@/components/add-lead/RecordingTab";
 import DemoTab from "@/components/add-lead/DemoTab";
 
-export default function AddLeadDialog({ open, onOpenChange, onLeadCreated }) {
+export default function AddLeadDialog({ open, onOpenChange, onLeadCreated, isMobile }) {
   const [tab, setTab] = useState("manual");
   const [resetKey, setResetKey] = useState(0);
 
@@ -31,7 +31,7 @@ export default function AddLeadDialog({ open, onOpenChange, onLeadCreated }) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+      <DialogContent fullScreen={isMobile} className={isMobile ? "" : "max-w-2xl max-h-[85vh] overflow-y-auto"}>
         <DialogHeader>
           <DialogTitle className="text-lg font-bold text-foreground">Add New Lead</DialogTitle>
           <p className="text-xs text-muted-foreground">Enter details manually, upload a recording, or try a demo.</p>
