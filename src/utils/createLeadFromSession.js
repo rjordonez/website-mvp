@@ -9,17 +9,17 @@ export function createLeadFromSession({ formData, recordingData, summaryData, id
 
   const intakeNote = {
     leadSource: "AI Demo Session",
-    zipcode: "90001",
+    zipcode: formData.zipcode || "",
     caller: `${formData.firstName} ${formData.lastName} (${formData.situation || 'Self'})`,
     dateTime: timeStr,
     salesRep: "AI Agent",
     situationSummary: summaryData.keyPoints || ["No key points recorded"],
-    careNeeds: summaryData.concerns || ["No concerns recorded"],
-    budgetFinancial: ["Budget to be discussed during follow-up"],
-    decisionMakers: [`${formData.firstName} ${formData.lastName}`],
+    careNeeds: summaryData.careLevel?.length > 0 ? summaryData.careLevel : (summaryData.concerns || ["No concerns recorded"]),
+    budgetFinancial: summaryData.budget?.length > 0 ? summaryData.budget : ["Budget to be discussed during follow-up"],
+    decisionMakers: summaryData.decisionMakers?.length > 0 ? summaryData.decisionMakers : [`${formData.firstName} ${formData.lastName}`],
     timeline: "To be determined",
     preferences: summaryData.smallThings || ["No preferences recorded"],
-    objections: ["None recorded yet"],
+    objections: summaryData.concerns || ["None recorded yet"],
     salesRepAssessment: ["AI-generated lead from demo session", "Requires human follow-up"],
     nextStep: ["Follow-up call scheduled", "Review AI transcript and analysis"],
   };

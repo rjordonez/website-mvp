@@ -7,7 +7,8 @@ function ListenModeForm({ onSubmit, onBack }) {
     firstName: '',
     lastName: '',
     phone: '',
-    email: ''
+    email: '',
+    zipcode: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -135,6 +136,18 @@ function ListenModeForm({ onSubmit, onBack }) {
               placeholder="john.smith@email.com"
             />
             {errors.email && <span className="error-message">{errors.email}</span>}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="zipcode">Zipcode <span style={{ fontWeight: 'normal', color: '#999' }}>(optional)</span></label>
+            <input
+              type="text"
+              id="zipcode"
+              name="zipcode"
+              value={formData.zipcode}
+              onChange={handleChange}
+              placeholder="e.g. 90210"
+            />
           </div>
 
           <button type="submit" className="submit-btn">Continue to Recording</button>

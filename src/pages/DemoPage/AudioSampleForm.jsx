@@ -112,6 +112,18 @@ function AudioSampleForm({ formData, onNext, onBack }) {
             </div>
           </div>
 
+          <div className="form-group">
+            <label htmlFor="zipcode">Zipcode</label>
+            <input
+              type="text"
+              id="zipcode"
+              value={formData.zipcode || ''}
+              disabled
+              style={{ backgroundColor: '#f5f5f5', cursor: 'not-allowed' }}
+              placeholder="e.g. 90210"
+            />
+          </div>
+
           <button type="submit" className="submit-btn">
             Next: View AI Analysis →
           </button>

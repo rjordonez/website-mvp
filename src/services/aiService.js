@@ -49,7 +49,9 @@ Context: ${context.firstName} ${context.lastName} - ${context.situation}
 Transcript:
 ${transcription}
 
-Return ONLY valid JSON: { "keyPoints": [...], "concerns": [...], "smallThings": [...] }`;
+Extract key points, concerns, small personal details, and also identify decision makers involved, any budget/financial details mentioned, and level of care needed if discussed.
+
+Return ONLY valid JSON: { "keyPoints": [...], "concerns": [...], "smallThings": [...], "decisionMakers": [...], "budget": [...], "careLevel": [...] }`;
 }
 
 /**
@@ -120,6 +122,9 @@ async function analyzeWithAnthropic(transcription, context) {
       keyPoints: result.keyPoints || [],
       concerns: result.concerns || [],
       smallThings: result.smallThings || [],
+      decisionMakers: result.decisionMakers || [],
+      budget: result.budget || [],
+      careLevel: result.careLevel || [],
       provider: 'anthropic',
       model: model
     };
@@ -172,6 +177,9 @@ async function analyzeWithGoogle(transcription, context) {
       keyPoints: result.keyPoints || [],
       concerns: result.concerns || [],
       smallThings: result.smallThings || [],
+      decisionMakers: result.decisionMakers || [],
+      budget: result.budget || [],
+      careLevel: result.careLevel || [],
       provider: 'google',
       model: model
     };
@@ -226,6 +234,9 @@ async function analyzeWithAzureOpenAI(transcription, context) {
       keyPoints: result.keyPoints || [],
       concerns: result.concerns || [],
       smallThings: result.smallThings || [],
+      decisionMakers: result.decisionMakers || [],
+      budget: result.budget || [],
+      careLevel: result.careLevel || [],
       provider: 'azure-openai',
       model: deployment
     };
@@ -260,6 +271,18 @@ async function analyzeWithMock(transcription, context) {
       "Enjoys gardening - mentioned herb garden",
       "Reads mystery novels - asked about library",
       "Plays bridge on Wednesdays with friends"
+    ],
+    decisionMakers: [
+      "Daughter (primary contact)",
+      "Prospect (self)"
+    ],
+    budget: [
+      "Inquired about monthly fees",
+      "Wants to understand what's included"
+    ],
+    careLevel: [
+      "Independent Living with some assistance",
+      "Dietary accommodations needed"
     ],
     provider: 'mock'
   };

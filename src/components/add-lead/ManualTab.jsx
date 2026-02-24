@@ -16,6 +16,7 @@ const initialForm = {
   source: "",
   facility: "",
   salesRep: "",
+  decisionMakers: "",
   situation: "",
   budget: "",
   timeline: "",
@@ -59,7 +60,9 @@ export default function ManualTab({ onLeadCreated }) {
         situationSummary: form.situation ? [form.situation] : ["No situation summary provided"],
         careNeeds: form.careType ? [`${form.careType} care needed`] : ["To be assessed"],
         budgetFinancial: form.budget ? [form.budget] : ["Budget to be discussed"],
-        decisionMakers: [form.contactPerson || form.name || "Unknown"],
+        decisionMakers: form.decisionMakers
+          ? form.decisionMakers.split(',').map(s => s.trim()).filter(Boolean)
+          : [form.contactPerson || form.name || "Unknown"],
         timeline: form.timeline || "To be determined",
         preferences: ["No preferences recorded yet"],
         objections: form.notes ? [form.notes] : ["None recorded yet"],
@@ -169,6 +172,11 @@ export default function ManualTab({ onLeadCreated }) {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label className="text-xs">Decision Makers</Label>
+        <Input placeholder="e.g. Lisa Chen (daughter), John Chen (son)" className="h-9 text-sm" value={form.decisionMakers} onChange={(e) => set("decisionMakers", e.target.value)} />
       </div>
 
       <div className="space-y-1.5">

@@ -31,6 +31,9 @@ function TourSummary({ formData, recordingData, summaryData: persistedSummaryDat
         keyPoints: result.keyPoints,
         concerns: result.concerns,
         smallThings: result.smallThings,
+        decisionMakers: result.decisionMakers || [],
+        budget: result.budget || [],
+        careLevel: result.careLevel || [],
         transcription: recordingData.transcription
       };
 
@@ -63,6 +66,24 @@ function TourSummary({ formData, recordingData, summaryData: persistedSummaryDat
       preview: summaryData.smallThings.slice(0, 2).join(' • '),
       items: summaryData.smallThings
     },
+    ...(summaryData.decisionMakers?.length > 0 ? [{
+      id: 'decisionMakers',
+      title: 'Decision Makers',
+      preview: summaryData.decisionMakers.slice(0, 2).join(' • '),
+      items: summaryData.decisionMakers
+    }] : []),
+    ...(summaryData.budget?.length > 0 ? [{
+      id: 'budget',
+      title: 'Budget & Financial',
+      preview: summaryData.budget.slice(0, 2).join(' • '),
+      items: summaryData.budget
+    }] : []),
+    ...(summaryData.careLevel?.length > 0 ? [{
+      id: 'careLevel',
+      title: 'Level of Care',
+      preview: summaryData.careLevel.slice(0, 2).join(' • '),
+      items: summaryData.careLevel
+    }] : []),
     {
       id: 'transcription',
       title: 'Raw Transcription',

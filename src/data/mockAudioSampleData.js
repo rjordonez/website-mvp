@@ -14,7 +14,8 @@ export const audioSampleMockData = {
     firstName: 'Margaret',
     lastName: 'Johnson',
     phone: '(555) 123-4567',
-    email: 'margaret.j@email.com'
+    email: 'margaret.j@email.com',
+    zipcode: '90210'
   },
 
   // Transcription result
@@ -47,6 +48,20 @@ export const audioSampleMockData = {
       "Daughter is primary decision maker and caregiver",
       "Father passed away last year - recent loss"
 ],
+    decisionMakers: [
+      "Margaret's daughter (primary caregiver)",
+      "Margaret Johnson (resident)"
+    ],
+    budget: [
+      "$4,500/month base rate discussed",
+      "One-time community fee of $2,500",
+      "Additional care costs possible"
+    ],
+    careLevel: [
+      "Assisted Living recommended",
+      "Medication management required (diabetes)",
+      "Mobility assistance needed (walker)"
+    ],
     transcription: `Hello, this is Sarah from Sunrise Gardens Senior Living. Thank you for calling today, Mrs. Johnson. I understand you're looking into care options for your mother. Yes, that's right. My mother is 82 and she's been living alone, but we're concerned about her safety and wellbeing. She needs help with daily activities and medications. I completely understand. Can you tell me a bit more about your mother's current situation and what kind of assistance she needs? Well, she has some mobility issues and uses a walker. She also has diabetes, so medication management is really important. She loves to garden and read, but she's been feeling isolated since my father passed away last year. I'm so sorry for your loss. It sounds like your mother would benefit from our assisted living community. We have a beautiful garden area where many of our residents spend time, and we have a full library. We also provide medication management and assistance with daily activities. Our staff is trained to help residents maintain their independence while ensuring their safety. That sounds perfect. What about the cost? Can you give me an idea of pricing? Of course. Our assisted living starts at around $4,500 per month. This includes a private or semi-private room, three meals a day, housekeeping, laundry, medication management, and access to all our amenities and activities. We also have a nurse on staff 24/7. Are there any additional fees I should know about? There's a one-time community fee of $2,500 when you move in. If your mother needs additional care beyond our standard services, such as more intensive personal care, that would be an additional cost based on her care plan. We can do a complimentary assessment to determine exactly what she needs. That would be helpful. How soon could she move in if we decided to proceed? We currently have availability and could accommodate her within the next 3-4 weeks. However, I'd love to schedule a tour for you and your mother to come see our community, meet our staff, and get a feel for the environment. Does that sound good? Yes, I'd like to arrange that. My mother lives about 20 minutes from your facility, which is convenient. And she has a small cat - is that allowed? That's a perfect distance for you to visit regularly. And yes, we are pet-friendly! We allow cats and small dogs under 25 pounds. Many of our residents have pets, and we find it really enriches their quality of life. Oh wonderful, she'll be so happy to hear that. She adores her cat, Mittens. I'm glad to hear that. Let me get some information from you to schedule that tour. What days work best for you?`
   }
 };
