@@ -15,16 +15,29 @@ export default function AudioNoteRecorder({ onAddNote, onCancel }) {
   const [mode, setMode] = useState(null); // null, 'record', 'manual'
   const [recording, setRecording] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [error, setError] = useState(null);
   // Manual mode state
   const [selectedType, setSelectedType] = useState('note');
   const [manualTitle, setManualTitle] = useState('');
   const [manualDesc, setManualDesc] = useState('');
   const mediaRecorderRef = useRef(null);
+  const streamRef = useRef(null);
   const audioChunksRef = useRef([]);
 
+  // Cleanup mic stream on unmount
+  React.useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
   const startRecording = async () => {
+    setError(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
       mediaRecorderRef.current = new MediaRecorder(stream);
       audioChunksRef.current = [];
 
@@ -34,6 +47,7 @@ export default function AudioNoteRecorder({ onAddNote, onCancel }) {
 
       mediaRecorderRef.current.onstop = async () => {
         stream.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
         await processAudio(audioBlob);
       };
@@ -42,6 +56,7 @@ export default function AudioNoteRecorder({ onAddNote, onCancel }) {
       setRecording(true);
     } catch (err) {
       console.error('Mic error:', err);
+      setError('Could not access microphone. Check browser permissions.');
     }
   };
 
@@ -75,9 +90,10 @@ export default function AudioNoteRecorder({ onAddNote, onCancel }) {
         description,
         by: 'You'
       });
-    } catch (error) {
-      console.error('Note processing error:', error);
+    } catch (err) {
+      console.error('Note processing error:', err);
       setProcessing(false);
+      setError('Failed to process recording. Try again or use Type Note.');
     }
   };
 
@@ -99,6 +115,18 @@ export default function AudioNoteRecorder({ onAddNote, onCancel }) {
       <div className="flex items-center gap-2 p-3 rounded-md border border-border bg-muted/30">
         <Loader2 className="h-4 w-4 animate-spin text-primary" />
         <span className="text-sm text-muted-foreground">AI is formatting your note...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-2">
+        <p className="text-sm text-destructive">{error}</p>
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="outline" onClick={() => { setError(null); setMode(null); }}>Try Again</Button>
+          <Button size="sm" variant="ghost" onClick={onCancel}>Cancel</Button>
+        </div>
       </div>
     );
   }
