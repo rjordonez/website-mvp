@@ -1,6 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import TopBar from "@/components/TopBar";
-import { mockPipelineLeads } from "@/data/mockData";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { User, Calendar, Heart, LayoutGrid, Table as TableIcon, ChevronDown, X, Phone, Mail, StickyNote } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
@@ -95,11 +94,7 @@ function HeaderFilter({ label, value, options, onChange }) {
   );
 }
 
-export default function LeadsPage({ demoLead, autoOpenLead, onAutoOpened }) {
-  const [leads, setLeads] = useState(() => {
-    // Add demo lead after Donald Brown (last lead) if it exists
-    return demoLead ? [...mockPipelineLeads, demoLead] : mockPipelineLeads;
-  });
+export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, onAutoOpenHandled }) {
   const [view, setView] = useState("table");
   const [selectedLead, setSelectedLead] = useState(null);
   const [addOpen, setAddOpen] = useState(false);
@@ -109,13 +104,16 @@ export default function LeadsPage({ demoLead, autoOpenLead, onAutoOpened }) {
   const [callTarget, setCallTarget] = useState(null);
   const [emailTarget, setEmailTarget] = useState(null);
 
-  // Auto-open lead detail dialog if autoOpenLead is provided
+  // Auto-open lead detail dialog when autoOpenLeadId is set
   useEffect(() => {
-    if (autoOpenLead) {
-      setSelectedLead(autoOpenLead);
-      onAutoOpened?.();
+    if (autoOpenLeadId) {
+      const lead = leads.find((l) => l.id === autoOpenLeadId);
+      if (lead) {
+        setSelectedLead(lead);
+        onAutoOpenHandled?.();
+      }
     }
-  }, [autoOpenLead, onAutoOpened]);
+  }, [autoOpenLeadId, leads, onAutoOpenHandled]);
 
   const salesRepOptions = useMemo(() => [...new Set(leads.map((l) => l.salesRep))], [leads]);
 
@@ -134,11 +132,10 @@ export default function LeadsPage({ demoLead, autoOpenLead, onAutoOpened }) {
     const { source, destination } = result;
     const sourceStage = source.droppableId;
     const destStage = destination.droppableId;
-    const updated = [...leads];
-    const sourceItems = updated.filter((l) => l.stage === sourceStage);
-    const [moved] = sourceItems.splice(source.index, 1);
-    moved.stage = destStage;
-    const withoutMoved = updated.filter((l) => l.id !== moved.id);
+    if (sourceStage === destStage && source.index === destination.index) return;
+    const sourceItems = leads.filter((l) => l.stage === sourceStage);
+    const moved = { ...sourceItems[source.index], stage: destStage };
+    const withoutMoved = leads.filter((l) => l.id !== moved.id);
     const destItems = withoutMoved.filter((l) => l.stage === destStage);
     destItems.splice(destination.index, 0, moved);
     const otherLeads = withoutMoved.filter((l) => l.stage !== destStage);
@@ -343,7 +340,7 @@ export default function LeadsPage({ demoLead, autoOpenLead, onAutoOpened }) {
         onEmail={(lead) => handleEmail(lead)}
       />
 
-      <AddLeadDialog open={addOpen} onOpenChange={setAddOpen} />
+      <AddLeadDialog open={addOpen} onOpenChange={setAddOpen} onLeadCreated={onAddLead} />
 
       <CallDialog
         open={!!callTarget}

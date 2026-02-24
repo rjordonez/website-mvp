@@ -6,12 +6,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Send, Loader2, Bot, User } from "lucide-react";
 import { mockPipelineLeads } from "@/data/mockData";
 
-export default function ChatbotPage({ demoLead }) {
+export default function ChatbotPage({ leads }) {
   const messagesEndRef = useRef(null);
   const [input, setInput] = useState("");
 
-  // Combine mock leads with demo lead if it exists
-  const allLeads = demoLead ? [...mockPipelineLeads, demoLead] : mockPipelineLeads;
+  const allLeads = leads || mockPipelineLeads;
 
   const leadsContext = allLeads.map(lead => ({
     name: lead.name,
