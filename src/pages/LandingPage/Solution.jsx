@@ -4,26 +4,25 @@ import './Solution.css';
 function Solution() {
   const features = [
     {
-      title: "Capture every lead",
-      description: "Remember what actually matters. Build rich profiles that go beyond basic contact info to capture the details that help you connect."
+      title: "Mobile-first & easy to use",
+      description: <>Log tours, calls, or meetings in just 1–2 taps — capturing every detail has never been easier.<br /><br />Whether you're on the road or visiting places, all important info is recorded without extra time on the desk.</>
     },
     {
-      title: "Follow up the right way, at the right time",
-      description: "Stay present even when families aren't ready yet. Personalized reminders help you nurture relationships without letting anyone slip away."
+      title: "AI assistant, acts on your data",
+      description: <>Your notes, family preferences, and follow-ups are automatically organized, summarized, and surfaced when you need them.<br /><br />This lets you focus on building trust and staying present, instead of hunting through data.</>
     },
     {
-      title: "All without adding more work to your day",
-      description: "We make sure nothing falls through the cracks. Voice-first design means updates happen naturally, not as another task on your list."
+      title: "Follow-ups on autopilot",
+      description: <>Reminders, texts, and emails are sent at the right time so no lead or detail slips through the cracks.<br /><br />You stay consistent with families without extra work, keeping every relationship moving forward.</>
     }
   ];
 
   return (
     <section id="solution" className="solution">
       <div className="container">
-        <h2>Solution</h2>
+        <h2>Why It's Different</h2>
         <div className="solution-header">
-          <h3>What is Trilio?</h3>
-          <p>From the first phone call to the day they move in, we help you</p>
+          <h3>Built for the real world of senior living sales</h3>
         </div>
         <div className="solution-grid">
           {features.map((feature, index) => (

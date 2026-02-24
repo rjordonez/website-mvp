@@ -86,13 +86,16 @@ function Hero() {
           }}
         />
         <div className="hero-content">
-          <p className="hero-subtitle">Voice-first CRM built for senior living sales teams.</p>
-          <h1>Never miss a lead, from first call to move-in</h1>
-          <div className="hero-bottom">
-            <div className="hero-buttons">
-              <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="hero-btn">Request a demo</a>
+          <div className="hero-backed">
+            <span className="hero-backed-label">BACKED BY:</span>
+            <div className="hero-backed-logos">
+              <img src="/techstars.png" alt="Techstars" className="hero-backed-logo hero-backed-logo-techstars" />
+              <img src="/usc.png" alt="USC" className="hero-backed-logo hero-backed-logo-usc" />
             </div>
           </div>
+          <h1>Turn every lead into<br />a trusted relationship</h1>
+          <p className="hero-subtitle">Capture every detail, follow up automatically, and stay present<br />with families, all from your phone.</p>
+          <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="hero-btn">Book a demo</a>
         </div>
         <motion.button
           className="scroll-indicator"

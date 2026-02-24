@@ -1,9 +1,8 @@
 import React from 'react';
 import Hero from './LandingPage/Hero';
-import Backed from './LandingPage/Backed';
 import Solution from './LandingPage/Solution';
 import Problem from './LandingPage/Problem';
-import Features from './LandingPage/Features';
+import FlipCards from './LandingPage/FlipCards';
 import FAQ from './LandingPage/FAQ';
 import CTA from './LandingPage/CTA';
 
@@ -11,10 +10,9 @@ function Home() {
   return (
     <>
       <Hero />
-      <Backed />
-      <Problem />
       <Solution />
-      <Features />
+      <Problem />
+      <FlipCards />
       <FAQ />
       <CTA />
     </>
