@@ -21,7 +21,7 @@ import EmailComposeDialog from "@/components/EmailComposeDialog";
 const stages = [
   { key: "inquiry", label: "Inquiry" },
   { key: "connection", label: "Connection" },
-  { key: "pre_tour", label: "Pre-Tour" },
+  { key: "pre_tour", label: "Post-Assessment" },
   { key: "post_tour", label: "Post-Tour" },
   { key: "deposit", label: "Deposit" },
   { key: "move_in", label: "Move-in" },
@@ -32,7 +32,7 @@ const stageProgress = {
 };
 
 const stageLabel = {
-  inquiry: "Inquiry", connection: "Connection", pre_tour: "Pre-Tour", post_tour: "Post-Tour", deposit: "Deposit", move_in: "Move-in",
+  inquiry: "Inquiry", connection: "Connection", pre_tour: "Post-Assessment", post_tour: "Post-Tour", deposit: "Deposit", move_in: "Move-in",
 };
 
 const careLevelColors = {
@@ -358,6 +358,10 @@ export default function LeadsPage({ demoLead, autoOpenLead, onAutoOpened }) {
         name={emailTarget?.name || ""}
         email={emailTarget?.email || ""}
       />
+
+      {view === "kanban" && (
+        <p className="fixed bottom-4 left-1/2 -translate-x-1/2 text-xs text-muted-foreground/60 bg-muted/50 px-4 py-1.5 rounded-full backdrop-blur-sm">Drag and drop prospects to update their pipeline stage</p>
+      )}
     </div>
   );
 }

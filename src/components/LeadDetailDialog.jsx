@@ -21,7 +21,7 @@ const careLevelColors = {
 const stageLabel = {
   inquiry: "Inquiry",
   connection: "Connection",
-  pre_tour: "Pre-Tour",
+  pre_tour: "Post-Assessment",
   post_tour: "Post-Tour",
   deposit: "Deposit",
   move_in: "Move-in",
