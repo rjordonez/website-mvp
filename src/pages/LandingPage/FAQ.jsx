@@ -2,44 +2,47 @@ import React, { useState } from 'react';
 import './FAQ.css';
 
 function FAQ() {
-  const [openFaq, setOpenFaq] = useState(null);
+  const [openItem, setOpenItem] = useState(null);
 
-  const toggleFaq = (index) => {
-    setOpenFaq(openFaq === index ? null : index);
+  const toggle = (index) => {
+    setOpenItem(openItem === index ? null : index);
   };
 
-  const faqs = [
+  const personas = [
     {
-      question: "How does the 24/7 call agent work?",
-      answer: "Our AI-powered agent answers every call, even after hours. Every inquiry is automatically logged as a lead in your system, so you never miss an opportunity, whether it's 3pm or 3am."
+      title: "Community Sales Directors",
+      description: "Managing multiple facilities, leading a sales team, attending community events, and running group tours. You need a system that keeps everything organized without slowing you down."
     },
     {
-      question: "Can I use voice to capture notes instead of typing?",
-      answer: "Yes! Simply record your notes by voice after tours or calls. Everything is automatically transcribed and saved to the contact's profile. Works on your phone, tablet, or iPad. If you can say it, it's captured."
+      title: "Home care sales teams",
+      description: "Tracking referrals, following up with families, and managing care plans. You need a system that keeps everything in one place so nothing falls through the cracks."
     },
     {
-      question: "How does autopilot mode help with follow-ups?",
-      answer: "Autopilot mode creates personalized follow-up reminders based on real context from your conversations. It suggests the right message, timing, and communication channel for each family, so you can stay present without being pushy."
+      title: "Senior placement specialists",
+      description: "Always on the go, constantly following up with families, juggling multiple leads and timelines. You need an assistant that captures every detail for you and keeps follow-ups on track."
     }
   ];
 
   return (
-    <section id="faq" className="faq">
+    <section id="who" className="who-section">
       <div className="container">
-        <h2>Frequently Asked Questions</h2>
-        <div className="faq-list">
-          {faqs.map((faq, index) => (
-            <div key={index} className="faq-item">
+        <h2 className="who-label">Who This Is For</h2>
+        <div className="who-header">
+          <h3>Made for people who build trust every day</h3>
+        </div>
+        <div className="accordion-list">
+          {personas.map((item, index) => (
+            <div key={index} className="accordion-item">
               <button
-                className={`faq-question ${openFaq === index ? 'active' : ''}`}
-                onClick={() => toggleFaq(index)}
+                className={`accordion-question ${openItem === index ? 'active' : ''}`}
+                onClick={() => toggle(index)}
               >
-                <span>{faq.question}</span>
-                <span className="faq-icon">{openFaq === index ? '−' : '+'}</span>
+                <span>{item.title}</span>
+                <span className="accordion-icon">{openItem === index ? '−' : '+'}</span>
               </button>
-              <div className={`faq-answer ${openFaq === index ? 'open' : ''}`}>
-                <div className="faq-answer-content">
-                  <p>{faq.answer}</p>
+              <div className={`accordion-answer ${openItem === index ? 'open' : ''}`}>
+                <div className="accordion-answer-content">
+                  <p>{item.description}</p>
                 </div>
               </div>
             </div>

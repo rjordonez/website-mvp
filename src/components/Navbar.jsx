@@ -15,12 +15,11 @@ function Navbar() {
         </div>
         <ul className="nav-links">
           <li><a href="#hero">Home</a></li>
-          <li><a href="#problem">Problem</a></li>
-          <li><a href="#solution">Solution</a></li>
-          <li><a href="#features">Features</a></li>
-          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#solution">Why It's Different</a></li>
+          <li><a href="#problem">The Challenge</a></li>
+          <li><a href="#who">Who This Is For</a></li>
         </ul>
-        <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="mobile-cta-button">Request Demo</a>
+        <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="mobile-cta-button">Book a demo</a>
       </div>
     </nav>
   );

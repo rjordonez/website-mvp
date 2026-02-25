@@ -1,36 +1,31 @@
 import React from 'react';
-import { motion, useScroll, useVelocity, useSpring, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import './CTA.css';
 
 function CTA() {
-  const { scrollY } = useScroll();
-  const scrollVelocity = useVelocity(scrollY);
-  const smoothVelocity = useSpring(scrollVelocity, {
-    damping: 20,
-    stiffness: 100
-  });
-  const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 10], {
-    clamp: false
-  });
-
   return (
     <section className="cta">
-      <div className="cta-container">
+      <div className="cta-inner">
         <motion.div
-          className="cta-card"
-          style={{ y: velocityFactor }}
-        >
-          <div className="cta-content">
-            <h2>Revolutionize your sales operations for</h2>
-            <ul className="cta-list">
-              <li>Senior living placement specialists</li>
-              <li>Assisted living locators</li>
-              <li>In-home care & hospice referral teams</li>
-              <li>High-performing sales directors inside communities</li>
-            </ul>
-          </div>
-          <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="cta-button">Book Call</a>
-        </motion.div>
+          className="cta-orb cta-orb-1"
+          animate={{ x: [0, 200, -150, 100, 0], y: [0, -150, 100, -50, 0] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="cta-orb cta-orb-2"
+          animate={{ x: [0, -200, 150, -80, 0], y: [0, 100, -150, 80, 0] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="cta-orb cta-orb-3"
+          animate={{ x: [0, 150, -200, 60, 0], y: [0, -100, 150, -80, 0] }}
+          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <div className="cta-inner-noise"></div>
+        <div className="cta-content">
+          <h2>Focus on families.<br />We'll handle the details.</h2>
+          <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="cta-button">Book a demo</a>
+        </div>
       </div>
     </section>
   );
