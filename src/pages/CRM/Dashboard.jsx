@@ -7,7 +7,7 @@ const neutralPalette = [
   "hsl(var(--primary))",
   "hsl(var(--accent))",
   "hsl(var(--muted-foreground))",
-  "hsl(152, 30%, 65%)",
+  "hsl(228, 60%, 75%)",
   "hsl(210, 15%, 75%)",
 ];
 

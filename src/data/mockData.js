@@ -8,14 +8,14 @@
 
 export const salespeople = [
   { name: "Sarah Johnson", color: "hsl(205, 65%, 48%)" },
-  { name: "Mike Peters", color: "hsl(152, 55%, 46%)" },
+  { name: "Mike Peters", color: "hsl(228, 80%, 65%)" },
   { name: "Emily Brown", color: "hsl(38, 92%, 55%)" },
   { name: "David Kim", color: "hsl(270, 50%, 55%)" },
 ];
 
 export const leadSourceData = [
   { name: "Digital Ads", value: 32, fill: "hsl(205, 65%, 48%)" },
-  { name: "Website", value: 24, fill: "hsl(152, 55%, 46%)" },
+  { name: "Website", value: 24, fill: "hsl(228, 80%, 65%)" },
   { name: "Phone Call", value: 18, fill: "hsl(38, 92%, 55%)" },
   { name: "Walk-in", value: 10, fill: "hsl(270, 50%, 55%)" },
   { name: "Referral", value: 16, fill: "hsl(0, 72%, 56%)" },
@@ -24,10 +24,10 @@ export const leadSourceData = [
 export const funnelData = [
   { stage: "Inquiry", count: 8, fill: "hsl(205, 65%, 48%)" },
   { stage: "Connection", count: 5, fill: "hsl(38, 92%, 55%)" },
-  { stage: "Pre-Tour", count: 3, fill: "hsl(152, 55%, 46%)" },
+  { stage: "Pre-Tour", count: 3, fill: "hsl(228, 80%, 65%)" },
   { stage: "Post-Tour", count: 3, fill: "hsl(270, 50%, 55%)" },
   { stage: "Deposit", count: 2, fill: "hsl(0, 72%, 56%)" },
-  { stage: "Move-in", count: 1, fill: "hsl(152, 44%, 42%)" },
+  { stage: "Move-in", count: 1, fill: "hsl(228, 75%, 55%)" },
 ];
 
 // Helper to generate call transcripts for leads with call/tour history
