@@ -2,7 +2,7 @@ import React from 'react';
 import Hero from './LandingPage/Hero';
 import Solution from './LandingPage/Solution';
 import Problem from './LandingPage/Problem';
-import FlipCards from './LandingPage/FlipCards';
+import Outcome from './LandingPage/Outcome';
 import FAQ from './LandingPage/FAQ';
 import CTA from './LandingPage/CTA';
 
@@ -12,7 +12,7 @@ function Home() {
       <Hero />
       <Solution />
       <Problem />
-      <FlipCards />
+      <Outcome />
       <FAQ />
       <CTA />
     </>

@@ -24,6 +24,7 @@ function CTA() {
         <div className="cta-inner-noise"></div>
         <div className="cta-content">
           <h2>Focus on families.<br />We'll handle the details.</h2>
+          <p className="cta-subtitle">Book a demo to see how Trilio simplifies senior living sales.</p>
           <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="cta-button">Book a demo</a>
         </div>
       </div>

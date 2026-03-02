@@ -1,6 +1,6 @@
 .solution {
   padding: 6rem 2rem;
-  background: white;
+  background: #f9fafb;
 }
 
 .solution h2 {
@@ -13,9 +13,19 @@
 
 .solution-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   margin-bottom: 3rem;
+}
+
+.solution-header p {
+  font-size: 1.05rem;
+  color: #6b7280;
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.6;
+  margin-top: 0.75rem;
 }
 
 .solution-header h3 {
@@ -26,44 +36,76 @@
   white-space: nowrap;
 }
 
-.solution-header p {
-  font-size: 1rem;
-  color: #6b7280;
-  line-height: 1.8;
-  white-space: nowrap;
+/* Split layout */
+.solution-split {
+  display: flex;
+  gap: 4rem;
+  align-items: flex-start;
 }
 
-.solution-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+.solution-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-.solution-card {
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 10px;
-  min-height: 350px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.14);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+.solution-item {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.solution-card:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
-  transform: translateY(-2px);
+.solution-item:first-child {
+  border-top: 1px solid #e5e7eb;
 }
 
-.solution-card h4 {
+.solution-item h4 {
   font-size: 1.25rem;
-  margin-bottom: 0.75rem;
+  color: #9ca3af;
+  font-weight: 400;
+  margin: 0;
+  transition: color 0.2s ease;
+}
+
+.solution-item.active h4 {
+  color: #1f2937;
+  font-weight: 500;
+}
+
+.solution-item:hover h4 {
   color: #1f2937;
 }
 
-.solution-card p {
+.solution-item-body {
+  overflow: hidden;
+}
+
+.solution-item-body p {
   color: #6b7280;
   font-size: 0.95rem;
-  line-height: 1.6;
+  line-height: 1.7;
+  margin: 0.75rem 0 0.5rem;
+}
+
+.solution-item.active {
+  border-bottom: 2px solid #4B6EF5;
+}
+
+/* Right side - image preview */
+.solution-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.solution-preview {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
 }
 
 @media (max-width: 768px) {
@@ -71,22 +113,21 @@
     font-size: 2rem;
   }
 
-  .solution-header {
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }
-
   .solution-header h3 {
     white-space: normal;
     font-size: 2rem;
   }
 
-  .solution-header p {
-    max-width: 100%;
+  .solution-split {
+    flex-direction: column;
+    gap: 2rem;
   }
 
-  .solution-grid {
-    grid-template-columns: 1fr;
+  .solution-right {
+    order: -1;
+  }
+
+  .solution-preview {
+    max-width: 100%;
   }
 }
