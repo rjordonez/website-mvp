@@ -265,3 +265,33 @@ export const mockActivities = [
   { id: "a5", type: "move_in", description: "Barbara Wilson completed move-in", user: "Sarah Johnson", timestamp: "Yesterday" },
   { id: "a6", type: "lead", description: "New lead Dorothy Martinez from referral", user: "System", timestamp: "Yesterday" },
 ];
+
+/**
+ * @typedef {Object} Referrer
+ * @property {string} id
+ * @property {string} name
+ * @property {string} organization
+ * @property {"Hospital"|"Physician"|"Social Worker"|"Local Communities"|"Insurance"|"Home Health"} type
+ * @property {string} email
+ * @property {string} phone
+ * @property {string} contactPerson
+ * @property {string[]} referredLeadIds
+ * @property {number} serviceHoursRequested
+ * @property {number} commissionRate
+ * @property {number} totalCommission
+ * @property {"hot"|"warm"|"cold"|"nurture"} score
+ * @property {"active"|"inactive"} status
+ * @property {string} lastReferralDate
+ * @property {string} notes
+ */
+
+/** @type {Referrer[]} */
+export const mockReferrers = [
+  { id: "ref1", name: "Valley Medical Center", organization: "Valley Medical Group", type: "Hospital", email: "referrals@valleymed.com", phone: "(310) 555-8000", contactPerson: "Dr. Patel", referredLeadIds: ["p3", "p1", "p5"], serviceHoursRequested: 320, commissionRate: 8, totalCommission: 2880, score: "hot", status: "active", lastReferralDate: "2026-02-05", notes: "Long-standing partnership. Dr. Patel refers IL candidates." },
+  { id: "ref2", name: "Alzheimer's Association LA", organization: "Alzheimer's Association", type: "Social Worker", email: "la@alz.org", phone: "(213) 555-9100", contactPerson: "Maria Torres", referredLeadIds: ["p7", "p9", "p2"], serviceHoursRequested: 540, commissionRate: 6, totalCommission: 3456, score: "warm", status: "active", lastReferralDate: "2026-01-18", notes: "Strong MC referral pipeline. Monthly meetings scheduled." },
+  { id: "ref3", name: "Cedar Sinai Discharge Planning", organization: "Cedars-Sinai Medical Center", type: "Hospital", email: "discharge@cedars.org", phone: "(310) 555-7200", contactPerson: "Linda Park, RN", referredLeadIds: ["p11", "p4", "p8"], serviceHoursRequested: 720, commissionRate: 10, totalCommission: 9600, score: "hot", status: "active", lastReferralDate: "2026-01-05", notes: "High-acuity referrals. Skilled nursing focus." },
+  { id: "ref4", name: "Dr. Kim Neurology", organization: "Kim Neurology Associates", type: "Physician", email: "office@kimneurology.com", phone: "(323) 555-4500", contactPerson: "Dr. James Kim", referredLeadIds: ["p16", "p6", "p10"], serviceHoursRequested: 480, commissionRate: 7, totalCommission: 5040, score: "warm", status: "active", lastReferralDate: "2025-11-20", notes: "Parkinson's and dementia specialist. 3 referrals in 12 months." },
+  { id: "ref5", name: "St. Mary's Parish", organization: "Archdiocese of Los Angeles", type: "Local Communities", email: "frodriguez@stmarys.org", phone: "(323) 555-3300", contactPerson: "Father Rodriguez", referredLeadIds: ["p19", "p12"], serviceHoursRequested: 280, commissionRate: 5, totalCommission: 1600, score: "nurture", status: "active", lastReferralDate: "2026-01-15", notes: "Community outreach partner. Spanish-speaking families." },
+  { id: "ref6", name: "SoCal Home Health", organization: "SoCal Home Health Services", type: "Home Health", email: "info@socalhh.com", phone: "(310) 555-6100", contactPerson: "Karen Lee", referredLeadIds: ["p13", "p15"], serviceHoursRequested: 200, commissionRate: 6, totalCommission: 0, score: "cold", status: "active", lastReferralDate: "2025-10-12", notes: "New partner. Pipeline building phase." },
+  { id: "ref7", name: "Pacific Insurance Group", organization: "Pacific LTC Insurance", type: "Insurance", email: "agents@pacificins.com", phone: "(213) 555-2200", contactPerson: "Tom Rivera", referredLeadIds: ["p14", "p17"], serviceHoursRequested: 180, commissionRate: 4, totalCommission: 0, score: "cold", status: "inactive", lastReferralDate: "2025-08-30", notes: "Paused partnership. Re-evaluate Q2." },
+];

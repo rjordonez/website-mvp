@@ -4,11 +4,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import AppSidebar from "@/components/AppSidebar";
+import ChatBubble from "@/components/ChatBubble";
 import Dashboard from "@/pages/CRM/Dashboard";
 import LeadsPage from "@/pages/CRM/LeadsPage";
 import ToursPage from "@/pages/CRM/ToursPage";
 import FollowUpPage from "@/pages/CRM/FollowUpPage";
 import ChatbotPage from "@/pages/CRM/ChatbotPage";
+import ReferrersPage from "@/pages/CRM/ReferrersPage";
+import { ChatProvider } from "@/contexts/ChatContext";
 import { mockPipelineLeads } from "@/data/mockData";
 import { useIsMobile } from "@/hooks/use-mobile";
 import '../../crm.css';
@@ -58,12 +61,14 @@ function CRMView() {
             onAutoOpenHandled={handleAutoOpenHandled}
           />
         );
+      case 'referrers':
+        return <ReferrersPage />;
       case 'tours':
         return <ToursPage />;
       case 'follow-up':
         return <FollowUpPage />;
       case 'chatbot':
-        return <ChatbotPage leads={leads} />;
+        return <ChatbotPage />;
       default:
         return <Dashboard />;
     }
@@ -72,21 +77,26 @@ function CRMView() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <div className="flex h-screen overflow-hidden bg-background">
+        <ChatProvider leads={leads}>
+          <Toaster />
+          <Sonner />
+          <div className="flex h-screen overflow-hidden bg-background">
+            {!isMobile && (
+              <AppSidebar
+                collapsed={sidebarCollapsed}
+                onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
+                currentPage={currentPage}
+                onNavigate={setCurrentPage}
+              />
+            )}
+            <main className="flex-1 overflow-auto">
+              {renderPage()}
+            </main>
+          </div>
           {!isMobile && (
-            <AppSidebar
-              collapsed={sidebarCollapsed}
-              onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-              currentPage={currentPage}
-              onNavigate={setCurrentPage}
-            />
+            <ChatBubble currentPage={currentPage} onNavigate={setCurrentPage} />
           )}
-          <main className="flex-1 overflow-auto">
-            {renderPage()}
-          </main>
-        </div>
+        </ChatProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

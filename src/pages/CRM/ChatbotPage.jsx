@@ -1,41 +1,15 @@
-import { useState, useRef, useEffect } from "react";
-import { useChat } from "@ai-sdk/react";
+import { useRef, useEffect } from "react";
+import { useChatContext } from "@/contexts/ChatContext";
 import TopBar from "@/components/TopBar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send, Loader2, Bot, User } from "lucide-react";
-import { mockPipelineLeads } from "@/data/mockData";
+import Markdown from "react-markdown";
 
-export default function ChatbotPage({ leads }) {
+export default function ChatbotPage() {
   const messagesEndRef = useRef(null);
-  const [input, setInput] = useState("");
-
-  const allLeads = leads || mockPipelineLeads;
-
-  const leadsContext = allLeads.map(lead => ({
-    name: lead.name,
-    stage: lead.stage,
-    careLevel: lead.careLevel,
-    contactPerson: lead.contactPerson,
-    contactPhone: lead.contactPhone,
-    contactEmail: lead.contactEmail,
-    salesRep: lead.salesRep,
-    nextActivity: lead.nextActivity,
-    source: lead.source,
-  }));
-
-  const { messages, sendMessage, status, error } = useChat({
-    api: '/api/chat',
-    body: {
-      leadsContext
-    },
-    onFinish: (options) => {
-      console.log('Message finished:', options.message);
-    },
-    onError: (error) => {
-      console.error('Chat error:', error);
-    }
-  });
+  const { messages, sendMessage, status, input, setInput, leadsCount } =
+    useChatContext();
 
   const isLoading = status === 'streaming' || status === 'submitted';
 
@@ -63,7 +37,7 @@ export default function ChatbotPage({ leads }) {
                 Welcome to your CRM AI Assistant
               </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                I have access to all {allLeads.length} leads in your pipeline. Ask me anything!
+                I have access to all {leadsCount} leads in your pipeline. Ask me anything!
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl mx-auto mt-6">
                 <button
@@ -113,9 +87,13 @@ export default function ChatbotPage({ leads }) {
                     : "bg-muted text-foreground"
                 }`}
               >
-                <p className="text-sm whitespace-pre-wrap">
-                  {message.parts.map((part, i) => part.type === 'text' ? part.text : null)}
-                </p>
+                {message.role === "user" ? (
+                  <p className="text-sm whitespace-pre-wrap">{message.parts.map((part) => part.type === 'text' ? part.text : '').join('')}</p>
+                ) : (
+                  <div className="text-sm prose prose-sm dark:prose-invert max-w-none">
+                    <Markdown>{message.parts.map((part) => part.type === 'text' ? part.text : '').join('')}</Markdown>
+                  </div>
+                )}
               </div>
               {message.role === "user" && (
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
