@@ -1,36 +1,74 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import './Solution.css';
 
 function Solution() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
   const features = [
     {
-      title: "Mobile-first & easy to use",
-      description: <>Log a tour, call, or meeting in just a couple taps or just speak your notes.<br /><br />It all gets saved automatically, so even when you're on the road, you won't be stuck at your desk catching up later.</>
+      title: "Easy On the Go & Simple to Learn",
+      description: "Log tours, calls, or meetings in a few taps or speak your notes out loud. So intuitive that even team members with no tech experience can start immediately.",
+      image: "/1.png"
     },
     {
-      title: "AI assistant, acts on your data",
-      description: <>Your notes, family preferences, and follow-ups are automatically organized, summarized, and surfaced when you need them.<br /><br />This lets you focus on building trust and staying present, instead of hunting through data.</>
+      title: "Smart AI Assistant",
+      description: "Your AI sidekick organizes notes, tracks family preferences, manages follow-ups, and surfaces insights exactly when you need them.",
+      image: "/2.png"
     },
     {
-      title: "Follow-ups on autopilot",
-      description: <>Reminders, texts, and emails are sent at the right time so no lead or detail slips through the cracks.<br /><br />You stay consistent with families without extra work, keeping every relationship moving forward.</>
+      title: "Follow-Ups on Autopilot",
+      description: "Reminders, texts, and emails go out at the right time to keep every relationship moving forward without extra effort.",
+      image: "/3.png"
     }
   ];
 
   return (
     <section id="solution" className="solution">
       <div className="container">
-        <h2>Why It's Different</h2>
         <div className="solution-header">
-          <h3>Built for the real world of senior living sales</h3>
+          <h3>Why Senior Living Sales Teams Choose Trilio</h3>
+          <p>Built for the real world of senior living sales, where trust matters,<br />timelines change, and emotions run high.</p>
         </div>
-        <div className="solution-grid">
-          {features.map((feature, index) => (
-            <div key={index} className="solution-card">
-              <h4>{feature.title}</h4>
-              <p>{feature.description}</p>
-            </div>
-          ))}
+        <div className="solution-split">
+          <div className="solution-left">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className={`solution-item ${activeIndex === index ? 'active' : ''}`}
+                onClick={() => setActiveIndex(index)}
+              >
+                <h4>{feature.title}</h4>
+                <AnimatePresence initial={false}>
+                  {activeIndex === index && (
+                    <motion.div
+                      className="solution-item-body"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    >
+                      <p>{feature.description}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ))}
+          </div>
+          <div className="solution-right">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={activeIndex}
+                src={features[activeIndex].image}
+                alt={features[activeIndex].title}
+                className="solution-preview"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              />
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </section>

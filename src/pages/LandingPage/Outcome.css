@@ -1,0 +1,170 @@
+.outcome {
+  padding: 6rem 2rem;
+  background: #f9fafb;
+}
+
+.outcome-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 3rem;
+}
+
+.outcome-header h3 {
+  font-size: 2.5rem;
+  color: #1f2937;
+  font-weight: 300;
+  text-align: center;
+}
+
+.outcome-header p {
+  font-size: 1.05rem;
+  color: #6b7280;
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.6;
+  margin-top: 0.75rem;
+}
+
+.outcome-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 960px;
+  margin: 0 auto 4rem;
+}
+
+/* Flip card */
+.outcome-flip {
+  perspective: 800px;
+  cursor: pointer;
+  height: 200px;
+}
+
+.outcome-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s ease;
+  transform-style: preserve-3d;
+}
+
+.outcome-flip.flipped .outcome-flip-inner {
+  transform: rotateY(180deg);
+}
+
+.outcome-flip-front,
+.outcome-flip-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.outcome-flip-front {
+  background: white;
+}
+
+.outcome-flip-front h4 {
+  font-size: 1.15rem;
+  color: #1f2937;
+  font-weight: 600;
+  margin: 0;
+}
+
+.outcome-flip-hint {
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin-top: 0.75rem;
+}
+
+.outcome-flip-back {
+  background: #4B6EF5;
+  transform: rotateY(180deg);
+}
+
+.outcome-flip-back p {
+  font-size: 0.95rem;
+  color: white;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Stats bar */
+.outcome-stat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4rem;
+  padding: 3rem;
+  background: linear-gradient(135deg, #eef2ff 0%, #e8edfd 50%, #f0f4ff 100%);
+  border-radius: 16px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.outcome-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.outcome-stat-number {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #4B6EF5;
+}
+
+.outcome-stat-label {
+  font-size: 1.05rem;
+  color: #6b7280;
+  text-align: center;
+}
+
+.outcome-stat-divider {
+  width: 1px;
+  height: 50px;
+  background: #d1d5db;
+}
+
+@media (max-width: 768px) {
+  .outcome {
+    padding: 4rem 1rem;
+  }
+
+  .outcome-header h3 {
+    font-size: 1.75rem;
+  }
+
+  .outcome-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .outcome-stat {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .outcome-stat-divider {
+    width: 60px;
+    height: 1px;
+  }
+
+  .outcome-stat-number {
+    font-size: 2.5rem;
+  }
+}
