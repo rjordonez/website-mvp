@@ -12,6 +12,25 @@ import {
 
 const hours = Array.from({ length: 10 }, (_, i) => i + 8);
 
+const communityEventColor = "hsl(160, 60%, 45%)";
+
+function hslToComponents(hsl) {
+  const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+  if (!match) return { h: 0, s: 0, l: 0 };
+  return { h: parseInt(match[1]), s: parseInt(match[2]), l: parseInt(match[3]) };
+}
+
+function getEventStyle(event) {
+  const isCommunity = event.type === "community";
+  const color = isCommunity ? communityEventColor : event.salespersonColor;
+  const { h, s, l } = hslToComponents(color);
+  return {
+    backgroundColor: `hsl(${h}, ${s}%, ${Math.min(l + 38, 95)}%)`,
+    color: `hsl(${h}, ${s}%, ${Math.max(l - 10, 15)}%)`,
+    borderLeft: `3px solid ${color}`,
+  };
+}
+
 function getWeekDates(baseDate) {
   const start = new Date(baseDate);
   const day = start.getDay();
@@ -52,6 +71,7 @@ export default function ToursPage() {
   const [view, setView] = useState("week");
   const [baseDate, setBaseDate] = useState(new Date(2026, 1, 11));
   const [staffFilter, setStaffFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
 
   const navigate = (dir) => {
     const d = new Date(baseDate);
@@ -61,9 +81,12 @@ export default function ToursPage() {
   };
 
   const filteredTours = useMemo(() => {
-    if (staffFilter === "all") return mockCalendarTours;
-    return mockCalendarTours.filter((t) => t.salesperson === staffFilter);
-  }, [staffFilter]);
+    return mockCalendarTours.filter((t) => {
+      if (staffFilter !== "all" && t.salesperson !== staffFilter) return false;
+      if (typeFilter !== "all" && t.type !== typeFilter) return false;
+      return true;
+    });
+  }, [staffFilter, typeFilter]);
 
   const weekDates = useMemo(() => getWeekDates(baseDate), [baseDate]);
   const monthDates = useMemo(() => getMonthDates(baseDate), [baseDate]);
@@ -75,7 +98,7 @@ export default function ToursPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <TopBar title="Tours" subtitle="Team schedule" action={{ label: "Schedule Tour", onClick: () => {} }} />
+      <TopBar title="Calendar" subtitle="Team schedule" action={{ label: "Schedule Tour", onClick: () => {} }} />
 
       {/* Toolbar */}
       <div className="flex items-center gap-3 px-6 py-3 border-b border-border bg-card">
@@ -89,9 +112,21 @@ export default function ToursPage() {
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </button>
 
+        {/* Type filter */}
+        <Select value={typeFilter} onValueChange={setTypeFilter}>
+          <SelectTrigger className="w-[160px] h-8 text-xs ml-2">
+            <SelectValue placeholder="Event type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Events</SelectItem>
+            <SelectItem value="tour">Tours</SelectItem>
+            <SelectItem value="community">Community Events</SelectItem>
+          </SelectContent>
+        </Select>
+
         {/* Staff filter */}
         <Select value={staffFilter} onValueChange={setStaffFilter}>
-          <SelectTrigger className="w-[180px] h-8 text-xs ml-2">
+          <SelectTrigger className="w-[180px] h-8 text-xs">
             <SelectValue placeholder="Filter by staff" />
           </SelectTrigger>
           <SelectContent>
@@ -137,6 +172,10 @@ export default function ToursPage() {
             {sp.name}
           </div>
         ))}
+        <div className="border-l border-border pl-4 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: communityEventColor }} />
+          Community Event
+        </div>
       </div>
 
       {/* Calendar content */}
@@ -183,19 +222,20 @@ function WeekView({ dates, tours }) {
 
                 {dayTours.map((tour) => {
                   const top = (tour.startHour - 8) * 64;
+                  const style = getEventStyle(tour);
                   return (
                     <div
                       key={tour.id}
-                      className="absolute left-1 right-1 rounded-md px-1.5 py-1 text-white overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
+                      className="absolute left-1 right-1 rounded-md px-1.5 py-1 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
                       style={{
                         top: `${top}px`,
                         height: "60px",
-                        backgroundColor: tour.salespersonColor,
+                        ...style,
                       }}
                     >
                       <p className="text-[10px] font-semibold truncate">{tour.leadName}</p>
-                      <p className="text-[9px] opacity-80 truncate">{tour.facility}</p>
-                      <p className="text-[9px] opacity-80">{formatHour(tour.startHour)} – {formatHour(tour.startHour + 1)}</p>
+                      <p className="text-[9px] opacity-70 truncate">{tour.facility}</p>
+                      <p className="text-[9px] opacity-70">{formatHour(tour.startHour)} – {formatHour(tour.startHour + 1)}</p>
                     </div>
                   );
                 })}
@@ -239,16 +279,19 @@ function MonthView({ dates, currentMonth, tours }) {
                 {date.getDate()}
               </span>
               <div className="space-y-0.5">
-                {dayTours.map((tour) => (
-                  <div
-                    key={tour.id}
-                    className="rounded px-1 py-0.5 text-[9px] text-white truncate cursor-pointer hover:opacity-90"
-                    style={{ backgroundColor: tour.salespersonColor }}
-                    title={`${tour.leadName} – ${tour.facility} (${tour.salesperson})`}
-                  >
-                    {formatHour(tour.startHour)} {tour.leadName}
-                  </div>
-                ))}
+                {dayTours.map((tour) => {
+                  const style = getEventStyle(tour);
+                  return (
+                    <div
+                      key={tour.id}
+                      className="rounded px-1 py-0.5 text-[9px] truncate cursor-pointer hover:opacity-80"
+                      style={style}
+                      title={`${tour.leadName} – ${tour.facility} (${tour.type === "community" ? "Community Event" : tour.salesperson})`}
+                    >
+                      {formatHour(tour.startHour)} {tour.leadName}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );

@@ -15,6 +15,8 @@ import Markdown from "react-markdown";
 
 export default function ChatBubble({ currentPage, onNavigate }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showGreeting, setShowGreeting] = useState(false);
+  const [greetingDismissed, setGreetingDismissed] = useState(false);
   const { messages, sendMessage, status, input, setInput } = useChatContext();
   const messagesEndRef = useRef(null);
 
@@ -25,6 +27,22 @@ export default function ChatBubble({ currentPage, onNavigate }) {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isOpen]);
+
+  // Show greeting after a short delay
+  useEffect(() => {
+    if (greetingDismissed || isOpen) return;
+    const timer = setTimeout(() => setShowGreeting(true), 1500);
+    return () => clearTimeout(timer);
+  }, [greetingDismissed, isOpen]);
+
+  // Auto-hide greeting after 1 minute
+  useEffect(() => {
+    if (!showGreeting) return;
+    const timer = setTimeout(() => {
+      setShowGreeting(false);
+    }, 60000);
+    return () => clearTimeout(timer);
+  }, [showGreeting]);
 
   if (currentPage === "chatbot") return null;
 
@@ -173,10 +191,31 @@ export default function ChatBubble({ currentPage, onNavigate }) {
         </div>
       )}
 
+      {/* Greeting tooltip */}
+      {showGreeting && !isOpen && (
+        <div
+          className="fixed bottom-[88px] right-6 z-50 animate-in slide-in-from-bottom-2 fade-in duration-300"
+        >
+          <div className="relative bg-background border border-border rounded-xl shadow-lg px-4 py-3 max-w-[220px]">
+            <button
+              onClick={() => { setShowGreeting(false); setGreetingDismissed(true); }}
+              className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-muted border border-border flex items-center justify-center hover:bg-muted/80"
+            >
+              <X className="h-3 w-3 text-muted-foreground" />
+            </button>
+            <p className="text-sm font-medium text-foreground">Hi, I'm Trilio, your AI sale assistant.</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Ask me anything!</p>
+          </div>
+          <div className="w-3 h-3 bg-background border-r border-b border-border rotate-45 absolute -bottom-1.5 right-8" />
+        </div>
+      )}
+
       {/* Floating bubble button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center"
+        onClick={() => { setIsOpen(!isOpen); setShowGreeting(false); setGreetingDismissed(true); }}
+        className={`fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center ${
+          !isOpen ? "animate-bounce" : ""
+        }`}
       >
         {isOpen ? (
           <X className="h-6 w-6" />

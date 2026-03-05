@@ -124,6 +124,7 @@ export default function ManualTab({ onLeadCreated }) {
               <SelectItem value="Phone Call">Phone Call</SelectItem>
               <SelectItem value="Walk-in">Walk-in</SelectItem>
               <SelectItem value="Referral">Referral</SelectItem>
+              <SelectItem value="Event">Event</SelectItem>
             </SelectContent>
           </Select>
         </div>

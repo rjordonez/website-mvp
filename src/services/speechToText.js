@@ -13,7 +13,6 @@
  */
 
 import { getConfig } from './config';
-import { AssemblyAI } from 'assemblyai';
 
 /**
  * Converts an audio blob to text using speech-to-text service
@@ -112,10 +111,6 @@ async function transcribeWithAssemblyAI(audioBlob, metadata) {
   const apiKey = config.speechToText.apiKey;
 
   try {
-    const client = new AssemblyAI({
-      apiKey: apiKey
-    });
-
     // Upload the audio blob
     const uploadResponse = await fetch('https://api.assemblyai.com/v2/upload', {
       method: 'POST',
@@ -131,23 +126,45 @@ async function transcribeWithAssemblyAI(audioBlob, metadata) {
 
     const { upload_url } = await uploadResponse.json();
 
-    // Transcribe with explicit language code (language_detection fails on short recordings)
-    const params = {
-      audio: upload_url,
-      language_code: 'en',
-    };
+    // Create transcription request via REST API
+    const transcriptResponse = await fetch('https://api.assemblyai.com/v2/transcript', {
+      method: 'POST',
+      headers: {
+        'authorization': apiKey,
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        audio_url: upload_url,
+        language_code: 'en',
+      })
+    });
 
-    const transcript = await client.transcripts.transcribe(params);
-
-    if (transcript.status === 'error') {
-      throw new Error(`Transcription failed: ${transcript.error}`);
+    if (!transcriptResponse.ok) {
+      throw new Error(`Transcription request failed: ${transcriptResponse.statusText}`);
     }
 
-    return {
-      transcription: transcript.text,
-      confidence: transcript.confidence,
-      provider: 'assemblyai'
-    };
+    const { id } = await transcriptResponse.json();
+
+    // Poll for completion
+    while (true) {
+      const pollResponse = await fetch(`https://api.assemblyai.com/v2/transcript/${id}`, {
+        headers: { 'authorization': apiKey }
+      });
+      const transcript = await pollResponse.json();
+
+      if (transcript.status === 'completed') {
+        return {
+          transcription: transcript.text,
+          confidence: transcript.confidence,
+          provider: 'assemblyai'
+        };
+      } else if (transcript.status === 'error') {
+        throw new Error(`Transcription failed: ${transcript.error}`);
+      }
+
+      // Wait 1 second before polling again
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
   } catch (error) {
     console.error('AssemblyAI transcription error:', error);
     throw error;

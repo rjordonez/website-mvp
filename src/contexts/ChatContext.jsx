@@ -25,7 +25,7 @@ export function ChatProvider({ leads, children }) {
     inquiryDate: lead.inquiryDate,
     initialContact: lead.initialContact,
     intakeNote: lead.intakeNote,
-    postTourNote: lead.postTourNote,
+    tourNotes: lead.tourNotes,
   }));
 
   // Keep a ref so the transport's body function always reads the latest leads

@@ -110,7 +110,7 @@ export default function ReferrersPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <TopBar title="Referrers" subtitle="B2B referral partner management" action={{ label: "Add Partner", onClick: () => setAddPartnerOpen(true) }} />
+      <TopBar title="Referrers" subtitle="Referral Management" action={{ label: "Add Partner", onClick: () => setAddPartnerOpen(true) }} />
       <div className="flex-1 overflow-auto p-6 space-y-6">
 
         {/* Referrer Snapshot */}
@@ -348,11 +348,33 @@ function ReferrerDetailDialog({ referrer, open, onClose, onLeadClick }) {
         </DialogHeader>
         <div className="space-y-5">
           <div className="grid grid-cols-2 gap-3">
-            <InfoRow icon={User} label="Contact" value={referrer.contactPerson} />
-            <InfoRow icon={Phone} label="Phone" value={referrer.phone} />
-            <InfoRow icon={Mail} label="Email" value={referrer.email} />
             <InfoRow icon={FileText} label="Type" value={referrer.type} />
+            <InfoRow icon={Phone} label="Main Phone" value={referrer.phone} />
+            <InfoRow icon={Mail} label="Main Email" value={referrer.email} />
           </div>
+          {referrer.contacts && referrer.contacts.length > 0 ? (
+            <div>
+              <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+                <Users className="h-4 w-4" /> Contacts ({referrer.contacts.length})
+              </h4>
+              <div className="space-y-2">
+                {referrer.contacts.map((c, i) => (
+                  <div key={i} className="rounded-lg border border-border p-3 flex items-center gap-4">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground">{c.name}</p>
+                      <p className="text-xs text-muted-foreground">{c.role}</p>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground shrink-0">
+                      <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{c.phone}</span>
+                      <span className="flex items-center gap-1"><Mail className="h-3 w-3" />{c.email}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <InfoRow icon={User} label="Contact" value={referrer.contactPerson} />
+          )}
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-lg border border-border bg-muted/30 p-3 text-center">
               <p className="text-[11px] text-muted-foreground">Total Referrals</p>

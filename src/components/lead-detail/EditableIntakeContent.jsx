@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { MapPin, User, Calendar, Heart, DollarSign, Clock, AlertTriangle, TrendingUp, ArrowRight, Pencil, Save, X } from "lucide-react";
+import { MapPin, User, Calendar, Heart, DollarSign, Clock, AlertTriangle, TrendingUp, ArrowRight, Pencil, Save, X, AlertCircle, Gift, Gem } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 function SectionHeader({ icon: Icon, title }) {
@@ -30,6 +30,8 @@ export default function EditableIntakeContent({ lead }) {
   const n = lead.intakeNote;
   const [editing, setEditing] = useState(false);
   const [editData, setEditData] = useState({});
+  const [editingMustKnow, setEditingMustKnow] = useState(false);
+  const [mustKnowDraft, setMustKnowDraft] = useState("");
 
   const startEditing = () => {
     const data = {};
@@ -37,6 +39,8 @@ export default function EditableIntakeContent({ lead }) {
       const val = n[sec.key];
       data[sec.key] = Array.isArray(val) ? val.join(". ") : val;
     }
+    data.maritalStatus = lead.maritalStatus || "";
+    data.specialDates = (lead.specialDates || []).map((sd) => `${sd.type}: ${sd.date}`).join(", ");
     setEditData(data);
     setEditing(true);
   };
@@ -51,6 +55,11 @@ export default function EditableIntakeContent({ lead }) {
         n[sec.key] = newVal;
       }
     }
+    lead.maritalStatus = editData.maritalStatus || "";
+    lead.specialDates = (editData.specialDates || "").split(",").map((s) => s.trim()).filter(Boolean).map((s) => {
+      const [type, ...rest] = s.split(":");
+      return { type: type.trim(), date: (rest.join(":") || "").trim() };
+    });
     setEditing(false);
     toast({ title: "Intake note updated" });
   };
@@ -66,29 +75,72 @@ export default function EditableIntakeContent({ lead }) {
 
   return (
     <div className="space-y-5">
+      {/* Must-Know Banner */}
+      {(lead.mustKnow || editingMustKnow) && (
+        <div className="rounded-lg border border-warning/30 bg-warning/10 px-4 py-3 flex items-start gap-3">
+          <AlertCircle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <div className="flex items-center justify-between mb-0.5">
+              <p className="text-xs font-semibold text-warning">Must Know</p>
+              {!editingMustKnow ? (
+                <button
+                  onClick={() => { setMustKnowDraft(lead.mustKnow || ""); setEditingMustKnow(true); }}
+                  className="p-0.5 rounded hover:bg-warning/20 transition-colors"
+                >
+                  <Pencil className="h-3 w-3 text-warning" />
+                </button>
+              ) : (
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setEditingMustKnow(false)}
+                    className="p-0.5 rounded hover:bg-warning/20 transition-colors"
+                  >
+                    <X className="h-3 w-3 text-warning" />
+                  </button>
+                  <button
+                    onClick={() => { lead.mustKnow = mustKnowDraft.trim(); setEditingMustKnow(false); toast({ title: "Must Know updated" }); }}
+                    className="p-0.5 rounded hover:bg-warning/20 transition-colors"
+                  >
+                    <Save className="h-3 w-3 text-warning" />
+                  </button>
+                </div>
+              )}
+            </div>
+            {editingMustKnow ? (
+              <Textarea
+                value={mustKnowDraft}
+                onChange={(e) => setMustKnowDraft(e.target.value)}
+                className="text-sm min-h-[50px] bg-background/50 border-warning/30"
+                autoFocus
+              />
+            ) : (
+              <p className="text-sm text-foreground leading-relaxed">{lead.mustKnow}</p>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Header info (non-editable metadata) */}
-      <div className="flex items-center justify-between">
-        <div className="grid grid-cols-2 gap-3 rounded-lg bg-muted/40 p-3 text-sm flex-1">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <MapPin className="h-3.5 w-3.5" />
-            <span>Lead Source: <span className="text-foreground font-medium">{n.leadSource}</span></span>
-          </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <MapPin className="h-3.5 w-3.5" />
-            <span>Zipcode: <span className="text-foreground font-medium">{n.zipcode}</span></span>
-          </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <User className="h-3.5 w-3.5" />
-            <span>Caller: <span className="text-foreground font-medium">{n.caller}</span></span>
-          </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Calendar className="h-3.5 w-3.5" />
-            <span>{n.dateTime}</span>
-          </div>
-          <div className="flex items-center gap-2 text-muted-foreground col-span-2">
-            <User className="h-3.5 w-3.5" />
-            <span>Sales Rep: <span className="text-foreground font-medium">{n.salesRep}</span></span>
-          </div>
+      <div className="grid grid-cols-2 gap-3 rounded-lg bg-muted/40 p-3 text-sm">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <MapPin className="h-3.5 w-3.5" />
+          <span>Lead Source: <span className="text-foreground font-medium">{n.leadSource}</span></span>
+        </div>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <MapPin className="h-3.5 w-3.5" />
+          <span>Zipcode: <span className="text-foreground font-medium">{n.zipcode}</span></span>
+        </div>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <User className="h-3.5 w-3.5" />
+          <span>Caller: <span className="text-foreground font-medium">{n.caller}</span></span>
+        </div>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Calendar className="h-3.5 w-3.5" />
+          <span>{n.dateTime}</span>
+        </div>
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <User className="h-3.5 w-3.5" />
+          <span>Assign To: <span className="text-foreground font-medium">{n.salesRep}</span></span>
         </div>
       </div>
 
@@ -106,6 +158,46 @@ export default function EditableIntakeContent({ lead }) {
               <Save className="h-3.5 w-3.5 mr-1" /> Save
             </Button>
           </div>
+        )}
+      </div>
+
+      <Separator />
+
+      {/* Personal Info — editable */}
+      <div>
+        <SectionHeader icon={Gem} title="Marital Status" />
+        {editing ? (
+          <div className="pl-6">
+            <input
+              type="text"
+              value={editData.maritalStatus || ""}
+              onChange={(e) => updateField("maritalStatus", e.target.value)}
+              placeholder="e.g. Single, Married, Widow"
+              className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+        ) : (
+          <p className="pl-6 text-sm text-muted-foreground leading-relaxed">{lead.maritalStatus || "—"}</p>
+        )}
+      </div>
+      <div>
+        <SectionHeader icon={Gift} title="Special Dates" />
+        {editing ? (
+          <div className="pl-6">
+            <input
+              type="text"
+              value={editData.specialDates || ""}
+              onChange={(e) => updateField("specialDates", e.target.value)}
+              placeholder="e.g. Birthday: Mar 15, Anniversary: Jun 18"
+              className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+            />
+          </div>
+        ) : (
+          <p className="pl-6 text-sm text-muted-foreground leading-relaxed">
+            {lead.specialDates && lead.specialDates.length > 0
+              ? lead.specialDates.map((sd) => `${sd.type}: ${sd.date}`).join(" · ")
+              : "—"}
+          </p>
         )}
       </div>
 

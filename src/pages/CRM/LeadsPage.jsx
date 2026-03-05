@@ -24,7 +24,7 @@ import EmailComposeDialog from "@/components/EmailComposeDialog";
 const stages = [
   { key: "inquiry", label: "Inquiry" },
   { key: "connection", label: "Connection" },
-  { key: "pre_tour", label: "Post-Assessment" },
+  { key: "pre_tour", label: "Pre-Tour" },
   { key: "post_tour", label: "Post-Tour" },
   { key: "deposit", label: "Deposit" },
   { key: "move_in", label: "Move-in" },
@@ -35,7 +35,7 @@ const stageProgress = {
 };
 
 const stageLabel = {
-  inquiry: "Inquiry", connection: "Connection", pre_tour: "Post-Assessment", post_tour: "Post-Tour", deposit: "Deposit", move_in: "Move-in",
+  inquiry: "Inquiry", connection: "Connection", pre_tour: "Pre-Tour", post_tour: "Post-Tour", deposit: "Deposit", move_in: "Move-in",
 };
 
 const careLevelColors = {
@@ -49,10 +49,10 @@ const scoreColors = {
   hot: "bg-destructive/15 text-destructive",
   warm: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
   cold: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  nurture: "bg-primary/10 text-primary",
+  nurture: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
 };
 
-const sourceOptions = ["Digital Ads", "Phone Call", "Referral", "Walk-in", "Website"];
+const sourceOptions = ["Digital Ads", "Event", "Phone Call", "Referral", "Walk-in", "Website"];
 const careOptions = ["Assisted Living", "Independent Living", "Memory Care", "Skilled Nursing"];
 const scoreOptions = ["cold", "hot", "nurture", "warm"];
 
@@ -186,6 +186,7 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
   const [addOpen, setAddOpen] = useState(false);
   const [filters, setFilters] = useState({ stage: "all", source: "all", careLevel: "all", salesRep: "all", score: "all" });
   const [stageChangeLead, setStageChangeLead] = useState(null);
+  const [kanbanCareFilter, setKanbanCareFilter] = useState("all");
 
   // Call & Email dialog state
   const [callTarget, setCallTarget] = useState(null);
@@ -354,6 +355,20 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
         >
           <TableIcon className="h-3.5 w-3.5" /> Table
         </button>
+        {view === "kanban" && !isMobile && (
+          <div className="flex items-center gap-1.5 ml-4">
+            <select
+              value={kanbanCareFilter}
+              onChange={(e) => setKanbanCareFilter(e.target.value)}
+              className="h-7 rounded-md border border-border bg-background px-2 text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            >
+              <option value="all">All Care Types</option>
+              {careOptions.map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       <div className="flex-1 overflow-auto p-4">
@@ -364,7 +379,9 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
             <DragDropContext onDragEnd={onDragEnd}>
               <div className="flex gap-3 min-w-max">
                 {stages.map((stage) => {
-                  const stageLeads = filteredLeads.filter((l) => l.stage === stage.key);
+                  const stageLeads = filteredLeads.filter((l) =>
+                    l.stage === stage.key && (kanbanCareFilter === "all" || l.careLevel === kanbanCareFilter)
+                  );
                   return (
                     <div key={stage.key} className="w-64 flex-shrink-0">
                       <div className="flex items-center gap-2 mb-3 px-1">
@@ -390,46 +407,7 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
                                       snapshot.isDragging ? "shadow-crm-lg rotate-1" : "hover:shadow-crm-md"
                                     }`}
                                   >
-                                    <div className="flex items-center justify-between">
-                                      <p className="text-sm font-semibold text-foreground">{lead.name}</p>
-                                      <div className="flex items-center gap-0.5">
-                                        <TooltipProvider delayDuration={200}>
-                                          <Tooltip>
-                                            <TooltipTrigger asChild>
-                                              <button
-                                                onClick={(e) => { e.stopPropagation(); handleCall(lead); }}
-                                                className="p-1 rounded hover:bg-muted transition-colors"
-                                              >
-                                                <Phone className="h-3 w-3 text-muted-foreground hover:text-primary" />
-                                              </button>
-                                            </TooltipTrigger>
-                                            <TooltipContent side="top" className="text-xs">{lead.contactPhone}</TooltipContent>
-                                          </Tooltip>
-                                          <Tooltip>
-                                            <TooltipTrigger asChild>
-                                              <button
-                                                onClick={(e) => { e.stopPropagation(); handleEmail(lead); }}
-                                                className="p-1 rounded hover:bg-muted transition-colors"
-                                              >
-                                                <Mail className="h-3 w-3 text-muted-foreground hover:text-primary" />
-                                              </button>
-                                            </TooltipTrigger>
-                                            <TooltipContent side="top" className="text-xs">{lead.contactEmail}</TooltipContent>
-                                          </Tooltip>
-                                          <Tooltip>
-                                            <TooltipTrigger asChild>
-                                              <button
-                                                onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); }}
-                                                className="p-1 rounded hover:bg-muted transition-colors"
-                                              >
-                                                <StickyNote className="h-3 w-3 text-muted-foreground hover:text-primary" />
-                                              </button>
-                                            </TooltipTrigger>
-                                            <TooltipContent side="top" className="text-xs">View notes</TooltipContent>
-                                          </Tooltip>
-                                        </TooltipProvider>
-                                      </div>
-                                    </div>
+                                    <p className="text-sm font-semibold text-foreground">{lead.name}</p>
                                     <div className="mt-2 space-y-1.5">
                                       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                         <User className="h-3 w-3" />
@@ -444,7 +422,6 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
                                         <span>{formatDate(lead.lastContactDate)}</span>
                                       </div>
                                       <div className="flex items-center gap-1.5">
-                                        <div className="text-[10px] text-muted-foreground/70">PIC: {lead.salesRep}</div>
                                         <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium capitalize ${scoreColors[lead.score] || ""}`}>{lead.score}</span>
                                       </div>
                                     </div>
@@ -484,7 +461,7 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
                       <HeaderFilter label="Care Type" value={filters.careLevel} options={careOptions} onChange={(v) => setFilters((f) => ({ ...f, careLevel: v }))} />
                     </TableHead>
                     <TableHead className="min-w-[110px] whitespace-nowrap">
-                      <HeaderFilter label="PIC" value={filters.salesRep} options={salesRepOptions} onChange={(v) => setFilters((f) => ({ ...f, salesRep: v }))} />
+                      <HeaderFilter label="Assign To" value={filters.salesRep} options={salesRepOptions} onChange={(v) => setFilters((f) => ({ ...f, salesRep: v }))} />
                     </TableHead>
                     <TableHead className="min-w-[120px] whitespace-nowrap">Contact</TableHead>
                     <TableHead className="min-w-[95px] whitespace-nowrap">Inquiry Date</TableHead>

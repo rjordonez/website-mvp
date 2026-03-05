@@ -1,15 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, Mail, Calendar, User, DollarSign, Heart, AlertTriangle, TrendingUp, ArrowRight, Sparkles, Loader2, Eye, ThumbsUp, ThumbsDown, Target, BarChart3, CheckCircle2, MessageSquare, ArrowRightLeft, Users, Plus, Headphones, ChevronDown } from "lucide-react";
+import { Phone, Mail, User, Sparkles, Loader2, Eye, MessageSquare, ArrowRightLeft, Users, Plus, ChevronDown, X } from "lucide-react";
 
 import { toast } from "@/hooks/use-toast";
 import AudioNoteRecorder from "@/components/lead-detail/AudioNoteRecorder";
 import EditableIntakeContent from "@/components/lead-detail/EditableIntakeContent";
-import CallTranscriptContent from "@/components/lead-detail/CallTranscriptContent";
 
 const careLevelColors = {
   "Assisted Living": "bg-info/10 text-info border-info/20",
@@ -22,7 +20,7 @@ const scoreColors = {
   hot: "bg-destructive/15 text-destructive border-destructive/30",
   warm: "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800",
   cold: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800",
-  nurture: "bg-primary/10 text-primary border-primary/20",
+  nurture: "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800",
 };
 
 const scoreOptions = ["hot", "warm", "nurture", "cold"];
@@ -67,40 +65,14 @@ function EditableScoreBadge({ score, onChange }) {
 const stageLabel = {
   inquiry: "Inquiry",
   connection: "Connection",
-  pre_tour: "Post-Assessment",
+  pre_tour: "Pre-Tour",
   post_tour: "Post-Tour",
   deposit: "Deposit",
   move_in: "Move-in",
 };
 
-function Section({ icon: Icon, title, children }) {
-  return (
-    <div>
-      <div className="flex items-center gap-2 mb-2">
-        <Icon className="h-4 w-4 text-primary" />
-        <h4 className="text-sm font-semibold text-foreground">{title}</h4>
-      </div>
-      <div className="pl-6">{children}</div>
-    </div>
-  );
-}
-
-function BulletList({ items }) {
-  return (
-    <ul className="space-y-1">
-      {items.map((item, i) => (
-        <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-          <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-muted-foreground/40 shrink-0" />
-          {item}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function generateMockSummary(lead) {
   const n = lead.intakeNote;
-  const pt = lead.postTourNote;
 
   let summary = `**${lead.name}** is a ${lead.careLevel.toLowerCase()} prospect currently in the **${stageLabel[lead.stage]}** stage. ${n.caller} reached out via ${n.leadSource.toLowerCase()}.
 
@@ -112,10 +84,12 @@ function generateMockSummary(lead) {
 
 **Main concerns:** ${n.objections.join("; ").toLowerCase()}.`;
 
-  if (pt) {
-    summary += `
-
-**Post-tour update:** Tour on ${pt.tourDate} with ${pt.attendees}. ${pt.firstImpressions[0]}. ${pt.emotionalSignals[0]}. Probability to close: ${pt.probabilityToClose}. Next step: ${pt.nextStepScheduled}.`;
+  const tours = lead.tourNotes || [];
+  if (tours.length > 0) {
+    summary += `\n\n**Tours taken: ${tours.length}**`;
+    tours.forEach((t, i) => {
+      summary += `\n**Tour ${i + 1}** (${formatTimelineDate(t.tourDate)}) — ${t.attendees}: ${t.summary}`;
+    });
   }
 
   summary += `
@@ -123,34 +97,6 @@ function generateMockSummary(lead) {
 **Sales assessment:** ${n.salesRepAssessment.join(". ")}. **Next steps:** ${n.nextStep.join("; ")}.`;
 
   return summary;
-}
-
-// IntakeNoteContent moved to EditableIntakeContent component
-
-function PostTourNoteContent({ lead }) {
-  const pt = lead.postTourNote;
-  if (!pt) return <p className="text-sm text-muted-foreground italic">No post-tour note available.</p>;
-  return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-3 rounded-lg bg-muted/40 p-3 text-sm">
-        <div className="flex items-center gap-2 text-muted-foreground"><Calendar className="h-3.5 w-3.5" /><span>Tour Date: <span className="text-foreground font-medium">{pt.tourDate}</span></span></div>
-        <div className="flex items-center gap-2 text-muted-foreground"><User className="h-3.5 w-3.5" /><span>Guide: <span className="text-foreground font-medium">{pt.tourGuide}</span></span></div>
-        <div className="flex items-center gap-2 text-muted-foreground col-span-2"><User className="h-3.5 w-3.5" /><span>Attendees: <span className="text-foreground font-medium">{pt.attendees}</span></span></div>
-      </div>
-      <Separator />
-      <Section icon={Eye} title="First Impressions"><BulletList items={pt.firstImpressions} /></Section>
-      <Section icon={Heart} title="Emotional Signals"><BulletList items={pt.emotionalSignals} /></Section>
-      <Section icon={ThumbsUp} title="Likes"><BulletList items={pt.likes} /></Section>
-      <Section icon={AlertTriangle} title="Concerns Raised"><BulletList items={pt.concernsRaised} /></Section>
-      <Section icon={DollarSign} title="Pricing Reaction"><BulletList items={pt.pricingReaction} /></Section>
-      <Section icon={Target} title="Buying Signals"><BulletList items={pt.buyingSignals} /></Section>
-      <Section icon={ThumbsDown} title="Risk Signals"><BulletList items={pt.riskSignals} /></Section>
-      <Section icon={TrendingUp} title="Sales Rep Assessment"><BulletList items={pt.salesRepAssessment} /></Section>
-      <Section icon={BarChart3} title="Probability to Close"><p className="text-sm text-muted-foreground font-medium">{pt.probabilityToClose}</p></Section>
-      <Section icon={CheckCircle2} title="Follow-Up Actions"><BulletList items={pt.followUpActions} /></Section>
-      <Section icon={ArrowRight} title="Next Step Scheduled"><p className="text-sm text-muted-foreground font-medium">{pt.nextStepScheduled}</p></Section>
-    </div>
-  );
 }
 
 const interactionIcons = {
@@ -179,17 +125,72 @@ function formatTimelineDate(dateStr) {
   return `${mm}/${dd}/${yy}`;
 }
 
-function TimelineContent({ interactions, onAddNote }) {
+function TourLogForm({ onLog, onCancel }) {
+  const [attendees, setAttendees] = useState("");
+  const [summary, setSummary] = useState("");
+
+  const handleSubmit = () => {
+    if (!attendees.trim() || !summary.trim()) return;
+    onLog({
+      id: `tour-${Date.now()}`,
+      date: new Date().toISOString().split("T")[0],
+      type: "tour",
+      title: "Facility tour",
+      description: summary.trim(),
+      by: "You",
+      tourNote: { tourDate: new Date().toISOString().split("T")[0], attendees: attendees.trim(), tourGuide: "You", summary: summary.trim() },
+    });
+  };
+
+  return (
+    <div className="rounded-lg border border-border p-3 space-y-2">
+      <p className="text-xs font-semibold text-foreground">Log Tour</p>
+      <input
+        type="text"
+        placeholder="Who joined? (e.g. David Clark + sister)"
+        value={attendees}
+        onChange={(e) => setAttendees(e.target.value)}
+        className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+        autoFocus
+      />
+      <textarea
+        placeholder="Tour summary notes..."
+        value={summary}
+        onChange={(e) => setSummary(e.target.value)}
+        className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-xs min-h-[60px] resize-none focus:outline-none focus:ring-1 focus:ring-primary"
+      />
+      <div className="flex justify-end gap-2">
+        <Button variant="ghost" size="sm" onClick={onCancel} className="text-xs h-7">Cancel</Button>
+        <Button size="sm" onClick={handleSubmit} disabled={!attendees.trim() || !summary.trim()} className="text-xs h-7">Save Tour</Button>
+      </div>
+    </div>
+  );
+}
+
+function TimelineContent({ interactions, onAddNote, onAddTour }) {
   const [addingNote, setAddingNote] = useState(false);
+  const [addingTour, setAddingTour] = useState(false);
 
   return (
     <div className="space-y-4">
-      {!addingNote ? (
-        <Button variant="outline" size="sm" className="w-full" onClick={() => setAddingNote(true)}>
-          <Plus className="h-3.5 w-3.5 mr-1.5" /> Add Note
-        </Button>
-      ) : (
+      <div className="flex gap-2">
+        {!addingNote && !addingTour && (
+          <>
+            <Button variant="outline" size="sm" className="flex-1" onClick={() => setAddingNote(true)}>
+              <Plus className="h-3.5 w-3.5 mr-1.5" /> Add Note
+            </Button>
+            <Button variant="outline" size="sm" className="flex-1" onClick={() => setAddingTour(true)}>
+              <Eye className="h-3.5 w-3.5 mr-1.5" /> Log Tour
+            </Button>
+          </>
+        )}
+      </div>
+
+      {addingNote && (
         <AudioNoteRecorder onAddNote={(note) => { onAddNote(note); setAddingNote(false); }} onCancel={() => setAddingNote(false)} />
+      )}
+      {addingTour && (
+        <TourLogForm onLog={(tour) => { onAddTour(tour); setAddingTour(false); }} onCancel={() => setAddingTour(false)} />
       )}
 
       {/* Timeline */}
@@ -198,6 +199,7 @@ function TimelineContent({ interactions, onAddNote }) {
         {interactions.map((entry) => {
           const Icon = interactionIcons[entry.type];
           const colorClass = interactionColors[entry.type];
+          const isTour = entry.type === "tour" && entry.tourNote;
           return (
             <div key={entry.id} className="relative flex gap-3 pb-4">
               <div className={`relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${colorClass}`}>
@@ -208,6 +210,11 @@ function TimelineContent({ interactions, onAddNote }) {
                   <span className="text-sm font-medium text-foreground">{entry.title}</span>
                   <span className="text-[10px] text-muted-foreground">{formatTimelineDate(entry.date)}</span>
                 </div>
+                {isTour && (
+                  <p className="text-[11px] text-foreground/70 mt-0.5">
+                    <span className="font-medium">Attendees:</span> {entry.tourNote.attendees}
+                  </p>
+                )}
                 <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{entry.description}</p>
                 <p className="text-[10px] text-muted-foreground/60 mt-0.5">by {entry.by}</p>
               </div>
@@ -226,11 +233,9 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
   const [localScore, setLocalScore] = useState(null);
 
   // Sync interactions when lead changes
-  const interactions = lead ? [...localInteractions.filter(n => n.id.startsWith("note-")), ...lead.interactions] : [];
+  const interactions = lead ? [...localInteractions, ...lead.interactions] : [];
 
   if (!lead) return null;
-
-  const hasPostTour = !!lead.postTourNote;
 
   const handleAiSummary = () => {
     setAiLoading(true);
@@ -256,6 +261,17 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
     setLocalInteractions((prev) => [note, ...prev]);
   };
 
+  const handleAddTour = (tour) => {
+    setLocalInteractions((prev) => [tour, ...prev]);
+    // Also add to lead's tourNotes so AI can access it
+    if (lead.tourNotes) {
+      lead.tourNotes.push(tour.tourNote);
+    } else {
+      lead.tourNotes = [tour.tourNote];
+    }
+    toast({ title: "Tour logged" });
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent fullScreen={isMobile} className={isMobile ? "" : "max-w-2xl max-h-[85vh] overflow-y-auto"}>
@@ -263,7 +279,7 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
               <Phone className="h-3 w-3" />
-              <span>{hasPostTour ? "Post-Tour Note — After First Visit" : "First Call Note — Prospect Intake"}</span>
+              <span>Lead Detail</span>
             </div>
             <Button
               variant="outline"
@@ -299,17 +315,22 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
             <EditableScoreBadge score={currentScore} onChange={(s) => { setLocalScore(s); if (lead) lead.score = s; }} />
             <Badge variant="outline" className={careLevelColors[lead.careLevel]}>{lead.careLevel}</Badge>
             <Badge variant="secondary">{stageLabel[lead.stage]}</Badge>
-            <Badge variant="secondary">{lead.source}</Badge>
-            <Badge variant="secondary">PIC: {lead.salesRep}</Badge>
           </div>
         </DialogHeader>
 
         {/* AI Summary */}
         {(aiLoading || aiSummary) && (
           <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="h-4 w-4 text-primary" />
-              <h4 className="text-sm font-semibold text-foreground">AI Summary</h4>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <h4 className="text-sm font-semibold text-foreground">AI Summary</h4>
+              </div>
+              {!aiLoading && (
+                <button onClick={() => setAiSummary(null)} className="p-0.5 rounded hover:bg-muted transition-colors">
+                  <X className="h-3.5 w-3.5 text-muted-foreground" />
+                </button>
+              )}
             </div>
             {aiLoading ? (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -330,22 +351,16 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
           </div>
         )}
 
-        <Tabs defaultValue={hasPostTour ? "post_tour" : "intake"} className="mt-2">
-          <TabsList className={`w-full grid ${hasPostTour ? "grid-cols-3" : "grid-cols-2"}`}>
-            {hasPostTour && <TabsTrigger value="post_tour">🏡 Post-Tour</TabsTrigger>}
+        <Tabs defaultValue="intake" className="mt-2">
+          <TabsList className="w-full grid grid-cols-2">
             <TabsTrigger value="intake">☎️ Intake</TabsTrigger>
             <TabsTrigger value="timeline">📋 Activity Log</TabsTrigger>
           </TabsList>
-          {hasPostTour && (
-            <TabsContent value="post_tour" className="mt-4">
-              <PostTourNoteContent lead={lead} />
-            </TabsContent>
-          )}
           <TabsContent value="intake" className="mt-4">
             <EditableIntakeContent lead={lead} />
           </TabsContent>
           <TabsContent value="timeline" className="mt-4">
-            <TimelineContent interactions={interactions} onAddNote={handleAddNote} />
+            <TimelineContent interactions={interactions} onAddNote={handleAddNote} onAddTour={handleAddTour} />
           </TabsContent>
         </Tabs>
       </DialogContent>
