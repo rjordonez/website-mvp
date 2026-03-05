@@ -34,7 +34,7 @@ export default function ReferrersPage() {
   const [sortKey, setSortKey] = useState("name");
   const [sortDir, setSortDir] = useState("asc");
   const [editingHours, setEditingHours] = useState({});
-  const [selectedLeadIds, setSelectedLeadIds] = useState(new Set());
+  const [selectedRowKeys, setSelectedRowKeys] = useState(new Set());
   const [filterPartner, setFilterPartner] = useState("all");
   const [filterStage, setFilterStage] = useState("all");
   const [filterRep, setFilterRep] = useState("all");
@@ -82,7 +82,7 @@ export default function ReferrersPage() {
       r.referredLeadIds.forEach(id => {
         const lead = mockPipelineLeads.find(l => l.id === id);
         if (lead) {
-          leads.push({ ...lead, hours: editingHours[lead.id] ?? perLead, partnerName: r.name, partnerId: r.id });
+          leads.push({ ...lead, rowKey: `${r.id}-${lead.id}`, hours: editingHours[`${r.id}-${lead.id}`] ?? perLead, partnerName: r.name, partnerId: r.id });
         }
       });
     });
@@ -105,9 +105,9 @@ export default function ReferrersPage() {
   }, [allReferredLeads, filterPartner, filterStage, filterRep, filterCare]);
 
   const displayedTotalHours = useMemo(() => {
-    const subset = selectedLeadIds.size > 0 ? filteredLeads.filter(l => selectedLeadIds.has(l.id)) : filteredLeads;
-    return subset.reduce((s, l) => s + (editingHours[l.id] ?? l.hours), 0);
-  }, [filteredLeads, selectedLeadIds, editingHours]);
+    const subset = selectedRowKeys.size > 0 ? filteredLeads.filter(l => selectedRowKeys.has(l.rowKey)) : filteredLeads;
+    return subset.reduce((s, l) => s + (editingHours[l.rowKey] ?? l.hours), 0);
+  }, [filteredLeads, selectedRowKeys, editingHours]);
 
   const SortableHead = ({ label, sortKeyVal }) => (
     <TableHead className="cursor-pointer select-none hover:text-foreground transition-colors" onClick={() => toggleSort(sortKeyVal)}>
@@ -193,10 +193,10 @@ export default function ReferrersPage() {
                 <TableRow>
                   <TableHead className="w-10">
                     <Checkbox
-                      checked={filteredLeads.length > 0 && filteredLeads.every(l => selectedLeadIds.has(l.id))}
+                      checked={filteredLeads.length > 0 && filteredLeads.every(l => selectedRowKeys.has(l.rowKey))}
                       onCheckedChange={(checked) => {
-                        if (checked) setSelectedLeadIds(new Set(filteredLeads.map(l => l.id)));
-                        else setSelectedLeadIds(new Set());
+                        if (checked) setSelectedRowKeys(new Set(filteredLeads.map(l => l.rowKey)));
+                        else setSelectedRowKeys(new Set());
                       }}
                     />
                   </TableHead>
@@ -250,14 +250,14 @@ export default function ReferrersPage() {
               </TableHeader>
               <TableBody>
                 {filteredLeads.map((lead) => (
-                  <TableRow key={`${lead.partnerId}-${lead.id}`} className={`cursor-pointer ${selectedLeadIds.has(lead.id) ? "bg-muted/50" : ""}`} onClick={() => setSelectedLead(lead)}>
+                  <TableRow key={lead.rowKey} className={`cursor-pointer ${selectedRowKeys.has(lead.rowKey) ? "bg-muted/50" : ""}`} onClick={() => setSelectedLead(lead)}>
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <Checkbox
-                        checked={selectedLeadIds.has(lead.id)}
+                        checked={selectedRowKeys.has(lead.rowKey)}
                         onCheckedChange={(checked) => {
-                          setSelectedLeadIds(prev => {
+                          setSelectedRowKeys(prev => {
                             const next = new Set(prev);
-                            checked ? next.add(lead.id) : next.delete(lead.id);
+                            checked ? next.add(lead.rowKey) : next.delete(lead.rowKey);
                             return next;
                           });
                         }}
@@ -278,8 +278,8 @@ export default function ReferrersPage() {
                       <Input
                         type="number"
                         className="w-16 h-7 text-center text-sm mx-auto"
-                        value={editingHours[lead.id] ?? lead.hours}
-                        onChange={(e) => setEditingHours(prev => ({ ...prev, [lead.id]: parseInt(e.target.value) || 0 }))}
+                        value={editingHours[lead.rowKey] ?? lead.hours}
+                        onChange={(e) => setEditingHours(prev => ({ ...prev, [lead.rowKey]: parseInt(e.target.value) || 0 }))}
                       />
                     </TableCell>
                   </TableRow>
@@ -288,7 +288,7 @@ export default function ReferrersPage() {
               <TableFooter>
                 <TableRow>
                   <TableCell colSpan={6} className="text-right text-sm font-semibold text-foreground">
-                    Total Hours {selectedLeadIds.size > 0 ? `(${selectedLeadIds.size} selected)` : `(${filteredLeads.length} leads)`}
+                    Total Hours {selectedRowKeys.size > 0 ? `(${selectedRowKeys.size} selected)` : `(${filteredLeads.length} leads)`}
                   </TableCell>
                   <TableCell className="text-center font-display text-base font-bold text-foreground">
                     {displayedTotalHours}h
