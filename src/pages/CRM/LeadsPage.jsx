@@ -42,7 +42,7 @@ const careLevelColors = {
   "Skilled Nursing": "bg-destructive/10 text-destructive",
 };
 
-const sourceOptions = ["Digital Ads", "Website", "Phone Call", "Walk-in", "Referral"];
+const sourceOptions = ["Digital Ads", "Phone Call", "Referral", "Walk-in", "Website"];
 const careOptions = ["Assisted Living", "Independent Living", "Memory Care", "Skilled Nursing"];
 
 function formatDate(dateStr) {
@@ -56,6 +56,10 @@ function formatDate(dateStr) {
 function HeaderFilter({ label, value, options, onChange }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const buttonRef = useRef(null);
+  const [dropdownStyle, setDropdownStyle] = useState({});
+
+  const sortedOptions = useMemo(() => [...options].sort((a, b) => a.localeCompare(b)), [options]);
 
   useEffect(() => {
     const handler = (e) => {
@@ -65,28 +69,41 @@ function HeaderFilter({ label, value, options, onChange }) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  useEffect(() => {
+    if (open && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownStyle({
+        position: "fixed",
+        top: rect.bottom + 4,
+        left: Math.max(8, Math.min(rect.left, window.innerWidth - 180)),
+      });
+    }
+  }, [open]);
+
   const isFiltered = value !== "all";
 
   return (
-    <div ref={ref} className="relative inline-flex items-center gap-1 cursor-pointer select-none" onClick={() => setOpen(!open)}>
-      <span className={`whitespace-nowrap ${isFiltered ? "text-primary font-semibold" : ""}`}>{label}</span>
-      <ChevronDown className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""} ${isFiltered ? "text-primary" : "text-muted-foreground"}`} />
+    <div ref={ref} className="inline-flex items-center gap-1 cursor-pointer select-none">
+      <div ref={buttonRef} className="inline-flex items-center gap-1" onClick={() => setOpen(!open)}>
+        <span className={`whitespace-nowrap ${isFiltered ? "text-primary font-semibold" : ""}`}>{label}</span>
+        <ChevronDown className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""} ${isFiltered ? "text-primary" : "text-muted-foreground"}`} />
+      </div>
       {isFiltered && (
         <button onClick={(e) => { e.stopPropagation(); onChange("all"); }} className="ml-0.5 rounded-full p-0.5 hover:bg-muted">
           <X className="h-2.5 w-2.5 text-primary" />
         </button>
       )}
       {open && (
-        <div className="absolute top-full left-0 mt-1 z-30 rounded-md border border-border bg-popover shadow-md py-1 min-w-[140px]">
+        <div style={dropdownStyle} className="z-50 rounded-md border border-border bg-popover shadow-lg py-1 min-w-[160px] max-h-[60vh] overflow-y-auto">
           <button
             onClick={(e) => { e.stopPropagation(); onChange("all"); setOpen(false); }}
-            className={`w-full text-left px-3 py-1.5 text-xs hover:bg-muted transition-colors ${value === "all" ? "font-semibold text-primary" : "text-foreground"}`}
+            className={`w-full text-left px-3 py-2 text-xs hover:bg-muted transition-colors ${value === "all" ? "font-semibold text-primary" : "text-foreground"}`}
           >All</button>
-          {options.map((opt) => (
+          {sortedOptions.map((opt) => (
             <button
               key={opt}
               onClick={(e) => { e.stopPropagation(); onChange(opt); setOpen(false); }}
-              className={`w-full text-left px-3 py-1.5 text-xs hover:bg-muted transition-colors ${value === opt ? "font-semibold text-primary" : "text-foreground"}`}
+              className={`w-full text-left px-3 py-2 text-xs hover:bg-muted transition-colors ${value === opt ? "font-semibold text-primary" : "text-foreground"}`}
             >{opt}</button>
           ))}
         </div>
