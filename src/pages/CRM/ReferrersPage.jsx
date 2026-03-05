@@ -14,15 +14,6 @@ import {
 import LeadDetailDialog from "@/components/LeadDetailDialog";
 import AddPartnerSheet from "@/components/AddPartnerSheet";
 
-const scoreColors = {
-  hot: "bg-destructive/15 text-destructive border-destructive/30",
-  warm: "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800",
-  cold: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800",
-  nurture: "bg-primary/10 text-primary border-primary/20",
-};
-
-const scoreOrder = { hot: 0, warm: 1, nurture: 2, cold: 3 };
-
 const stageLabels = {
   inquiry: "Inquiry", connection: "Connection", pre_tour: "Pre-Tour",
   post_tour: "Post-Tour", deposit: "Deposit", move_in: "Move-in",
@@ -67,7 +58,6 @@ export default function ReferrersPage() {
         case "type": return dir * a.type.localeCompare(b.type);
         case "contact": return dir * a.contactPerson.localeCompare(b.contactPerson);
         case "referrals": return dir * (a.referredLeadIds.length - b.referredLeadIds.length);
-        case "score": return dir * ((scoreOrder[a.score] ?? 9) - (scoreOrder[b.score] ?? 9));
         default: return 0;
       }
     });
@@ -142,7 +132,6 @@ export default function ReferrersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <SortableHead label="Score" sortKeyVal="score" />
                   <SortableHead label="Partner" sortKeyVal="name" />
                   <SortableHead label="Type" sortKeyVal="type" />
                   <SortableHead label="Contact" sortKeyVal="contact" />
@@ -158,9 +147,6 @@ export default function ReferrersPage() {
               <TableBody>
                 {sorted.map((r) => (
                   <TableRow key={r.id} className="cursor-pointer" onClick={() => setSelectedReferrer(r)}>
-                    <TableCell>
-                      <Badge variant="outline" className={`text-[11px] capitalize ${scoreColors[r.score] || ""}`}>{r.score}</Badge>
-                    </TableCell>
                     <TableCell>
                       <p className="font-medium text-foreground text-sm">{r.name}</p>
                       <p className="text-xs text-muted-foreground">{r.organization}</p>
@@ -358,7 +344,6 @@ function ReferrerDetailDialog({ referrer, open, onClose, onLeadClick }) {
           <DialogTitle className="flex items-center gap-2">
             <Building2 className="h-5 w-5 text-primary" />
             {referrer.name}
-            <Badge variant="outline" className={`text-[11px] capitalize ml-2 ${scoreColors[referrer.score]}`}>{referrer.score}</Badge>
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-5">

@@ -8,19 +8,15 @@ import { Button } from "@/components/ui/button";
 const initialForm = {
   name: "",
   contactPerson: "",
-  relation: "",
-  phone: "",
-  email: "",
+  contactInfo: "",
   zipcode: "",
   careType: "",
   source: "",
-  facility: "",
-  salesRep: "",
+  score: "",
   decisionMakers: "",
-  situation: "",
+  notes: "",
   budget: "",
   timeline: "",
-  notes: "",
 };
 
 export default function ManualTab({ onLeadCreated }) {
@@ -39,25 +35,26 @@ export default function ManualTab({ onLeadCreated }) {
       id: `manual-lead-${Date.now()}`,
       name: form.name || "Unknown",
       contactPerson: form.contactPerson || form.name || "Unknown",
-      contactRelation: form.relation || "Self",
-      contactPhone: form.phone || "",
-      contactEmail: form.email || "",
+      contactRelation: "",
+      contactPhone: form.contactInfo?.includes("@") ? "" : form.contactInfo || "",
+      contactEmail: form.contactInfo?.includes("@") ? form.contactInfo : "",
       careLevel: form.careType || "Assisted Living",
       lastContactDate: dateStr,
-      facility: form.facility || "Sunrise Gardens",
+      facility: "Sunrise Gardens",
       stage: "inquiry",
+      score: form.score || "cold",
       source: form.source || "Phone Call",
       inquiryDate: dateStr,
       initialContact: dateStr,
       nextActivity: "Follow-up call scheduled",
-      salesRep: form.salesRep || "Alex Rivera",
+      salesRep: "Alex Rivera",
       intakeNote: {
         leadSource: form.source || "Manual Entry",
         zipcode: form.zipcode || "",
-        caller: `${form.contactPerson || form.name} (${form.relation || "Self"})`,
+        caller: `${form.contactPerson || form.name}`,
         dateTime: timeStr,
-        salesRep: form.salesRep || "Alex Rivera",
-        situationSummary: form.situation ? [form.situation] : ["No situation summary provided"],
+        salesRep: "Alex Rivera",
+        situationSummary: form.notes ? [form.notes] : ["No notes provided"],
         careNeeds: form.careType ? [`${form.careType} care needed`] : ["To be assessed"],
         budgetFinancial: form.budget ? [form.budget] : ["Budget to be discussed"],
         decisionMakers: form.decisionMakers
@@ -65,7 +62,7 @@ export default function ManualTab({ onLeadCreated }) {
           : [form.contactPerson || form.name || "Unknown"],
         timeline: form.timeline || "To be determined",
         preferences: ["No preferences recorded yet"],
-        objections: form.notes ? [form.notes] : ["None recorded yet"],
+        objections: [],
         salesRepAssessment: ["Manually entered lead", "Requires initial assessment"],
         nextStep: ["Schedule initial call", "Complete intake assessment"],
       },
@@ -91,27 +88,13 @@ export default function ManualTab({ onLeadCreated }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <Label className="text-xs">Relation</Label>
-          <Input placeholder="e.g. Daughter" className="h-9 text-sm" value={form.relation} onChange={(e) => set("relation", e.target.value)} />
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-xs">Phone</Label>
-          <Input placeholder="(555) 123-4567" className="h-9 text-sm" value={form.phone} onChange={(e) => set("phone", e.target.value)} />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div className="space-y-1.5">
-          <Label className="text-xs">Email</Label>
-          <Input placeholder="email@example.com" className="h-9 text-sm" value={form.email} onChange={(e) => set("email", e.target.value)} />
+          <Label className="text-xs">Contact</Label>
+          <Input placeholder="e.g. (555) 123-4567 or email@example.com" className="h-9 text-sm" value={form.contactInfo} onChange={(e) => set("contactInfo", e.target.value)} />
         </div>
         <div className="space-y-1.5">
           <Label className="text-xs">Zipcode</Label>
           <Input placeholder="e.g. 90007" className="h-9 text-sm" value={form.zipcode} onChange={(e) => set("zipcode", e.target.value)} />
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label className="text-xs">Care Type</Label>
           <Select value={form.careType} onValueChange={(v) => set("careType", v)}>
@@ -126,6 +109,9 @@ export default function ManualTab({ onLeadCreated }) {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-1.5">
           <Label className="text-xs">Source</Label>
           <Select value={form.source} onValueChange={(v) => set("source", v)}>
@@ -141,34 +127,17 @@ export default function ManualTab({ onLeadCreated }) {
             </SelectContent>
           </Select>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <Label className="text-xs">Facility</Label>
-          <Select value={form.facility} onValueChange={(v) => set("facility", v)}>
+          <Label className="text-xs">Lead Score</Label>
+          <Select value={form.score} onValueChange={(v) => set("score", v)}>
             <SelectTrigger className="h-9 text-sm">
-              <SelectValue placeholder="Select facility" />
+              <SelectValue placeholder="Select score" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Sunrise Gardens">Sunrise Gardens</SelectItem>
-              <SelectItem value="Oakwood Manor">Oakwood Manor</SelectItem>
-              <SelectItem value="Lakeside Living">Lakeside Living</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-xs">Sales Rep</Label>
-          <Select value={form.salesRep} onValueChange={(v) => set("salesRep", v)}>
-            <SelectTrigger className="h-9 text-sm">
-              <SelectValue placeholder="Select rep" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Alex Rivera">Alex Rivera</SelectItem>
-              <SelectItem value="Sarah Johnson">Sarah Johnson</SelectItem>
-              <SelectItem value="Mike Peters">Mike Peters</SelectItem>
-              <SelectItem value="Emily Brown">Emily Brown</SelectItem>
-              <SelectItem value="David Kim">David Kim</SelectItem>
+              <SelectItem value="hot">Hot</SelectItem>
+              <SelectItem value="warm">Warm</SelectItem>
+              <SelectItem value="nurture">Nurture</SelectItem>
+              <SelectItem value="cold">Cold</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -177,11 +146,6 @@ export default function ManualTab({ onLeadCreated }) {
       <div className="space-y-1.5">
         <Label className="text-xs">Decision Makers</Label>
         <Input placeholder="e.g. Lisa Chen (daughter), John Chen (son)" className="h-9 text-sm" value={form.decisionMakers} onChange={(e) => set("decisionMakers", e.target.value)} />
-      </div>
-
-      <div className="space-y-1.5">
-        <Label className="text-xs">Situation Summary</Label>
-        <Textarea placeholder="Brief description of the prospect's situation..." className="text-sm min-h-[60px]" value={form.situation} onChange={(e) => set("situation", e.target.value)} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -196,8 +160,8 @@ export default function ManualTab({ onLeadCreated }) {
       </div>
 
       <div className="space-y-1.5">
-        <Label className="text-xs">Notes / Objections</Label>
-        <Textarea placeholder="Any concerns, objections, or additional notes..." className="text-sm min-h-[60px]" value={form.notes} onChange={(e) => set("notes", e.target.value)} />
+        <Label className="text-xs">Notes</Label>
+        <Textarea placeholder="Situation summary, concerns, objections, or any other notes..." className="text-sm min-h-[80px]" value={form.notes} onChange={(e) => set("notes", e.target.value)} />
       </div>
 
       <Button type="submit" className="w-full" size="sm">

@@ -210,8 +210,20 @@ const leadsRaw = [
   { id: "p20", name: "Donald Brown", contactPerson: "Kevin Brown", contactRelation: "Son", contactPhone: "(213) 555-1967", contactEmail: "kevin.brown@email.com", careLevel: "Skilled Nursing", lastContactDate: "2026-02-03", facility: "Sunrise Gardens", stage: "move_in", source: "Phone Call", inquiryDate: "2025-11-10", initialContact: "2025-11-10", nextActivity: "Move-in day Feb 20", salesRep: "Alex Rivera", intakeNote: { leadSource: "Direct phone call from hospital social worker", zipcode: "90026", caller: "Kevin Brown (son)", dateTime: "Feb 3 — 4:30 PM", salesRep: "Alex Rivera", situationSummary: ["Father has COPD and heart failure", "Multiple hospitalizations last year", "Needs continuous medical oversight", "All paperwork finalized"], careNeeds: ["24/7 skilled nursing", "Respiratory therapy", "Cardiac monitoring", "Wound care", "Complex medication regimen"], budgetFinancial: ["Medicare + supplemental insurance", "VA benefits approved", "Budget managed at ~$8,500/month"], decisionMakers: ["Kevin (sole)", "Father's POA"], timeline: "Move-in Feb 20", preferences: ["Experienced pulmonary care team", "Oxygen therapy setup", "Comfortable private room", "Good visiting room for family"], objections: ["None — fully committed", "Wants smooth transition from hospital"], salesRepAssessment: ["Completed sale", "Complex medical — ensure clinical readiness", "VA coordination needed"], nextStep: ["Move-in day Feb 20", "Clinical team briefing scheduled", "Room prepared with medical equipment"] } },
 ];
 
+function deriveScore(lead) {
+  const stage = lead.stage;
+  const assessment = (lead.intakeNote?.salesRepAssessment || []).join(" ").toLowerCase();
+  if (stage === "deposit" || stage === "move_in") return "hot";
+  if (stage === "post_tour") return "warm";
+  if (assessment.includes("hot") || assessment.includes("urgent")) return "hot";
+  if (assessment.includes("strong") || assessment.includes("warm") || assessment.includes("very motivated")) return "warm";
+  if (assessment.includes("moderate") || assessment.includes("good")) return "nurture";
+  return "cold";
+}
+
 export const mockPipelineLeads = leadsRaw.map((l) => ({
   ...l,
+  score: deriveScore(l),
   interactions: generateInteractions(l),
   callTranscripts: generateCallTranscripts(l),
 }));

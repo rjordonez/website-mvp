@@ -45,8 +45,16 @@ const careLevelColors = {
   "Skilled Nursing": "bg-destructive/10 text-destructive",
 };
 
+const scoreColors = {
+  hot: "bg-destructive/15 text-destructive",
+  warm: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
+  cold: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+  nurture: "bg-primary/10 text-primary",
+};
+
 const sourceOptions = ["Digital Ads", "Phone Call", "Referral", "Walk-in", "Website"];
 const careOptions = ["Assisted Living", "Independent Living", "Memory Care", "Skilled Nursing"];
+const scoreOptions = ["cold", "hot", "nurture", "warm"];
 
 function formatDate(dateStr) {
   const d = new Date(dateStr);
@@ -176,7 +184,7 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
   const [view, setView] = useState("table");
   const [selectedLead, setSelectedLead] = useState(null);
   const [addOpen, setAddOpen] = useState(false);
-  const [filters, setFilters] = useState({ stage: "all", source: "all", careLevel: "all", salesRep: "all" });
+  const [filters, setFilters] = useState({ stage: "all", source: "all", careLevel: "all", salesRep: "all", score: "all" });
   const [stageChangeLead, setStageChangeLead] = useState(null);
 
   // Call & Email dialog state
@@ -202,6 +210,7 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
       if (filters.source !== "all" && l.source !== filters.source) return false;
       if (filters.careLevel !== "all" && l.careLevel !== filters.careLevel) return false;
       if (filters.salesRep !== "all" && l.salesRep !== filters.salesRep) return false;
+      if (filters.score !== "all" && l.score !== filters.score) return false;
       return true;
     });
   }, [leads, filters]);
@@ -271,9 +280,12 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
                       <Heart className="h-3 w-3 text-muted-foreground" />
                       <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${careLevelColors[lead.careLevel]}`}>{lead.careLevel}</span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                      <Calendar className="h-3 w-3" />
-                      <span>{formatDate(lead.lastContactDate)}</span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Calendar className="h-3 w-3" />
+                        <span>{formatDate(lead.lastContactDate)}</span>
+                      </div>
+                      <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium capitalize ${scoreColors[lead.score] || ""}`}>{lead.score}</span>
                     </div>
                   </div>
                 </div>
@@ -307,6 +319,7 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
           </div>
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>{lead.source}</span>
+            <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium capitalize ${scoreColors[lead.score] || ""}`}>{lead.score}</span>
             <span>{formatDate(lead.lastContactDate)}</span>
           </div>
         </div>
@@ -430,7 +443,10 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
                                         <Calendar className="h-3 w-3" />
                                         <span>{formatDate(lead.lastContactDate)}</span>
                                       </div>
-                                      <div className="text-[10px] text-muted-foreground/70">PIC: {lead.salesRep}</div>
+                                      <div className="flex items-center gap-1.5">
+                                        <div className="text-[10px] text-muted-foreground/70">PIC: {lead.salesRep}</div>
+                                        <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium capitalize ${scoreColors[lead.score] || ""}`}>{lead.score}</span>
+                                      </div>
                                     </div>
                                   </div>
                                 )}
@@ -455,6 +471,9 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
                 <TableHeader>
                   <TableRow>
                     <TableHead className="min-w-[150px] sticky left-0 bg-card z-10 whitespace-nowrap">Prospect Name</TableHead>
+                    <TableHead className="min-w-[90px] whitespace-nowrap">
+                      <HeaderFilter label="Score" value={filters.score} options={scoreOptions} onChange={(v) => setFilters((f) => ({ ...f, score: v }))} />
+                    </TableHead>
                     <TableHead className="min-w-[170px] whitespace-nowrap">
                       <HeaderFilter label="Stage" value={filters.stage} options={stages.map((s) => s.key)} onChange={(v) => setFilters((f) => ({ ...f, stage: v }))} />
                     </TableHead>
@@ -467,7 +486,7 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
                     <TableHead className="min-w-[110px] whitespace-nowrap">
                       <HeaderFilter label="PIC" value={filters.salesRep} options={salesRepOptions} onChange={(v) => setFilters((f) => ({ ...f, salesRep: v }))} />
                     </TableHead>
-                    <TableHead className="min-w-[120px] whitespace-nowrap">Point of Contact</TableHead>
+                    <TableHead className="min-w-[120px] whitespace-nowrap">Contact</TableHead>
                     <TableHead className="min-w-[95px] whitespace-nowrap">Inquiry Date</TableHead>
                     <TableHead className="min-w-[95px] whitespace-nowrap">Initial Contact</TableHead>
                     <TableHead className="min-w-[95px] whitespace-nowrap">Last Contact</TableHead>
@@ -478,6 +497,9 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
                   {filteredLeads.map((lead) => (
                     <TableRow key={lead.id} className="cursor-pointer" onClick={() => setSelectedLead(lead)}>
                       <TableCell className="font-medium text-foreground sticky left-0 bg-card z-10 whitespace-nowrap">{lead.name}</TableCell>
+                      <TableCell>
+                        <span className={`px-2 py-0.5 rounded text-[11px] font-medium capitalize whitespace-nowrap ${scoreColors[lead.score] || ""}`}>{lead.score}</span>
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Progress value={stageProgress[lead.stage]} className="h-2 w-16" />

@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Phone, Mail, Calendar, User, DollarSign, Heart, AlertTriangle, TrendingUp, ArrowRight, Sparkles, Loader2, Eye, ThumbsUp, ThumbsDown, Target, BarChart3, CheckCircle2, MessageSquare, ArrowRightLeft, Users, Plus, Headphones } from "lucide-react";
+import { Phone, Mail, Calendar, User, DollarSign, Heart, AlertTriangle, TrendingUp, ArrowRight, Sparkles, Loader2, Eye, ThumbsUp, ThumbsDown, Target, BarChart3, CheckCircle2, MessageSquare, ArrowRightLeft, Users, Plus, Headphones, ChevronDown } from "lucide-react";
 
 import { toast } from "@/hooks/use-toast";
 import AudioNoteRecorder from "@/components/lead-detail/AudioNoteRecorder";
@@ -17,6 +17,52 @@ const careLevelColors = {
   "Memory Care": "bg-warning/10 text-warning border-warning/20",
   "Skilled Nursing": "bg-destructive/10 text-destructive border-destructive/20",
 };
+
+const scoreColors = {
+  hot: "bg-destructive/15 text-destructive border-destructive/30",
+  warm: "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800",
+  cold: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800",
+  nurture: "bg-primary/10 text-primary border-primary/20",
+};
+
+const scoreOptions = ["hot", "warm", "nurture", "cold"];
+
+function EditableScoreBadge({ score, onChange }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <Badge
+        variant="outline"
+        className={`capitalize cursor-pointer ${scoreColors[score] || ""}`}
+        onClick={() => setOpen(!open)}
+      >
+        {score || "—"}
+        <ChevronDown className="h-2.5 w-2.5 ml-1" />
+      </Badge>
+      {open && (
+        <div className="absolute top-full left-0 mt-1 z-50 rounded-md border border-border bg-popover shadow-lg py-1 min-w-[100px]">
+          {scoreOptions.map((opt) => (
+            <button
+              key={opt}
+              onClick={() => { onChange(opt); setOpen(false); }}
+              className={`w-full text-left px-3 py-1.5 text-xs capitalize hover:bg-muted transition-colors ${score === opt ? "font-semibold text-primary" : "text-foreground"}`}
+            >{opt}</button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 const stageLabel = {
   inquiry: "Inquiry",
@@ -177,6 +223,7 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
   const [aiSummary, setAiSummary] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [localInteractions, setLocalInteractions] = useState([]);
+  const [localScore, setLocalScore] = useState(null);
 
   // Sync interactions when lead changes
   const interactions = lead ? [...localInteractions.filter(n => n.id.startsWith("note-")), ...lead.interactions] : [];
@@ -198,9 +245,12 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
     if (!openState) {
       setAiSummary(null);
       setAiLoading(false);
+      setLocalScore(null);
     }
     onOpenChange(openState);
   };
+
+  const currentScore = localScore || lead?.score || "cold";
 
   const handleAddNote = (note) => {
     setLocalInteractions((prev) => [note, ...prev]);
@@ -245,7 +295,8 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
               <Mail className="h-3 w-3" />{lead.contactEmail}
             </button>
           </div>
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <EditableScoreBadge score={currentScore} onChange={(s) => { setLocalScore(s); if (lead) lead.score = s; }} />
             <Badge variant="outline" className={careLevelColors[lead.careLevel]}>{lead.careLevel}</Badge>
             <Badge variant="secondary">{stageLabel[lead.stage]}</Badge>
             <Badge variant="secondary">{lead.source}</Badge>
@@ -280,11 +331,10 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
         )}
 
         <Tabs defaultValue={hasPostTour ? "post_tour" : "intake"} className="mt-2">
-          <TabsList className={`w-full grid ${hasPostTour ? "grid-cols-4" : "grid-cols-3"}`}>
+          <TabsList className={`w-full grid ${hasPostTour ? "grid-cols-3" : "grid-cols-2"}`}>
             {hasPostTour && <TabsTrigger value="post_tour">🏡 Post-Tour</TabsTrigger>}
             <TabsTrigger value="intake">☎️ Intake</TabsTrigger>
             <TabsTrigger value="timeline">📋 Activity Log</TabsTrigger>
-            <TabsTrigger value="recordings">🎧 Recordings</TabsTrigger>
           </TabsList>
           {hasPostTour && (
             <TabsContent value="post_tour" className="mt-4">
@@ -296,9 +346,6 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
           </TabsContent>
           <TabsContent value="timeline" className="mt-4">
             <TimelineContent interactions={interactions} onAddNote={handleAddNote} />
-          </TabsContent>
-          <TabsContent value="recordings" className="mt-4">
-            <CallTranscriptContent transcripts={lead.callTranscripts || []} />
           </TabsContent>
         </Tabs>
       </DialogContent>
