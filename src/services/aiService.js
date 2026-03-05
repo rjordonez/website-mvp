@@ -39,85 +39,39 @@ export async function analyzeTourTranscription(transcription, context = {}) {
 }
 
 /**
- * Creates the system prompt for analysis
+ * Creates the analysis prompt (used by Anthropic/Google/Azure providers)
  */
 function getAnalysisPrompt(transcription, context) {
-  return `You are an AI assistant analyzing conversations to extract structured insights.
+  return `Analyze this conversation transcript and extract structured insights.
 
-Analyze the following conversation transcript and extract:
-
-1. **Key Points**: The most important takeaways, main topics discussed, or key information mentioned (3-5 items). Extract any significant statements, goals, preferences, or requirements mentioned.
-
-2. **Concerns**: Any worries, questions, objections, or issues raised (2-4 items). If none exist, extract things that might need follow-up or clarification.
-
-3. **Small Things**: Minor details, personal preferences, or interesting facts mentioned that could be useful for personalization (2-4 items). This includes hobbies, locations, relationships, or specific likes/dislikes.
-
-IMPORTANT: Even if this is a brief or casual conversation, extract at least 2-3 items for each category based on what was actually said. Be creative and extract value from whatever information is provided.
-
-Context:
-- Person: ${context.firstName} ${context.lastName}
-- Situation: ${context.situation}
-- Email: ${context.email}
-- Phone: ${context.phone}
+Context: ${context.firstName} ${context.lastName} - ${context.situation}
 
 Transcript:
 ${transcription}
 
-Return ONLY a valid JSON object with this exact structure (no markdown, no code blocks):
-{
-  "keyPoints": ["point 1", "point 2", ...],
-  "concerns": ["concern 1", "concern 2", ...],
-  "smallThings": ["detail 1", "detail 2", ...]
-}`;
+Extract key points, concerns, small personal details, and also identify decision makers involved, any budget/financial details mentioned, and level of care needed if discussed.
+
+Return ONLY valid JSON: { "keyPoints": [...], "concerns": [...], "smallThings": [...], "decisionMakers": [...], "budget": [...], "careLevel": [...] }`;
 }
 
 /**
- * OpenAI Implementation (GPT-4 or GPT-3.5)
- * Docs: https://platform.openai.com/docs/api-reference/chat
+ * OpenAI Implementation — proxied through /api/analyze to avoid CORS
  */
 async function analyzeWithOpenAI(transcription, context) {
-  const config = getConfig();
-  const apiKey = config.ai.apiKey;
-  const model = config.ai.model || 'gpt-4-turbo-preview';
-
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('/api/analyze', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        model: model,
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an AI assistant that analyzes senior living tour conversations and extracts structured insights. Always respond with valid JSON only.'
-          },
-          {
-            role: 'user',
-            content: getAnalysisPrompt(transcription, context)
-          }
-        ],
-        temperature: 0.7,
-        response_format: { type: 'json_object' }
-      })
+      body: JSON.stringify({ transcription, context })
     });
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.statusText}`);
+      throw new Error(`Analysis API error: ${response.statusText}`);
     }
 
-    const data = await response.json();
-    const result = JSON.parse(data.choices[0].message.content);
-
-    return {
-      keyPoints: result.keyPoints || [],
-      concerns: result.concerns || [],
-      smallThings: result.smallThings || [],
-      provider: 'openai',
-      model: model
-    };
+    return await response.json();
   } catch (error) {
     console.error('OpenAI analysis error:', error);
     throw error;
@@ -168,6 +122,9 @@ async function analyzeWithAnthropic(transcription, context) {
       keyPoints: result.keyPoints || [],
       concerns: result.concerns || [],
       smallThings: result.smallThings || [],
+      decisionMakers: result.decisionMakers || [],
+      budget: result.budget || [],
+      careLevel: result.careLevel || [],
       provider: 'anthropic',
       model: model
     };
@@ -220,6 +177,9 @@ async function analyzeWithGoogle(transcription, context) {
       keyPoints: result.keyPoints || [],
       concerns: result.concerns || [],
       smallThings: result.smallThings || [],
+      decisionMakers: result.decisionMakers || [],
+      budget: result.budget || [],
+      careLevel: result.careLevel || [],
       provider: 'google',
       model: model
     };
@@ -274,6 +234,9 @@ async function analyzeWithAzureOpenAI(transcription, context) {
       keyPoints: result.keyPoints || [],
       concerns: result.concerns || [],
       smallThings: result.smallThings || [],
+      decisionMakers: result.decisionMakers || [],
+      budget: result.budget || [],
+      careLevel: result.careLevel || [],
       provider: 'azure-openai',
       model: deployment
     };
@@ -308,6 +271,18 @@ async function analyzeWithMock(transcription, context) {
       "Enjoys gardening - mentioned herb garden",
       "Reads mystery novels - asked about library",
       "Plays bridge on Wednesdays with friends"
+    ],
+    decisionMakers: [
+      "Daughter (primary contact)",
+      "Prospect (self)"
+    ],
+    budget: [
+      "Inquired about monthly fees",
+      "Wants to understand what's included"
+    ],
+    careLevel: [
+      "Independent Living with some assistance",
+      "Dietary accommodations needed"
     ],
     provider: 'mock'
   };

@@ -21,7 +21,7 @@ const careLevelColors = {
 const stageLabel = {
   inquiry: "Inquiry",
   connection: "Connection",
-  pre_tour: "Pre-Tour",
+  pre_tour: "Post-Assessment",
   post_tour: "Post-Tour",
   deposit: "Deposit",
   move_in: "Move-in",
@@ -173,7 +173,7 @@ function TimelineContent({ interactions, onAddNote }) {
   );
 }
 
-export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onEmail }) {
+export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onEmail, isMobile }) {
   const [aiSummary, setAiSummary] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
   const [localInteractions, setLocalInteractions] = useState([]);
@@ -208,7 +208,7 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+      <DialogContent fullScreen={isMobile} className={isMobile ? "" : "max-w-2xl max-h-[85vh] overflow-y-auto"}>
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
@@ -283,8 +283,8 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
           <TabsList className={`w-full grid ${hasPostTour ? "grid-cols-4" : "grid-cols-3"}`}>
             {hasPostTour && <TabsTrigger value="post_tour">🏡 Post-Tour</TabsTrigger>}
             <TabsTrigger value="intake">☎️ Intake</TabsTrigger>
-            <TabsTrigger value="recordings">🎧 Recordings</TabsTrigger>
             <TabsTrigger value="timeline">📋 Activity Log</TabsTrigger>
+            <TabsTrigger value="recordings">🎧 Recordings</TabsTrigger>
           </TabsList>
           {hasPostTour && (
             <TabsContent value="post_tour" className="mt-4">
@@ -294,11 +294,11 @@ export default function LeadDetailDialog({ lead, open, onOpenChange, onCall, onE
           <TabsContent value="intake" className="mt-4">
             <EditableIntakeContent lead={lead} />
           </TabsContent>
-          <TabsContent value="recordings" className="mt-4">
-            <CallTranscriptContent transcripts={lead.callTranscripts || []} />
-          </TabsContent>
           <TabsContent value="timeline" className="mt-4">
             <TimelineContent interactions={interactions} onAddNote={handleAddNote} />
+          </TabsContent>
+          <TabsContent value="recordings" className="mt-4">
+            <CallTranscriptContent transcripts={lead.callTranscripts || []} />
           </TabsContent>
         </Tabs>
       </DialogContent>

@@ -1,6 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './Solution.css';
+
+function SolutionVideo({ src, index }) {
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+
+    el.currentTime = 0;
+
+    if (index === 1) {
+      el.playbackRate = 1.5;
+    }
+
+    el.play().catch(() => {});
+
+    if (index === 0) {
+      const handleTimeUpdate = () => {
+        if (el.currentTime >= 6) {
+          el.currentTime = 0;
+        }
+      };
+      el.addEventListener('timeupdate', handleTimeUpdate);
+      return () => el.removeEventListener('timeupdate', handleTimeUpdate);
+    }
+  }, [src, index]);
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      className={`solution-preview${index === 0 ? ' solution-preview-zoomed' : ''}`}
+      autoPlay
+      muted
+      loop
+      playsInline
+      disablePictureInPicture
+    />
+  );
+}
 
 function Solution() {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -9,17 +49,17 @@ function Solution() {
     {
       title: "Easy On the Go & Simple to Learn",
       description: "Log tours, calls, or meetings in a few taps or speak your notes out loud. So intuitive that even team members with no tech experience can start immediately.",
-      image: "/1.png"
+      video: "/1vid.mov"
     },
     {
       title: "Smart AI Assistant",
       description: "Your AI sidekick organizes notes, tracks family preferences, manages follow-ups, and surfaces insights exactly when you need them.",
-      image: "/2.png"
+      video: "/2vid.mov"
     },
     {
       title: "Follow-Ups on Autopilot",
       description: "Reminders, texts, and emails go out at the right time to keep every relationship moving forward without extra effort.",
-      image: "/3.png"
+      video: "/3vid.mov"
     }
   ];
 
@@ -57,16 +97,19 @@ function Solution() {
           </div>
           <div className="solution-right">
             <AnimatePresence mode="wait">
-              <motion.img
+              <motion.div
                 key={activeIndex}
-                src={features[activeIndex].image}
-                alt={features[activeIndex].title}
-                className="solution-preview"
+                className="solution-video-wrapper"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
-              />
+              >
+                <SolutionVideo
+                  src={features[activeIndex].video}
+                  index={activeIndex}
+                />
+              </motion.div>
             </AnimatePresence>
           </div>
         </div>

@@ -18,7 +18,12 @@
       "Bash(then echo \"=== $file ===\" head -20 \"$file\")",
       "Bash(curl:*)",
       "Bash(lsof:*)",
-      "Bash(src/pages/CRM/FollowUpPage.jsx)"
+      "Bash(src/pages/CRM/FollowUpPage.jsx)",
+      "Bash(node:*)",
+      "WebFetch(domain:ai-sdk.dev)",
+      "WebSearch",
+      "Bash(git -C /tmp/silver-stream-organizer branch -a 2>&1)",
+      "Bash(git -C /tmp/silver-stream-organizer log --oneline -5 2>&1; git -C /tmp/silver-stream-organizer remote -v 2>&1)"
     ],
     "deny": [],
     "ask": []

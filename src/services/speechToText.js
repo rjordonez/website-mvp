@@ -131,12 +131,10 @@ async function transcribeWithAssemblyAI(audioBlob, metadata) {
 
     const { upload_url } = await uploadResponse.json();
 
-    // Transcribe with language detection and universal-3-pro model
+    // Transcribe with explicit language code (language_detection fails on short recordings)
     const params = {
       audio: upload_url,
-      language_detection: true,
-      // Uses universal-3-pro for en, es, de, fr, it, pt. Else uses universal-2 for support across all other languages
-      speech_models: ['universal-3-pro', 'universal-2']
+      language_code: 'en',
     };
 
     const transcript = await client.transcripts.transcribe(params);

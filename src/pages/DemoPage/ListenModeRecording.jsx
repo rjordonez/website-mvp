@@ -15,13 +15,28 @@ function ListenModeRecording({ formData, onSubmit, onBack }) {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const timerRef = useRef(null);
+  const streamRef = useRef(null);
+  const audioURLRef = useRef(null);
 
   useEffect(() => {
     checkMicrophonePermission();
 
     return () => {
+      // Stop timer
       if (timerRef.current) {
         clearInterval(timerRef.current);
+      }
+      // Stop active recording
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+        mediaRecorderRef.current.stop();
+      }
+      // Release microphone
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      // Release object URL
+      if (audioURLRef.current) {
+        URL.revokeObjectURL(audioURLRef.current);
       }
     };
   }, []);
@@ -40,6 +55,7 @@ function ListenModeRecording({ formData, onSubmit, onBack }) {
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
 
       mediaRecorderRef.current = new MediaRecorder(stream);
       audioChunksRef.current = [];
@@ -49,12 +65,18 @@ function ListenModeRecording({ formData, onSubmit, onBack }) {
       };
 
       mediaRecorderRef.current.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+        const mimeType = mediaRecorderRef.current.mimeType || 'audio/webm';
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
+        if (audioURLRef.current) {
+          URL.revokeObjectURL(audioURLRef.current);
+        }
         const url = URL.createObjectURL(audioBlob);
+        audioURLRef.current = url;
         setAudioURL(url);
         setHasRecorded(true);
 
         stream.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
       };
 
       mediaRecorderRef.current.start();
@@ -210,6 +232,10 @@ function ListenModeRecording({ formData, onSubmit, onBack }) {
                   <button
                     className="re-record-btn"
                     onClick={() => {
+                      if (audioURLRef.current) {
+                        URL.revokeObjectURL(audioURLRef.current);
+                        audioURLRef.current = null;
+                      }
                       setHasRecorded(false);
                       setAudioURL(null);
                       setRecordingTime(0);
