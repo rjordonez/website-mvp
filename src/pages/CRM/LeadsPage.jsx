@@ -58,36 +58,37 @@ function formatDate(dateStr) {
 
 function HeaderFilter({ label, value, options, onChange }) {
   const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-  const buttonRef = useRef(null);
-  const [dropdownStyle, setDropdownStyle] = useState({});
+  const triggerRef = useRef(null);
+  const dropdownRef = useRef(null);
 
   const sortedOptions = useMemo(() => [...options].sort((a, b) => a.localeCompare(b)), [options]);
 
   useEffect(() => {
     const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+      if (
+        triggerRef.current && !triggerRef.current.contains(e.target) &&
+        dropdownRef.current && !dropdownRef.current.contains(e.target)
+      ) setOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  useEffect(() => {
-    if (open && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownStyle({
-        position: "fixed",
-        top: rect.bottom + 4,
-        left: Math.max(8, Math.min(rect.left, window.innerWidth - 180)),
-      });
-    }
-  }, [open]);
-
   const isFiltered = value !== "all";
 
+  const getDropdownPosition = () => {
+    if (!triggerRef.current) return {};
+    const rect = triggerRef.current.getBoundingClientRect();
+    return {
+      position: "fixed",
+      top: rect.bottom + 4,
+      left: Math.max(8, Math.min(rect.left, window.innerWidth - 180)),
+    };
+  };
+
   return (
-    <div ref={ref} className="inline-flex items-center gap-1 cursor-pointer select-none">
-      <div ref={buttonRef} className="inline-flex items-center gap-1" onClick={() => setOpen(!open)}>
+    <div className="inline-flex items-center gap-1 cursor-pointer select-none">
+      <div ref={triggerRef} className="inline-flex items-center gap-1" onClick={() => setOpen(!open)}>
         <span className={`whitespace-nowrap ${isFiltered ? "text-primary font-semibold" : ""}`}>{label}</span>
         <ChevronDown className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""} ${isFiltered ? "text-primary" : "text-muted-foreground"}`} />
       </div>
@@ -97,7 +98,7 @@ function HeaderFilter({ label, value, options, onChange }) {
         </button>
       )}
       {open && (
-        <div style={dropdownStyle} className="z-50 rounded-md border border-border bg-popover shadow-lg py-1 min-w-[160px] max-h-[60vh] overflow-y-auto">
+        <div ref={dropdownRef} style={getDropdownPosition()} className="z-50 rounded-md border border-border bg-popover shadow-lg py-1 min-w-[160px] max-h-[60vh] overflow-y-auto flex flex-col">
           <button
             onClick={(e) => { e.stopPropagation(); onChange("all"); setOpen(false); }}
             className={`w-full text-left px-3 py-2 text-xs hover:bg-muted transition-colors ${value === "all" ? "font-semibold text-primary" : "text-foreground"}`}
