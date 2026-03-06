@@ -1,7 +1,6 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { useState, useRef, useEffect } from "react";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { MapPin, User, Calendar, Heart, DollarSign, Clock, AlertTriangle, TrendingUp, ArrowRight, Pencil, Save, X, AlertCircle, Gift, Gem } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -26,51 +25,143 @@ const sections = [
   { key: "nextStep", icon: ArrowRight, title: "Next Steps", type: "list" },
 ];
 
-export default function EditableIntakeContent({ lead }) {
-  const n = lead.intakeNote;
+function InlineEditableText({ value, onSave, sectionType }) {
   const [editing, setEditing] = useState(false);
-  const [editData, setEditData] = useState({});
-  const [editingMustKnow, setEditingMustKnow] = useState(false);
-  const [mustKnowDraft, setMustKnowDraft] = useState("");
+  const [draft, setDraft] = useState("");
+  const textareaRef = useRef(null);
+
+  const displayText = Array.isArray(value) ? value.join(". ") + "." : value || "";
 
   const startEditing = () => {
-    const data = {};
-    for (const sec of sections) {
-      const val = n[sec.key];
-      data[sec.key] = Array.isArray(val) ? val.join(". ") : val;
-    }
-    data.maritalStatus = lead.maritalStatus || "";
-    data.specialDates = (lead.specialDates || []).map((sd) => `${sd.type}: ${sd.date}`).join(", ");
-    setEditData(data);
+    setDraft(Array.isArray(value) ? value.join(". ") : value || "");
     setEditing(true);
   };
 
-  const handleSave = () => {
-    // In production, this would persist to DB. For now, update in-memory.
-    for (const sec of sections) {
-      const newVal = editData[sec.key] || "";
-      if (sec.type === "list") {
-        n[sec.key] = newVal.split(/\.\s*/).filter(Boolean);
-      } else {
-        n[sec.key] = newVal;
-      }
+  useEffect(() => {
+    if (editing && textareaRef.current) {
+      const el = textareaRef.current;
+      el.focus();
+      el.selectionStart = el.selectionEnd = el.value.length;
+      el.style.height = "auto";
+      el.style.height = el.scrollHeight + "px";
     }
-    lead.maritalStatus = editData.maritalStatus || "";
-    lead.specialDates = (editData.specialDates || "").split(",").map((s) => s.trim()).filter(Boolean).map((s) => {
-      const [type, ...rest] = s.split(":");
-      return { type: type.trim(), date: (rest.join(":") || "").trim() };
-    });
-    setEditing(false);
-    toast({ title: "Intake note updated" });
+  }, [editing]);
+
+  const handleInput = (e) => {
+    setDraft(e.target.value);
+    e.target.style.height = "auto";
+    e.target.style.height = e.target.scrollHeight + "px";
   };
 
-  const handleCancel = () => {
+  const commitEdit = () => {
+    const trimmed = draft.trim();
+    if (trimmed !== displayText.replace(/\.$/, "")) {
+      let newVal;
+      if (sectionType === "list") {
+        newVal = trimmed.split(/\.\s*/).filter(Boolean);
+      } else {
+        newVal = trimmed;
+      }
+      onSave(newVal);
+      toast({ title: "Updated" });
+    }
     setEditing(false);
-    setEditData({});
   };
 
-  const updateField = (key, value) => {
-    setEditData((prev) => ({ ...prev, [key]: value }));
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") setEditing(false);
+  };
+
+  if (editing) {
+    return (
+      <div className="rounded-md bg-muted/40 border border-dashed border-muted-foreground/25 -mx-1 px-1 py-1">
+        <textarea
+          ref={textareaRef}
+          value={draft}
+          onChange={handleInput}
+          onBlur={commitEdit}
+          onKeyDown={handleKeyDown}
+          className="w-full pl-6 text-sm text-foreground leading-relaxed bg-transparent border-none outline-none resize-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:outline-none"
+          rows={1}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <p
+      onClick={startEditing}
+      className="pl-6 text-sm text-muted-foreground leading-relaxed cursor-text rounded-md px-1 -mx-1 py-1 hover:bg-muted/40"
+    >
+      {displayText || <span className="italic text-muted-foreground/50">Click to add...</span>}
+    </p>
+  );
+}
+
+function InlineEditableInput({ value, onSave, placeholder }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState("");
+  const inputRef = useRef(null);
+
+  const startEditing = () => {
+    setDraft(value || "");
+    setEditing(true);
+  };
+
+  useEffect(() => {
+    if (editing && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [editing]);
+
+  const commitEdit = () => {
+    const trimmed = draft.trim();
+    if (trimmed !== (value || "")) {
+      onSave(trimmed);
+      toast({ title: "Updated" });
+    }
+    setEditing(false);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") setEditing(false);
+    if (e.key === "Enter") commitEdit();
+  };
+
+  if (editing) {
+    return (
+      <div className="rounded-md bg-muted/40 border border-dashed border-muted-foreground/25 -mx-1 px-1 py-1">
+        <input
+          ref={inputRef}
+          type="text"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={commitEdit}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          className="w-full pl-6 text-sm text-foreground bg-transparent border-none outline-none ring-0 focus:ring-0 focus-visible:ring-0 focus-visible:outline-none"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <p
+      onClick={startEditing}
+      className="pl-6 text-sm text-muted-foreground leading-relaxed cursor-text rounded-md px-1 -mx-1 py-1 hover:bg-muted/40"
+    >
+      {value || <span className="italic text-muted-foreground/50">{placeholder || "Click to add..."}</span>}
+    </p>
+  );
+}
+
+export default function EditableIntakeContent({ lead }) {
+  const n = lead.intakeNote;
+  const [editingMustKnow, setEditingMustKnow] = useState(false);
+  const [mustKnowDraft, setMustKnowDraft] = useState("");
+
+  const handleSave = (key, newVal) => {
+    n[key] = newVal;
   };
 
   return (
@@ -85,7 +176,7 @@ export default function EditableIntakeContent({ lead }) {
               {!editingMustKnow ? (
                 <button
                   onClick={() => { setMustKnowDraft(lead.mustKnow || ""); setEditingMustKnow(true); }}
-                  className="p-0.5 rounded hover:bg-warning/20 transition-colors"
+                  className="p-0.5 rounded hover:bg-warning/20"
                 >
                   <Pencil className="h-3 w-3 text-warning" />
                 </button>
@@ -93,13 +184,13 @@ export default function EditableIntakeContent({ lead }) {
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => setEditingMustKnow(false)}
-                    className="p-0.5 rounded hover:bg-warning/20 transition-colors"
+                    className="p-0.5 rounded hover:bg-warning/20"
                   >
                     <X className="h-3 w-3 text-warning" />
                   </button>
                   <button
                     onClick={() => { lead.mustKnow = mustKnowDraft.trim(); setEditingMustKnow(false); toast({ title: "Must Know updated" }); }}
-                    className="p-0.5 rounded hover:bg-warning/20 transition-colors"
+                    className="p-0.5 rounded hover:bg-warning/20"
                   >
                     <Save className="h-3 w-3 text-warning" />
                   </button>
@@ -120,7 +211,7 @@ export default function EditableIntakeContent({ lead }) {
         </div>
       )}
 
-      {/* Header info (non-editable metadata) */}
+      {/* Header info */}
       <div className="grid grid-cols-2 gap-3 rounded-lg bg-muted/40 p-3 text-sm">
         <div className="flex items-center gap-2 text-muted-foreground">
           <MapPin className="h-3.5 w-3.5" />
@@ -144,86 +235,45 @@ export default function EditableIntakeContent({ lead }) {
         </div>
       </div>
 
-      <div className="flex justify-end">
-        {!editing ? (
-          <Button variant="outline" size="sm" onClick={startEditing} className="text-xs">
-            <Pencil className="h-3.5 w-3.5 mr-1" /> Edit Intake
-          </Button>
-        ) : (
-          <div className="flex gap-2">
-            <Button variant="ghost" size="sm" onClick={handleCancel} className="text-xs">
-              <X className="h-3.5 w-3.5 mr-1" /> Cancel
-            </Button>
-            <Button size="sm" onClick={handleSave} className="text-xs">
-              <Save className="h-3.5 w-3.5 mr-1" /> Save
-            </Button>
-          </div>
-        )}
-      </div>
-
       <Separator />
 
-      {/* Personal Info — editable */}
+      {/* Personal Info — inline editable */}
       <div>
         <SectionHeader icon={Gem} title="Marital Status" />
-        {editing ? (
-          <div className="pl-6">
-            <input
-              type="text"
-              value={editData.maritalStatus || ""}
-              onChange={(e) => updateField("maritalStatus", e.target.value)}
-              placeholder="e.g. Single, Married, Widow"
-              className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
-        ) : (
-          <p className="pl-6 text-sm text-muted-foreground leading-relaxed">{lead.maritalStatus || "—"}</p>
-        )}
+        <InlineEditableInput
+          value={lead.maritalStatus}
+          onSave={(val) => { lead.maritalStatus = val; }}
+          placeholder="e.g. Single, Married, Widow"
+        />
       </div>
       <div>
         <SectionHeader icon={Gift} title="Special Dates" />
-        {editing ? (
-          <div className="pl-6">
-            <input
-              type="text"
-              value={editData.specialDates || ""}
-              onChange={(e) => updateField("specialDates", e.target.value)}
-              placeholder="e.g. Birthday: Mar 15, Anniversary: Jun 18"
-              className="w-full rounded-md border border-border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
-        ) : (
-          <p className="pl-6 text-sm text-muted-foreground leading-relaxed">
-            {lead.specialDates && lead.specialDates.length > 0
-              ? lead.specialDates.map((sd) => `${sd.type}: ${sd.date}`).join(" · ")
-              : "—"}
-          </p>
-        )}
+        <InlineEditableInput
+          value={lead.specialDates && lead.specialDates.length > 0
+            ? lead.specialDates.map((sd) => `${sd.type}: ${sd.date}`).join(", ")
+            : ""}
+          onSave={(val) => {
+            lead.specialDates = val.split(",").map((s) => s.trim()).filter(Boolean).map((s) => {
+              const [type, ...rest] = s.split(":");
+              return { type: type.trim(), date: (rest.join(":") || "").trim() };
+            });
+          }}
+          placeholder="e.g. Birthday: Mar 15, Anniversary: Jun 18"
+        />
       </div>
 
       <Separator />
 
-      {sections.map((sec) => {
-        const val = n[sec.key];
-        const displayText = Array.isArray(val) ? val.join(". ") + "." : val;
-
-        return (
-          <div key={sec.key}>
-            <SectionHeader icon={sec.icon} title={sec.title} />
-            {editing ? (
-              <div className="pl-6">
-                <Textarea
-                  value={editData[sec.key] || ""}
-                  onChange={(e) => updateField(sec.key, e.target.value)}
-                  className="text-sm min-h-[60px]"
-                />
-              </div>
-            ) : (
-              <p className="pl-6 text-sm text-muted-foreground leading-relaxed">{displayText}</p>
-            )}
-          </div>
-        );
-      })}
+      {sections.map((sec) => (
+        <div key={sec.key}>
+          <SectionHeader icon={sec.icon} title={sec.title} />
+          <InlineEditableText
+            value={n[sec.key]}
+            onSave={(newVal) => handleSave(sec.key, newVal)}
+            sectionType={sec.type}
+          />
+        </div>
+      ))}
     </div>
   );
 }

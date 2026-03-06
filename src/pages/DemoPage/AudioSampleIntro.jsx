@@ -45,7 +45,7 @@ function AudioSampleIntro({ onNext, onBack }) {
               marginBottom: '12px'
             }}
           >
-            <source src="/demo-audio.mp3" type="audio/mpeg" />
+            <source src="/demo-audio2.mp3" type="audio/mpeg" />
             Your browser does not support the audio element.
           </audio>
           <p style={{
