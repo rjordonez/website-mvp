@@ -25,15 +25,15 @@ const sections = [
   { key: "nextStep", icon: ArrowRight, title: "Next Steps", type: "list" },
 ];
 
-function InlineEditableText({ value, onSave, sectionType }) {
+function InlineEditableText({ displayValue, onSave, sectionType }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
   const textareaRef = useRef(null);
-
-  const displayText = Array.isArray(value) ? value.join(". ") + "." : value || "";
+  const saving = useRef(false);
 
   const startEditing = () => {
-    setDraft(Array.isArray(value) ? value.join(". ") : value || "");
+    setDraft(displayValue);
+    saving.current = false;
     setEditing(true);
   };
 
@@ -54,22 +54,28 @@ function InlineEditableText({ value, onSave, sectionType }) {
   };
 
   const commitEdit = () => {
+    if (saving.current) return;
+    saving.current = true;
     const trimmed = draft.trim();
-    if (trimmed !== displayText.replace(/\.$/, "")) {
-      let newVal;
-      if (sectionType === "list") {
-        newVal = trimmed.split(/\.\s*/).filter(Boolean);
-      } else {
-        newVal = trimmed;
-      }
-      onSave(newVal);
-      toast({ title: "Updated" });
+    let newVal;
+    if (sectionType === "list") {
+      newVal = trimmed.split(/\.\s*/).filter(Boolean);
+    } else {
+      newVal = trimmed;
     }
+    onSave(newVal);
     setEditing(false);
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Escape") setEditing(false);
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      textareaRef.current?.blur();
+    }
+    if (e.key === "Escape") {
+      saving.current = true;
+      setEditing(false);
+    }
   };
 
   if (editing) {
@@ -93,18 +99,20 @@ function InlineEditableText({ value, onSave, sectionType }) {
       onClick={startEditing}
       className="pl-6 text-sm text-muted-foreground leading-relaxed cursor-text rounded-md px-1 -mx-1 py-1 hover:bg-muted/40"
     >
-      {displayText || <span className="italic text-muted-foreground/50">Click to add...</span>}
+      {displayValue || <span className="italic text-muted-foreground/50">Click to add...</span>}
     </p>
   );
 }
 
-function InlineEditableInput({ value, onSave, placeholder }) {
+function InlineEditableInput({ displayValue, onSave, placeholder }) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
   const inputRef = useRef(null);
+  const saving = useRef(false);
 
   const startEditing = () => {
-    setDraft(value || "");
+    setDraft(displayValue || "");
+    saving.current = false;
     setEditing(true);
   };
 
@@ -115,17 +123,21 @@ function InlineEditableInput({ value, onSave, placeholder }) {
   }, [editing]);
 
   const commitEdit = () => {
-    const trimmed = draft.trim();
-    if (trimmed !== (value || "")) {
-      onSave(trimmed);
-      toast({ title: "Updated" });
-    }
+    if (saving.current) return;
+    saving.current = true;
+    onSave(draft.trim());
     setEditing(false);
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Escape") setEditing(false);
-    if (e.key === "Enter") commitEdit();
+    if (e.key === "Enter") {
+      e.preventDefault();
+      inputRef.current?.blur();
+    }
+    if (e.key === "Escape") {
+      saving.current = true;
+      setEditing(false);
+    }
   };
 
   if (editing) {
@@ -150,7 +162,7 @@ function InlineEditableInput({ value, onSave, placeholder }) {
       onClick={startEditing}
       className="pl-6 text-sm text-muted-foreground leading-relaxed cursor-text rounded-md px-1 -mx-1 py-1 hover:bg-muted/40"
     >
-      {value || <span className="italic text-muted-foreground/50">{placeholder || "Click to add..."}</span>}
+      {displayValue || <span className="italic text-muted-foreground/50">{placeholder || "Click to add..."}</span>}
     </p>
   );
 }
@@ -159,9 +171,25 @@ export default function EditableIntakeContent({ lead }) {
   const n = lead.intakeNote;
   const [editingMustKnow, setEditingMustKnow] = useState(false);
   const [mustKnowDraft, setMustKnowDraft] = useState("");
+  const [maritalStatus, setMaritalStatus] = useState(lead.maritalStatus || "");
+  const [specialDates, setSpecialDates] = useState(
+    lead.specialDates && lead.specialDates.length > 0
+      ? lead.specialDates.map((sd) => `${sd.type}: ${sd.date}`).join(", ")
+      : ""
+  );
+  const [intakeState, setIntakeState] = useState(() => {
+    const init = {};
+    for (const sec of sections) {
+      const val = n[sec.key];
+      init[sec.key] = Array.isArray(val) ? val.join(". ") + "." : val || "";
+    }
+    return init;
+  });
 
   const handleSave = (key, newVal) => {
     n[key] = newVal;
+    const display = Array.isArray(newVal) ? newVal.join(". ") + "." : newVal || "";
+    setIntakeState((prev) => ({ ...prev, [key]: display }));
   };
 
   return (
@@ -237,26 +265,25 @@ export default function EditableIntakeContent({ lead }) {
 
       <Separator />
 
-      {/* Personal Info — inline editable */}
+      {/* Personal Info */}
       <div>
         <SectionHeader icon={Gem} title="Marital Status" />
         <InlineEditableInput
-          value={lead.maritalStatus}
-          onSave={(val) => { lead.maritalStatus = val; }}
+          displayValue={maritalStatus}
+          onSave={(val) => { lead.maritalStatus = val; setMaritalStatus(val); }}
           placeholder="e.g. Single, Married, Widow"
         />
       </div>
       <div>
         <SectionHeader icon={Gift} title="Special Dates" />
         <InlineEditableInput
-          value={lead.specialDates && lead.specialDates.length > 0
-            ? lead.specialDates.map((sd) => `${sd.type}: ${sd.date}`).join(", ")
-            : ""}
+          displayValue={specialDates}
           onSave={(val) => {
             lead.specialDates = val.split(",").map((s) => s.trim()).filter(Boolean).map((s) => {
               const [type, ...rest] = s.split(":");
               return { type: type.trim(), date: (rest.join(":") || "").trim() };
             });
+            setSpecialDates(val);
           }}
           placeholder="e.g. Birthday: Mar 15, Anniversary: Jun 18"
         />
@@ -268,7 +295,7 @@ export default function EditableIntakeContent({ lead }) {
         <div key={sec.key}>
           <SectionHeader icon={sec.icon} title={sec.title} />
           <InlineEditableText
-            value={n[sec.key]}
+            displayValue={intakeState[sec.key]}
             onSave={(newVal) => handleSave(sec.key, newVal)}
             sectionType={sec.type}
           />
