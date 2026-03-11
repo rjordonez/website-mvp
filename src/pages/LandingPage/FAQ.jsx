@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import './FAQ.css';
 
 function FAQ() {
@@ -39,7 +40,14 @@ function FAQ() {
   ];
 
   return (
-    <section id="who" className="who-section">
+    <motion.section
+      id="who"
+      className="who-section"
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+    >
       <div className="container">
         <div className="who-header">
           <h3>Who This Is For</h3>
@@ -78,7 +86,7 @@ function FAQ() {
           ))}
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 

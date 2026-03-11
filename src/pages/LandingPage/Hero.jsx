@@ -1,12 +1,25 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import './Hero.css';
 
+const heroStagger = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.15 },
+  },
+};
+
+const heroChild = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+};
+
 function Hero() {
-  const scrollToNext = () => {
-    const backedSection = document.getElementById('backed');
-    if (backedSection) {
-      backedSection.scrollIntoView({ behavior: 'smooth' });
+  const scrollToICP = () => {
+    const icpSection = document.getElementById('icp-paths');
+    if (icpSection) {
+      icpSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -85,21 +98,30 @@ function Hero() {
             ease: "easeInOut"
           }}
         />
-        <div className="hero-content">
-          <div className="hero-backed">
+        <motion.div
+          className="hero-content"
+          variants={heroStagger}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div className="hero-backed" variants={heroChild}>
             <span className="hero-backed-label">BACKED BY:</span>
             <div className="hero-backed-logos">
               <img src="/techstars.png" alt="Techstars" className="hero-backed-logo hero-backed-logo-techstars" />
               <img src="/usc.png" alt="USC" className="hero-backed-logo hero-backed-logo-usc" />
             </div>
-          </div>
-          <h1>Turn every lead into<br />a trusted relationship</h1>
-          <p className="hero-subtitle">Capture every detail, follow up automatically, and stay present<br />with families, all from your phone.</p>
-          <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="hero-btn">Book a demo</a>
-        </div>
+          </motion.div>
+          <motion.h1 variants={heroChild}>The CRM Built for</motion.h1>
+          <motion.h1 variants={heroChild} style={{ marginTop: '-0.5rem' }}>Senior Living Sales</motion.h1>
+          <motion.p className="hero-subtitle" variants={heroChild}>Log by voice. Follow up automatically. Know which leads are worth your time. All from your phone.</motion.p>
+          <motion.div className="hero-buttons" variants={heroChild}>
+            <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="hero-btn">Book a Demo</a>
+            <Link to="/demo" className="hero-btn-secondary">See How It Works</Link>
+          </motion.div>
+        </motion.div>
         <motion.button
           className="scroll-indicator"
-          onClick={scrollToNext}
+          onClick={scrollToICP}
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
         >
