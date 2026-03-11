@@ -33,14 +33,58 @@
   color: #1f2937;
   font-weight: 300;
   text-align: center;
-  white-space: nowrap;
+  font-family: 'Playfair Display', serif;
+}
+
+/* Feature cards grid */
+.solution-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.solution-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.solution-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #eef2ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.solution-card h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 0.75rem;
+}
+
+.solution-card p {
+  font-size: 0.95rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
 }
 
 /* Split layout */
 .solution-split {
   display: flex;
   gap: 4rem;
-  align-items: flex-start;
+  align-items: center;
 }
 
 .solution-left {
@@ -102,23 +146,41 @@
 
 .solution-preview {
   width: 100%;
-  max-width: 500px;
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-  object-fit: cover;
+  max-width: 560px;
+  border-radius: 0;
+  box-shadow: none;
+  object-fit: contain;
   pointer-events: none;
   display: block;
+  background: #000;
+}
+
+.solution-preview-cropped {
+  width: calc(100% + 20px);
+  max-width: none;
+  margin: -10px;
 }
 
 .solution-video-wrapper {
   overflow: hidden;
-  border-radius: 12px;
-  max-width: 500px;
+  border-radius: 16px;
+  max-width: 560px;
   width: 100%;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.solution-placeholder {
+  aspect-ratio: 9 / 16;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .solution-preview-zoomed {
-  transform: scale(1.1);
+  transform: none;
 }
 
 .solution-preview::-webkit-media-controls {
@@ -137,6 +199,11 @@
   .solution-header h3 {
     white-space: normal;
     font-size: 2rem;
+  }
+
+  .solution-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 
   .solution-split {

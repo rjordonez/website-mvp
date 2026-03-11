@@ -100,6 +100,23 @@
   margin: 0;
 }
 
+.hero-badge {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  padding: 0.4rem 1.25rem;
+  border-radius: 100px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
 .hero-btn {
   background: white;
   color: black;
@@ -112,11 +129,28 @@
   transition: opacity 0.2s;
   text-decoration: none;
   display: inline-block;
-  margin-top: 1rem;
 }
 
 .hero-btn:hover {
   opacity: 0.9;
+}
+
+.hero-btn-secondary {
+  background: transparent;
+  color: white;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  padding: 1rem 2.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.hero-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.8);
 }
 
 .blur-orb {
@@ -229,6 +263,11 @@
 
   .hero-backed-logos {
     gap: 1rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
   .scroll-indicator {

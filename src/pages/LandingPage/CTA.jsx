@@ -1,10 +1,17 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import './CTA.css';
 
 function CTA() {
   return (
-    <section className="cta">
+    <motion.section
+      className="cta"
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+    >
       <div className="cta-inner">
         <motion.div
           className="cta-orb cta-orb-1"
@@ -23,12 +30,12 @@ function CTA() {
         />
         <div className="cta-inner-noise"></div>
         <div className="cta-content">
-          <h2>Focus on families.<br />We'll handle the details.</h2>
-          <p className="cta-subtitle">Book a demo to see how Trilio simplifies senior living sales.</p>
-          <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="cta-button">Book a demo</a>
+          <h2>See It for Yourself</h2>
+          <p className="cta-subtitle">A quick 20-minute demo. We will show you exactly how it works for your team.</p>
+          <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="cta-button">Book a Demo</a>
         </div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 

@@ -1,0 +1,88 @@
+.social-proof {
+  padding: 6rem 2rem;
+  background: #f9fafb;
+}
+
+.social-proof-heading {
+  font-size: 2.5rem;
+  color: #1f2937;
+  font-weight: 300;
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+  margin: 0 0 3rem;
+}
+
+.social-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.social-proof-card {
+  background: white;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.social-proof-stars {
+  font-size: 0.9rem;
+  color: #4B6EF5;
+  letter-spacing: 0.1em;
+}
+
+.social-proof-quote {
+  font-size: 1.1rem;
+  color: #1f2937;
+  line-height: 1.7;
+  margin: 0;
+  font-style: italic;
+}
+
+.social-proof-author {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.social-proof-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.social-proof-author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.social-proof-name {
+  font-size: 0.9rem;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.social-proof-role {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+@media (max-width: 768px) {
+  .social-proof-heading {
+    font-size: 2rem;
+  }
+
+  .social-proof-grid {
+    grid-template-columns: 1fr;
+  }
+}
