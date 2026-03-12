@@ -1,15 +1,28 @@
 import React, { useState } from 'react';
+import { supabase } from '../../lib/supabase';
 import CRMView from './CRMView';
 
 function Demo() {
   const [email, setEmail] = useState('');
   const [showDemo, setShowDemo] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email.trim()) {
-      setShowDemo(true);
+    if (!email.trim()) return;
+
+    setSubmitting(true);
+    try {
+      if (supabase) {
+        await supabase.from('demo_emails').insert([
+          { email: email.trim(), source: 'demo_page' }
+        ]);
+      }
+    } catch (err) {
+      console.error('Failed to save email:', err);
     }
+    setSubmitting(false);
+    setShowDemo(true);
   };
 
   if (showDemo) {
@@ -58,15 +71,18 @@ function Demo() {
           />
           <button
             type="submit"
+            disabled={submitting}
             style={{
               background: '#4B6EF5', color: 'white', border: 'none',
               padding: '0.85rem', borderRadius: '6px', fontSize: '1rem',
-              fontWeight: 500, cursor: 'pointer', transition: 'background 0.2s',
+              fontWeight: 500, cursor: submitting ? 'not-allowed' : 'pointer',
+              transition: 'background 0.2s',
+              opacity: submitting ? 0.7 : 1,
             }}
-            onMouseEnter={(e) => e.target.style.background = '#3b5de7'}
-            onMouseLeave={(e) => e.target.style.background = '#4B6EF5'}
+            onMouseEnter={(e) => !submitting && (e.target.style.background = '#3b5de7')}
+            onMouseLeave={(e) => !submitting && (e.target.style.background = '#4B6EF5')}
           >
-            Access Demo
+            {submitting ? 'Loading...' : 'Access Demo'}
           </button>
         </form>
         <p style={{

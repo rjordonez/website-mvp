@@ -79,10 +79,18 @@
 
 @media (max-width: 768px) {
   .social-proof-heading {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 6vw, 2rem);
+    text-wrap: balance;
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .social-proof-grid {
     grid-template-columns: 1fr;
+  }
+
+  .social-proof-quote {
+    text-wrap: balance;
   }
 }

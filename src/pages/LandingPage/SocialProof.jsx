@@ -9,16 +9,16 @@ const cardVariants = {
 
 const quotes = [
   {
-    text: "Honestly, we had no idea which referral partners were actually good for us. Trilio showed us the hours of service each one brought in. Total game changer for where we spend our time.",
+    text: "Before Trilio, we were guessing which referral partners were worth our time. Now we know exactly which ones drive hours of service and we invest accordingly.",
     name: "Agency Owner",
     role: "Home Care Services",
-    avatar: "https://randomuser.me/api/portraits/men/46.jpg",
+    avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=face",
   },
   {
     text: "I'm never at my desk. I'm always out on tours or at events. I used to spend an hour every night just catching up on notes. Now I just talk on my way to the car and it's done.",
     name: "Community Sales Director",
     role: "Senior Living Community",
-    avatar: "https://randomuser.me/api/portraits/women/57.jpg",
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face",
   },
 ];
 

@@ -1,8 +1,11 @@
 .navbar {
-  position: sticky;
-  top: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
-  padding: 0 2rem;
+  padding: 0.5rem 2rem 0;
+  background: white;
 }
 
 .nav-container {
@@ -16,16 +19,10 @@
   transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
 }
 
-.nav-container.nav-transparent {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: none;
-}
-
+.nav-container.nav-transparent,
 .nav-container.nav-scrolled {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
+  background: white;
+  backdrop-filter: none;
   border: 1px solid rgba(0, 0, 0, 0.06);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
@@ -219,6 +216,24 @@
     display: none;
   }
 
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 0 1rem;
+    z-index: 1000;
+    background: white;
+  }
+
+  .nav-container.nav-transparent,
+  .nav-container.nav-scrolled {
+    background: white;
+    backdrop-filter: none;
+    border: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  }
+
   .hamburger-btn {
     display: flex;
   }
@@ -226,28 +241,33 @@
   .mobile-menu {
     display: flex;
     flex-direction: column;
-    background: rgba(255, 255, 255, 0.97);
-    backdrop-filter: blur(12px);
+    background: white;
+    backdrop-filter: none;
     border: 1px solid rgba(0, 0, 0, 0.06);
     border-radius: 6px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     max-width: 1100px;
     margin: 0.5rem auto 0;
     padding: 0.5rem 0;
+    position: relative;
+    z-index: 1001;
   }
 
   .mobile-menu a {
     display: block;
     padding: 0.75rem 1.5rem;
-    color: #6b7280;
-    font-size: 0.9rem;
+    color: #1f2937;
+    font-size: 1rem;
     font-weight: 500;
     text-decoration: none;
     transition: background 0.15s, color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
   }
 
-  .mobile-menu a:hover {
-    background: #f9fafb;
+  .mobile-menu a:hover,
+  .mobile-menu a:active {
+    background: #f3f4f6;
     color: #1f2937;
   }
 

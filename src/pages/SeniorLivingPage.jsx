@@ -182,7 +182,7 @@ function FeatureVideo({ src }) {
         style={{
           width: '100%',
           aspectRatio: '16 / 9',
-          borderRadius: '12px',
+          borderRadius: '16px',
           background: '#f3f4f6',
           objectFit: 'cover',
         }}
@@ -397,36 +397,95 @@ function SeniorLivingPage() {
   return (
     <>
       <style>{`
+        .mobile-cta-text { display: none; }
+        .desktop-cta-text { display: inline; }
         @media (max-width: 768px) {
-          .sl-hero { height: auto !important; min-height: 70vh !important; }
-          .sl-hero-headline { font-size: 2rem !important; max-width: 100% !important; }
-          .sl-hero-sub { font-size: 0.95rem !important; }
+          .mobile-cta-text { display: inline !important; }
+          .desktop-cta-text { display: none !important; }
+          .sl-hero { height: auto !important; min-height: auto !important; padding: 0.25rem !important; }
+          .sl-hero-blue-inner {
+            height: auto !important;
+            min-height: 70vh !important;
+            padding: 4rem 1rem !important;
+          }
+          .sl-hero-headline {
+            font-size: clamp(1.75rem, 7vw, 4.5rem) !important;
+            max-width: 90% !important;
+            text-wrap: balance !important;
+          }
+          .sl-hero-sub {
+            font-size: clamp(0.85rem, 3.5vw, 1.15rem) !important;
+            text-wrap: balance !important;
+            max-width: 85% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+          }
           .sl-hero-content { padding: 0 1rem !important; gap: 1rem !important; }
           .sl-hero-cta { width: 100% !important; text-align: center !important; }
-          .sl-hero-cta a { display: block !important; width: 100% !important; box-sizing: border-box !important; }
+          .sl-hero-cta a { display: block !important; width: 100% !important; box-sizing: border-box !important; padding: 0.8rem 2rem !important; font-size: 0.8rem !important; }
           .sl-section { padding: 3rem 1rem !important; }
-          .sl-section-heading { font-size: 1.5rem !important; }
-          .sl-section-subtext { font-size: 0.9rem !important; }
+          .sl-section-heading {
+            font-size: clamp(1.5rem, 5vw, 2.5rem) !important;
+            text-wrap: balance !important;
+            max-width: 95% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+          }
+          .sl-section-subtext {
+            font-size: clamp(0.85rem, 3.5vw, 1.05rem) !important;
+            text-wrap: balance !important;
+            max-width: 92% !important;
+          }
           .sl-label { font-size: 0.75rem !important; }
           .sl-features-container { gap: 2.5rem !important; }
           .sl-feature-row { flex-direction: column !important; gap: 1.5rem !important; }
-          .sl-feature-title { font-size: 1.25rem !important; }
-          .sl-feature-desc { font-size: 0.9rem !important; }
-          .sl-feature-quote { font-size: 0.85rem !important; }
+          .sl-feature-title {
+            font-size: clamp(1.1rem, 4.5vw, 1.5rem) !important;
+            text-wrap: balance !important;
+          }
+          .sl-feature-desc {
+            font-size: 0.9rem !important;
+            max-width: 100% !important;
+          }
+          .sl-feature-quote {
+            font-size: 0.85rem !important;
+            max-width: 100% !important;
+          }
           .sl-stats-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
           .sl-stat-number { font-size: 3rem !important; }
-          .sl-stat-label { font-size: 1rem !important; }
-          .sl-stat-sublabel { font-size: 0.85rem !important; }
+          .sl-stat-label {
+            font-size: 1rem !important;
+            text-wrap: balance !important;
+          }
+          .sl-stat-sublabel {
+            font-size: 0.85rem !important;
+            text-wrap: balance !important;
+            max-width: 280px !important;
+          }
           .sl-cta-section { padding: 0 0.5rem !important; }
           .sl-cta-inner { padding: 3rem 1rem !important; }
-          .sl-cta-heading { font-size: 1.5rem !important; }
-          .sl-cta-sub { font-size: 0.9rem !important; }
+          .sl-cta-heading {
+            font-size: clamp(1.5rem, 5vw, 2.5rem) !important;
+            text-wrap: balance !important;
+            max-width: 90% !important;
+          }
+          .sl-cta-sub {
+            font-size: clamp(0.85rem, 3.5vw, 1.05rem) !important;
+            text-wrap: balance !important;
+            max-width: 90% !important;
+          }
           .sl-cta-btn { display: block !important; width: 100% !important; box-sizing: border-box !important; text-align: center !important; }
           .sl-disclaimer { font-size: 0.75rem !important; margin-top: 2rem !important; }
           .sl-pain-section { padding: 3rem 1rem !important; }
           .sl-pain-card-container { max-width: 100% !important; }
           .sl-pain-card { padding: 1.5rem 1rem !important; }
-          .sl-pain-card p { font-size: 0.9rem !important; }
+          .sl-pain-card p {
+            font-size: 0.9rem !important;
+            text-wrap: balance !important;
+            max-width: 95% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+          }
           .sl-pain-arrow { width: 32px !important; height: 32px !important; }
           .sl-pain-arrow-left { left: -4px !important; }
           .sl-pain-arrow-right { right: -4px !important; }
@@ -444,7 +503,7 @@ function SeniorLivingPage() {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        <div style={{
+        <div className="sl-hero-blue-inner" style={{
           width: 'calc(100% - 1rem)',
           height: 'calc(100% - 1rem)',
           background: '#4B6EF5',
@@ -511,7 +570,8 @@ function SeniorLivingPage() {
                 borderRadius: '4px', fontSize: '1rem', fontWeight: 400, textDecoration: 'none',
                 display: 'inline-block', marginTop: '1rem',
               }}>
-                Book a Demo for Your Community
+                <span className="mobile-cta-text">Book a Demo</span>
+                <span className="desktop-cta-text">Book a Demo for Your Community</span>
               </a>
             </motion.div>
           </motion.div>
@@ -573,7 +633,7 @@ function SeniorLivingPage() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.6, ease: 'easeOut', delay: 0.15 }}
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, overflow: 'hidden', borderRadius: '12px' }}
                 >
                   <FeatureVideo src={feature.videoSrc} />
                 </motion.div>

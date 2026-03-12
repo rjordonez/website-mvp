@@ -56,10 +56,33 @@ function Home() {
       <Hero />
 
       {/* ICP Paths */}
-      <section id="icp-paths" style={{ padding: '6rem 2rem', background: 'white' }}>
+      <style>{`
+        @media (max-width: 768px) {
+          .icp-cards-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1.25rem !important;
+          }
+          .icp-card {
+            padding: 1.5rem 1.25rem !important;
+          }
+          .icp-card-title {
+            font-size: 1.2rem !important;
+          }
+          .icp-card-desc {
+            font-size: 0.9rem !important;
+          }
+          .icp-section {
+            padding: 3rem 1rem !important;
+          }
+          .icp-section-heading {
+            font-size: clamp(1.5rem, 5vw, 2.5rem) !important;
+          }
+        }
+      `}</style>
+      <section id="icp-paths" className="icp-section" style={{ padding: '6rem 2rem', background: 'white' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <h3 style={{
+            <h3 className="icp-section-heading" style={{
               fontSize: '2.5rem',
               color: '#1f2937',
               fontWeight: 300,
@@ -69,6 +92,7 @@ function Home() {
 {/* Removed subtext */}
           </div>
           <motion.div
+            className="icp-cards-grid"
             style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '2rem' }}
             initial="hidden"
             whileInView="visible"
@@ -79,6 +103,7 @@ function Home() {
               <motion.div
                 key={icp.title}
                 variants={cardVariants}
+                className="icp-card"
                 style={{
                   background: '#f9fafb',
                   borderRadius: '12px',
@@ -91,13 +116,13 @@ function Home() {
                 }}
               >
                 <div style={iconContainerStyle}>{icp.icon}</div>
-                <h3 style={{
+                <h3 className="icp-card-title" style={{
                   fontSize: '1.5rem',
                   fontWeight: 600,
                   color: '#1f2937',
                   margin: 0,
                 }}>{icp.title}</h3>
-                <p style={{
+                <p className="icp-card-desc" style={{
                   fontSize: '1.05rem',
                   color: '#6b7280',
                   lineHeight: 1.6,
