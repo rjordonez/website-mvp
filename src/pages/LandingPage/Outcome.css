@@ -206,7 +206,13 @@
   }
 
   .outcome-header h3 {
-    font-size: 1.75rem;
+    font-size: clamp(1.5rem, 6vw, 1.75rem);
+    text-wrap: balance;
+  }
+
+  .outcome-header p {
+    text-wrap: balance;
+    max-width: 90%;
   }
 
   .outcome-stats-row {
@@ -216,6 +222,15 @@
 
   .outcome-stat-number-lg {
     font-size: 3.5rem;
+  }
+
+  .outcome-stat-label-lg {
+    text-wrap: balance;
+  }
+
+  .outcome-stat-supporting {
+    text-wrap: balance;
+    max-width: 85%;
   }
 
   .outcome-grid {

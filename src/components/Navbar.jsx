@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
 function Navbar() {
@@ -7,6 +7,29 @@ function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleHashLink = (hash) => (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: hash } });
+    } else {
+      const el = document.querySelector(hash);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    if (location.pathname === '/' && location.state?.scrollTo) {
+      setTimeout(() => {
+        const el = document.querySelector(location.state.scrollTo);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+      window.history.replaceState({}, '');
+    }
+  }, [location]);
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -72,8 +95,8 @@ function Navbar() {
               </div>
             )}
           </li>
-          <li><a href="#solution">Features</a></li>
-          <li><a href="#outcome">Outcomes</a></li>
+          <li><a href="#solution" onClick={handleHashLink('#solution')}>Features</a></li>
+          <li><a href="#outcome" onClick={handleHashLink('#outcome')}>Outcomes</a></li>
         </ul>
         <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="nav-cta">Book a demo</a>
 
@@ -93,8 +116,8 @@ function Navbar() {
           <Link to="/" onClick={() => setMobileMenuOpen(false)}>Home</Link>
           <Link to="/for/senior-living" onClick={() => setMobileMenuOpen(false)}>For Senior Living Communities</Link>
           <Link to="/for/home-care" onClick={() => setMobileMenuOpen(false)}>For Home Care Agencies</Link>
-          <a href="#solution" onClick={() => setMobileMenuOpen(false)}>Features</a>
-          <a href="#outcome" onClick={() => setMobileMenuOpen(false)}>Outcomes</a>
+          <a href="#solution" onClick={handleHashLink('#solution')}>Features</a>
+          <a href="#outcome" onClick={handleHashLink('#outcome')}>Outcomes</a>
           <a
             href="https://calendly.com/jessie-trilio/30min"
             target="_blank"

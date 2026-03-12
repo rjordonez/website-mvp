@@ -188,9 +188,9 @@ function FeatureVideo({ src }) {
         disablePictureInPicture
         style={{
           width: '100%',
-          borderRadius: '12px',
+          borderRadius: '16px',
           background: '#f3f4f6',
-          objectFit: 'contain',
+          objectFit: 'cover',
         }}
       />
     );
@@ -396,7 +396,7 @@ function HomeCarePage() {
       title: 'Walk Into Every Call Fully Prepared',
       description: "Before every call, Trilio surfaces who this person is, what they need, and where you left off. You never ask the same question twice.",
       quote: '"Families notice when you remember them. That is how you win over a cheaper agency."',
-      videoSrc: '/2vid.mov',
+      videoSrc: '/HomeCareDemo3.mov',
     },
     {
       icon: <IconBolt />,
@@ -416,26 +416,43 @@ function HomeCarePage() {
   return (
     <>
       <style>{`
+        .mobile-cta-text { display: none; }
+        .desktop-cta-text { display: inline; }
         @media (max-width: 768px) {
+          .mobile-cta-text { display: inline !important; }
+          .desktop-cta-text { display: none !important; }
           .hc-hero-section {
             height: auto !important;
-            min-height: 70vh !important;
+            min-height: auto !important;
             padding: 0.25rem !important;
+          }
+          .hc-hero-blue-inner {
+            height: auto !important;
+            min-height: 70vh !important;
+            padding: 4rem 1rem !important;
           }
           .hc-hero-inner {
             padding: 1rem !important;
           }
           .hc-hero-h1 {
-            font-size: 2rem !important;
+            font-size: clamp(1.75rem, 7vw, 4.5rem) !important;
             line-height: 1.1 !important;
+            text-wrap: balance !important;
+            max-width: 90% !important;
           }
           .hc-hero-subtitle {
-            font-size: 0.9rem !important;
+            font-size: clamp(0.85rem, 3.5vw, 1.15rem) !important;
+            text-wrap: balance !important;
+            max-width: 85% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
           }
           .hc-hero-cta {
             width: 100% !important;
             text-align: center !important;
             box-sizing: border-box !important;
+            padding: 0.8rem 2rem !important;
+            font-size: 0.8rem !important;
           }
           .hc-hero-badge {
             font-size: 0.75rem !important;
@@ -444,10 +461,16 @@ function HomeCarePage() {
             padding: 3rem 1rem !important;
           }
           .hc-pain-heading {
-            font-size: 1.5rem !important;
+            font-size: clamp(1.5rem, 5vw, 2.5rem) !important;
+            text-wrap: balance !important;
+            max-width: 95% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
           }
           .hc-pain-subtext {
-            font-size: 0.9rem !important;
+            font-size: clamp(0.85rem, 3.5vw, 1.05rem) !important;
+            text-wrap: balance !important;
+            max-width: 92% !important;
           }
           .hc-pain-carousel-wrap {
             max-width: 100% !important;
@@ -457,6 +480,10 @@ function HomeCarePage() {
           }
           .hc-pain-card-text {
             font-size: 0.9rem !important;
+            text-wrap: balance !important;
+            max-width: 95% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
           }
           .hc-pain-arrow {
             width: 32px !important;
@@ -472,7 +499,8 @@ function HomeCarePage() {
             padding: 3rem 1rem !important;
           }
           .hc-section-heading {
-            font-size: 1.5rem !important;
+            font-size: clamp(1.5rem, 5vw, 2.5rem) !important;
+            text-wrap: balance !important;
           }
           .hc-feature-row {
             flex-direction: column !important;
@@ -485,13 +513,16 @@ function HomeCarePage() {
             order: 1 !important;
           }
           .hc-feature-title {
-            font-size: 1.25rem !important;
+            font-size: clamp(1.1rem, 4.5vw, 1.5rem) !important;
+            text-wrap: balance !important;
           }
           .hc-feature-desc {
             font-size: 0.9rem !important;
+            max-width: 100% !important;
           }
           .hc-feature-quote {
             font-size: 0.85rem !important;
+            max-width: 100% !important;
           }
           .hc-outcomes-section {
             padding: 3rem 1rem !important;
@@ -505,9 +536,12 @@ function HomeCarePage() {
           }
           .hc-stat-label {
             font-size: 1rem !important;
+            text-wrap: balance !important;
           }
           .hc-stat-sublabel {
             font-size: 0.85rem !important;
+            text-wrap: balance !important;
+            max-width: 280px !important;
           }
           .hc-stat-disclaimer {
             font-size: 0.75rem !important;
@@ -520,10 +554,14 @@ function HomeCarePage() {
             padding: 3rem 1rem !important;
           }
           .hc-cta-heading {
-            font-size: 1.5rem !important;
+            font-size: clamp(1.5rem, 5vw, 2.5rem) !important;
+            text-wrap: balance !important;
+            max-width: 90% !important;
           }
           .hc-cta-subtext {
-            font-size: 0.9rem !important;
+            font-size: clamp(0.85rem, 3.5vw, 1.05rem) !important;
+            text-wrap: balance !important;
+            max-width: 90% !important;
           }
           .hc-cta-button {
             width: 100% !important;
@@ -547,7 +585,7 @@ function HomeCarePage() {
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        <div style={{
+        <div className="hc-hero-blue-inner" style={{
           width: 'calc(100% - 1rem)',
           height: 'calc(100% - 1rem)',
           background: '#4B6EF5',
@@ -614,7 +652,8 @@ function HomeCarePage() {
                 borderRadius: '4px', fontSize: '1rem', fontWeight: 400, textDecoration: 'none',
                 display: 'inline-block', marginTop: '1rem',
               }}>
-                Book a Demo for Your Agency
+                <span className="mobile-cta-text">Book a Demo</span>
+                <span className="desktop-cta-text">Book a Demo for Your Agency</span>
               </a>
             </motion.div>
           </motion.div>
@@ -670,7 +709,7 @@ function HomeCarePage() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.6, ease: 'easeOut', delay: 0.15 }}
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, overflow: 'hidden', borderRadius: '12px' }}
                 >
                   <FeatureVideo src={feature.videoSrc} />
                 </motion.div>

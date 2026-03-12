@@ -46,7 +46,7 @@ function SolutionVideo({ src, index }) {
     <video
       ref={videoRef}
       src={src}
-      className={`solution-preview${index === 1 ? ' solution-preview-cropped' : ''}`}
+      className={`solution-preview${index === 1 ? ' solution-preview-cropped' : ''}${index === 2 ? ' solution-preview-crop-bottom-sm solution-preview-crop-right' : ''}${index === 0 || index === 3 ? ' solution-preview-crop-right' : ''}${index === 3 ? ' solution-preview-crop-bottom' : ''}`}
       autoPlay
       muted
       loop
@@ -68,7 +68,7 @@ function Solution() {
     {
       title: "AI Assistant",
       description: "Every detail from every conversation, remembered. Walk into every call knowing exactly who you are talking to, what matters to them, and where you left off.",
-      video: "/2vid.mov"
+      video: "/AiAssistant.mov"
     },
     {
       title: "Follow-Ups on Autopilot",
