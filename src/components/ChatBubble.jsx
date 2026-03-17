@@ -10,6 +10,7 @@ import {
   Loader2,
   Bot,
   User,
+  Square,
 } from "lucide-react";
 import Markdown from "react-markdown";
 
@@ -17,10 +18,17 @@ export default function ChatBubble({ currentPage, onNavigate }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showGreeting, setShowGreeting] = useState(false);
   const [greetingDismissed, setGreetingDismissed] = useState(false);
-  const { messages, sendMessage, status, input, setInput } = useChatContext();
+  const [shouldBounce, setShouldBounce] = useState(true);
+  const { messages, sendMessage, stop, status, input, setInput } = useChatContext();
   const messagesEndRef = useRef(null);
 
   const isLoading = status === "streaming" || status === "submitted";
+
+  // Stop bouncing after 30 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => setShouldBounce(false), 30000);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -173,18 +181,15 @@ export default function ChatBubble({ currentPage, onNavigate }) {
                   className="min-h-[40px] max-h-[80px] resize-none text-xs"
                   onKeyDown={handleKeyDown}
                 />
-                <Button
-                  type="submit"
-                  disabled={isLoading || !input?.trim()}
-                  size="icon"
-                  className="h-[40px] w-[40px] shrink-0"
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : (
+                {isLoading ? (
+                  <Button type="button" onClick={stop} size="icon" variant="destructive" className="h-[40px] w-[40px] shrink-0">
+                    <Square className="h-3 w-3" />
+                  </Button>
+                ) : (
+                  <Button type="submit" disabled={!input?.trim()} size="icon" className="h-[40px] w-[40px] shrink-0">
                     <Send className="h-3 w-3" />
-                  )}
-                </Button>
+                  </Button>
+                )}
               </div>
             </form>
           </div>
@@ -214,7 +219,7 @@ export default function ChatBubble({ currentPage, onNavigate }) {
       <button
         onClick={() => { setIsOpen(!isOpen); setShowGreeting(false); setGreetingDismissed(true); }}
         className={`fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center ${
-          !isOpen ? "animate-bounce" : ""
+          !isOpen && shouldBounce ? "animate-bounce" : ""
         }`}
       >
         {isOpen ? (

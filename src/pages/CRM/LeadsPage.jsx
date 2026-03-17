@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import LeadDetailDialog from "@/components/LeadDetailDialog";
 import AddLeadDialog from "@/components/AddLeadDialog";
+import BulkImportDialog from "@/components/BulkImportDialog";
 import CallDialog from "@/components/CallDialog";
 import EmailComposeDialog from "@/components/EmailComposeDialog";
 
@@ -28,14 +29,15 @@ const stages = [
   { key: "post_tour", label: "Post-Tour" },
   { key: "deposit", label: "Deposit" },
   { key: "move_in", label: "Move-in" },
+  { key: "declined", label: "Declined" },
 ];
 
 const stageProgress = {
-  inquiry: 10, connection: 25, pre_tour: 45, post_tour: 65, deposit: 85, move_in: 100,
+  inquiry: 10, connection: 25, pre_tour: 45, post_tour: 65, deposit: 85, move_in: 100, declined: 0,
 };
 
 const stageLabel = {
-  inquiry: "Inquiry", connection: "Connection", pre_tour: "Pre-Tour", post_tour: "Post-Tour", deposit: "Deposit", move_in: "Move-in",
+  inquiry: "Inquiry", connection: "Connection", pre_tour: "Pre-Tour", post_tour: "Post-Tour", deposit: "Deposit", move_in: "Move-in", declined: "Declined",
 };
 
 const careLevelColors = {
@@ -62,6 +64,87 @@ function formatDate(dateStr) {
   const dd = String(d.getDate()).padStart(2, "0");
   const yy = String(d.getFullYear()).slice(-2);
   return `${mm}/${dd}/${yy}`;
+}
+
+function formatRelativeDate(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now - d;
+  const days = Math.floor(diffMs / 86400000);
+  if (days <= 0) return "Today";
+  if (days === 1) return "Yesterday";
+  if (days <= 6) return `${days} days ago`;
+  if (days <= 13) return "A week ago";
+  if (days <= 27) return `${Math.floor(days / 7)} weeks ago`;
+  if (days <= 59) return "A month ago";
+  return `${Math.floor(days / 30)} months ago`;
+}
+
+const dateRangeOptions = [
+  { label: "Today", days: 0 },
+  { label: "Last 7 days", days: 7 },
+  { label: "Last 14 days", days: 14 },
+  { label: "Last 30 days", days: 30 },
+  { label: "Last 60 days", days: 60 },
+  { label: "Last 90 days", days: 90 },
+];
+
+function DateRangeFilter({ label, value, onChange }) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef(null);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (
+        triggerRef.current && !triggerRef.current.contains(e.target) &&
+        dropdownRef.current && !dropdownRef.current.contains(e.target)
+      ) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const isFiltered = value !== "all";
+
+  const getDropdownPosition = () => {
+    if (!triggerRef.current) return {};
+    const rect = triggerRef.current.getBoundingClientRect();
+    return {
+      position: "fixed",
+      top: rect.bottom + 4,
+      left: Math.max(8, Math.min(rect.left, window.innerWidth - 180)),
+    };
+  };
+
+  return (
+    <div className="inline-flex items-center gap-1 cursor-pointer select-none">
+      <div ref={triggerRef} className="inline-flex items-center gap-1" onClick={() => setOpen(!open)}>
+        <span className={`whitespace-nowrap ${isFiltered ? "text-primary font-semibold" : ""}`}>{label}</span>
+        <ChevronDown className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""} ${isFiltered ? "text-primary" : "text-muted-foreground"}`} />
+      </div>
+      {isFiltered && (
+        <button onClick={(e) => { e.stopPropagation(); onChange("all"); }} className="ml-0.5 rounded-full p-0.5 hover:bg-muted">
+          <X className="h-2.5 w-2.5 text-primary" />
+        </button>
+      )}
+      {open && (
+        <div ref={dropdownRef} style={getDropdownPosition()} className="z-50 rounded-md border border-border bg-popover shadow-lg py-1 min-w-[160px] max-h-[60vh] overflow-y-auto flex flex-col">
+          <button
+            onClick={(e) => { e.stopPropagation(); onChange("all"); setOpen(false); }}
+            className={`w-full text-left px-3 py-2 text-xs hover:bg-muted transition-colors ${value === "all" ? "font-semibold text-primary" : "text-foreground"}`}
+          >All</button>
+          {dateRangeOptions.map((opt) => (
+            <button
+              key={opt.days}
+              onClick={(e) => { e.stopPropagation(); onChange(opt.days); setOpen(false); }}
+              className={`w-full text-left px-3 py-2 text-xs hover:bg-muted transition-colors ${value === opt.days ? "font-semibold text-primary" : "text-foreground"}`}
+            >{opt.label}</button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function HeaderFilter({ label, value, options, onChange }) {
@@ -184,9 +267,14 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
   const [view, setView] = useState("table");
   const [selectedLead, setSelectedLead] = useState(null);
   const [addOpen, setAddOpen] = useState(false);
-  const [filters, setFilters] = useState({ stage: "all", source: "all", careLevel: "all", salesRep: "all", score: "all" });
+  const [importOpen, setImportOpen] = useState(false);
+  const [filters, setFilters] = useState({ stage: "all", source: "all", careLevel: "all", salesRep: "all", score: "all", inquiryDate: "all", lastContact: "all" });
   const [stageChangeLead, setStageChangeLead] = useState(null);
   const [kanbanCareFilter, setKanbanCareFilter] = useState("all");
+
+  // Decline reason dialog state
+  const [declinePending, setDeclinePending] = useState(null); // { leadId, fromStage }
+  const [declineReason, setDeclineReason] = useState("");
 
   // Call & Email dialog state
   const [callTarget, setCallTarget] = useState(null);
@@ -206,15 +294,76 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
   const salesRepOptions = useMemo(() => [...new Set(leads.map((l) => l.salesRep))], [leads]);
 
   const filteredLeads = useMemo(() => {
+    const now = new Date();
+    now.setHours(23, 59, 59, 999);
     return leads.filter((l) => {
       if (filters.stage !== "all" && l.stage !== filters.stage) return false;
       if (filters.source !== "all" && l.source !== filters.source) return false;
       if (filters.careLevel !== "all" && l.careLevel !== filters.careLevel) return false;
       if (filters.salesRep !== "all" && l.salesRep !== filters.salesRep) return false;
       if (filters.score !== "all" && l.score !== filters.score) return false;
+      if (filters.inquiryDate !== "all" && l.inquiryDate) {
+        const d = new Date(l.inquiryDate);
+        const cutoff = new Date(now);
+        cutoff.setDate(cutoff.getDate() - filters.inquiryDate);
+        cutoff.setHours(0, 0, 0, 0);
+        if (d < cutoff) return false;
+      }
+      if (filters.lastContact !== "all" && l.lastContactDate) {
+        const d = new Date(l.lastContactDate);
+        const cutoff = new Date(now);
+        cutoff.setDate(cutoff.getDate() - filters.lastContact);
+        cutoff.setHours(0, 0, 0, 0);
+        if (d < cutoff) return false;
+      }
       return true;
     });
   }, [leads, filters]);
+
+  const logStageChange = (lead, fromStage, toStage) => {
+    const fromLabel = stages.find((s) => s.key === fromStage)?.label || fromStage;
+    const toLabel = stages.find((s) => s.key === toStage)?.label || toStage;
+    const entry = {
+      id: `${lead.id}-sc-${Date.now()}`,
+      date: new Date().toISOString().split("T")[0],
+      type: "stage_change",
+      title: `Moved to ${toLabel}`,
+      description: `Lead advanced from ${fromLabel} to ${toLabel}.`,
+      by: lead.salesRep || "System",
+    };
+    if (!lead.interactions) lead.interactions = [];
+    lead.interactions.unshift(entry);
+  };
+
+  const applyStageChange = (leadId, newStage) => {
+    setLeads((prev) =>
+      prev.map((l) => {
+        if (l.id !== leadId) return l;
+        logStageChange(l, l.stage, newStage);
+        return { ...l, stage: newStage };
+      })
+    );
+  };
+
+  const confirmDecline = () => {
+    if (!declinePending) return;
+    const lead = leads.find((l) => l.id === declinePending.leadId);
+    if (lead) {
+      const reason = declineReason.trim() || "No reason provided";
+      if (!lead.interactions) lead.interactions = [];
+      lead.interactions.unshift({
+        id: `${lead.id}-decline-${Date.now()}`,
+        date: new Date().toISOString().split("T")[0],
+        type: "stage_change",
+        title: "Declined",
+        description: `Lead declined. Reason: ${reason}`,
+        by: lead.salesRep || "System",
+      });
+    }
+    applyStageChange(declinePending.leadId, "declined");
+    setDeclinePending(null);
+    setDeclineReason("");
+  };
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
@@ -223,7 +372,13 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
     const destStage = destination.droppableId;
     if (sourceStage === destStage && source.index === destination.index) return;
     const sourceItems = leads.filter((l) => l.stage === sourceStage);
-    const moved = { ...sourceItems[source.index], stage: destStage };
+    const lead = sourceItems[source.index];
+    if (destStage === "declined") {
+      setDeclinePending({ leadId: lead.id, fromStage: sourceStage });
+      return;
+    }
+    logStageChange(lead, sourceStage, destStage);
+    const moved = { ...lead, stage: destStage };
     const withoutMoved = leads.filter((l) => l.id !== moved.id);
     const destItems = withoutMoved.filter((l) => l.stage === destStage);
     destItems.splice(destination.index, 0, moved);
@@ -232,9 +387,11 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
   };
 
   const handleStageChange = (leadId, newStage) => {
-    setLeads((prev) =>
-      prev.map((l) => (l.id === leadId ? { ...l, stage: newStage } : l))
-    );
+    if (newStage === "declined") {
+      setDeclinePending({ leadId, fromStage: leads.find((l) => l.id === leadId)?.stage });
+      return;
+    }
+    applyStageChange(leadId, newStage);
   };
 
   const handleCall = (lead) => {
@@ -284,7 +441,7 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                         <Calendar className="h-3 w-3" />
-                        <span>{formatDate(lead.lastContactDate)}</span>
+                        <span>{formatRelativeDate(lead.lastContactDate)}</span>
                       </div>
                       <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium capitalize ${scoreColors[lead.score] || ""}`}>{lead.score}</span>
                     </div>
@@ -321,7 +478,7 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>{lead.source}</span>
             <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium capitalize ${scoreColors[lead.score] || ""}`}>{lead.score}</span>
-            <span>{formatDate(lead.lastContactDate)}</span>
+            <span>{formatRelativeDate(lead.lastContactDate)}</span>
           </div>
         </div>
       ))}
@@ -334,6 +491,7 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
         title="Leads Pipeline"
         subtitle={`${filteredLeads.length} prospects`}
         action={{ label: "Add Lead", onClick: () => setAddOpen(true) }}
+        secondaryAction={{ label: "Import", onClick: () => setImportOpen(true) }}
         isMobile={isMobile}
       />
 
@@ -419,7 +577,7 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
                                       </div>
                                       <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                         <Calendar className="h-3 w-3" />
-                                        <span>{formatDate(lead.lastContactDate)}</span>
+                                        <span>{formatRelativeDate(lead.lastContactDate)}</span>
                                       </div>
                                       <div className="flex items-center gap-1.5">
                                         <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium capitalize ${scoreColors[lead.score] || ""}`}>{lead.score}</span>
@@ -464,9 +622,12 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
                       <HeaderFilter label="Assign To" value={filters.salesRep} options={salesRepOptions} onChange={(v) => setFilters((f) => ({ ...f, salesRep: v }))} />
                     </TableHead>
                     <TableHead className="min-w-[120px] whitespace-nowrap">Contact</TableHead>
-                    <TableHead className="min-w-[95px] whitespace-nowrap">Inquiry Date</TableHead>
-                    <TableHead className="min-w-[95px] whitespace-nowrap">Initial Contact</TableHead>
-                    <TableHead className="min-w-[95px] whitespace-nowrap">Last Contact</TableHead>
+                    <TableHead className="min-w-[95px] whitespace-nowrap">
+                      <DateRangeFilter label="Inquiry Date" value={filters.inquiryDate} onChange={(v) => setFilters((f) => ({ ...f, inquiryDate: v }))} />
+                    </TableHead>
+                    <TableHead className="min-w-[95px] whitespace-nowrap">
+                      <DateRangeFilter label="Last Contact" value={filters.lastContact} onChange={(v) => setFilters((f) => ({ ...f, lastContact: v }))} />
+                    </TableHead>
                     <TableHead className="min-w-[180px] whitespace-nowrap">Next Activity</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -492,8 +653,7 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
                         {lead.contactPerson}{lead.contactRelation ? ` (${lead.contactRelation})` : ""}
                       </TableCell>
                       <TableCell className="text-muted-foreground whitespace-nowrap">{formatDate(lead.inquiryDate)}</TableCell>
-                      <TableCell className="text-muted-foreground whitespace-nowrap">{formatDate(lead.initialContact)}</TableCell>
-                      <TableCell className="text-muted-foreground whitespace-nowrap">{formatDate(lead.lastContactDate)}</TableCell>
+                      <TableCell className="text-muted-foreground whitespace-nowrap">{formatRelativeDate(lead.lastContactDate)}</TableCell>
                       <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{lead.nextActivity}</TableCell>
                     </TableRow>
                   ))}
@@ -514,6 +674,7 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
       />
 
       <AddLeadDialog open={addOpen} onOpenChange={setAddOpen} onLeadCreated={onAddLead} isMobile={isMobile} />
+      <BulkImportDialog open={importOpen} onOpenChange={setImportOpen} type="leads" />
 
       <CallDialog
         open={!!callTarget}
@@ -536,6 +697,28 @@ export default function LeadsPage({ leads, setLeads, onAddLead, autoOpenLeadId, 
         onStageChange={handleStageChange}
         isMobile={isMobile}
       />
+
+      {/* Decline Reason Dialog */}
+      <Dialog open={!!declinePending} onOpenChange={(open) => { if (!open) { setDeclinePending(null); setDeclineReason(""); } }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Reason for Declining</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 pt-1">
+            <textarea
+              value={declineReason}
+              onChange={(e) => setDeclineReason(e.target.value)}
+              placeholder="Why is this lead being declined?"
+              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm min-h-[80px] resize-none focus:outline-none focus:ring-1 focus:ring-primary"
+              autoFocus
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" size="sm" onClick={() => { setDeclinePending(null); setDeclineReason(""); }}>Cancel</Button>
+              <Button variant="destructive" size="sm" onClick={confirmDecline}>Decline</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {view === "kanban" && !isMobile && (
         <p className="fixed bottom-4 left-1/2 -translate-x-1/2 text-xs text-muted-foreground/60 bg-muted/50 px-4 py-1.5 rounded-full backdrop-blur-sm">Drag and drop prospects to update their pipeline stage</p>

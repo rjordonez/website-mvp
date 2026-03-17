@@ -2,20 +2,18 @@ import {
   LayoutDashboard,
   UserPlus,
   Handshake,
-  CalendarDays,
   PanelLeftClose,
   PanelLeft,
   Sparkles,
-  Mail,
   MessageSquare,
+  ClipboardList,
 } from "lucide-react";
 
 const navItems = [
   { id: "dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { id: "leads", icon: UserPlus, label: "Leads" },
-  { id: "referrers", icon: Handshake, label: "Referrers" },
-  { id: "tours", icon: CalendarDays, label: "Calendar" },
-  { id: "follow-up", icon: Mail, label: "Communication" },
+  { id: "referrers", icon: Handshake, label: "Referral Management" },
+  { id: "tasklist", icon: ClipboardList, label: "Tasklist" },
   { id: "chatbot", icon: MessageSquare, label: "AI Assistant" },
 ];
 

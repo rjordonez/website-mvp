@@ -1,7 +1,7 @@
-import { Bell, Plus } from "lucide-react";
+import { Bell, Plus, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function TopBar({ title, subtitle, action, isMobile }) {
+export default function TopBar({ title, subtitle, action, secondaryAction, isMobile }) {
   return (
     <header className={`flex h-14 items-center justify-between border-b border-border bg-card ${isMobile ? "px-4" : "px-6"}`}>
       <div>
@@ -9,6 +9,12 @@ export default function TopBar({ title, subtitle, action, isMobile }) {
         {!isMobile && subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
       </div>
       <div className="flex items-center gap-2">
+        {secondaryAction && (
+          <Button size="sm" variant="outline" onClick={secondaryAction.onClick} className="gap-1.5">
+            <Upload className="h-3.5 w-3.5" />
+            {secondaryAction.label}
+          </Button>
+        )}
         {action && (
           <Button size="sm" onClick={action.onClick} className="gap-1.5">
             <Plus className="h-3.5 w-3.5" />
