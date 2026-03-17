@@ -14,9 +14,12 @@ function Demo() {
     setSubmitting(true);
     try {
       if (supabase) {
-        await supabase.from('demo_emails').insert([
+        const { error } = await supabase.from('demo_emails').insert([
           { email: email.trim(), source: 'demo_page' }
         ]);
+        if (error) {
+          console.error('Failed to save email:', error.message);
+        }
       }
     } catch (err) {
       console.error('Failed to save email:', err);
