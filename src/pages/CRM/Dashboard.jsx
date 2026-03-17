@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import TopBar from "@/components/TopBar";
-import { leadSourceData, funnelData, mockPipelineLeads } from "@/data/mockData";
+import { leadSourceData, funnelData } from "@/data/mockData";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Users, CalendarDays, TrendingUp, Home, ChevronDown } from "lucide-react";
+
+const CURRENT_USER = "Alex Rivera";
 
 const neutralPalette = [
   "hsl(var(--primary))",
@@ -39,7 +41,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col h-full">
-      <TopBar title="Dashboard" subtitle="At a glance overview" />
+      <TopBar title="Dashboard" subtitle={`Welcome back, ${CURRENT_USER}`} />
       <div className="flex-1 overflow-auto p-6 space-y-6">
         {/* Period filter dropdown */}
         <div className="flex items-center">

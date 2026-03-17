@@ -3,12 +3,12 @@ import { useChatContext } from "@/contexts/ChatContext";
 import TopBar from "@/components/TopBar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Loader2, Bot, User } from "lucide-react";
+import { Send, Loader2, Bot, User, Square } from "lucide-react";
 import Markdown from "react-markdown";
 
 export default function ChatbotPage() {
   const messagesEndRef = useRef(null);
-  const { messages, sendMessage, status, input, setInput, leadsCount } =
+  const { messages, sendMessage, stop, status, input, setInput, leadsCount } =
     useChatContext();
 
   const isLoading = status === 'streaming' || status === 'submitted';
@@ -32,37 +32,25 @@ export default function ChatbotPage() {
         <div className="max-w-3xl mx-auto space-y-4">
           {messages.length === 0 && (
             <div className="text-center py-12">
-              <Bot className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">
-                Welcome to your CRM AI Assistant
+              <Bot className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+              <h3 className="text-base font-semibold text-foreground mb-1">
+                AI Assistant
               </h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                I have access to all {leadsCount} leads in your pipeline. Ask me anything!
+              <p className="text-xs text-muted-foreground mb-5">
+                {leadsCount} leads in your pipeline
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-2xl mx-auto mt-6">
-                <button
-                  onClick={() => sendMessage({ text: "How many leads are in the inquiry stage?" })}
-                  className="p-3 text-left text-sm border rounded-lg hover:bg-muted transition-colors"
-                >
-                  💡 How many leads are in the inquiry stage?
+              <div className="grid grid-cols-2 gap-2 max-w-md mx-auto">
+                <button onClick={() => sendMessage({ text: "Leads in inquiry stage?" })} className="p-2.5 text-left text-xs border rounded-lg hover:bg-muted transition-colors">
+                  Leads in inquiry stage?
                 </button>
-                <button
-                  onClick={() => sendMessage({ text: "Show me leads assigned to Sarah Johnson" })}
-                  className="p-3 text-left text-sm border rounded-lg hover:bg-muted transition-colors"
-                >
-                  👥 Show me leads assigned to Sarah Johnson
+                <button onClick={() => sendMessage({ text: "Sarah Johnson's leads" })} className="p-2.5 text-left text-xs border rounded-lg hover:bg-muted transition-colors">
+                  Sarah Johnson's leads
                 </button>
-                <button
-                  onClick={() => sendMessage({ text: "Which leads need follow-up this week?" })}
-                  className="p-3 text-left text-sm border rounded-lg hover:bg-muted transition-colors"
-                >
-                  📅 Which leads need follow-up this week?
+                <button onClick={() => sendMessage({ text: "Follow-ups this week?" })} className="p-2.5 text-left text-xs border rounded-lg hover:bg-muted transition-colors">
+                  Follow-ups this week?
                 </button>
-                <button
-                  onClick={() => sendMessage({ text: "Summarize the demo lead from Margaret Johnson" })}
-                  className="p-3 text-left text-sm border rounded-lg hover:bg-muted transition-colors"
-                >
-                  ✨ Summarize the demo lead
+                <button onClick={() => sendMessage({ text: "Summarize Margaret Chen" })} className="p-2.5 text-left text-xs border rounded-lg hover:bg-muted transition-colors">
+                  Summarize Margaret Chen
                 </button>
               </div>
             </div>
@@ -143,13 +131,15 @@ export default function ChatbotPage() {
                 }
               }}
             />
-            <Button type="submit" disabled={isLoading || !input?.trim()} size="icon" className="h-[60px] w-[60px]">
-              {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
+            {isLoading ? (
+              <Button type="button" onClick={stop} size="icon" variant="destructive" className="h-[60px] w-[60px]">
+                <Square className="h-4 w-4" />
+              </Button>
+            ) : (
+              <Button type="submit" disabled={!input?.trim()} size="icon" className="h-[60px] w-[60px]">
                 <Send className="h-4 w-4" />
-              )}
-            </Button>
+              </Button>
+            )}
           </div>
           <p className="text-xs text-muted-foreground mt-2">
             Press Enter to send, Shift + Enter for new line

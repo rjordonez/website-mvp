@@ -32,7 +32,7 @@ export function ChatProvider({ leads, children }) {
   const leadsContextRef = useRef(leadsContext);
   leadsContextRef.current = leadsContext;
 
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, sendMessage, status, error, stop } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
       body: () => ({ leadsContext: leadsContextRef.current }),
@@ -50,6 +50,7 @@ export function ChatProvider({ leads, children }) {
       value={{
         messages,
         sendMessage,
+        stop,
         status,
         error,
         input,

@@ -175,14 +175,9 @@ function TimelineContent({ interactions, onAddNote, onAddTour }) {
     <div className="space-y-4">
       <div className="flex gap-2">
         {!addingNote && !addingTour && (
-          <>
-            <Button variant="outline" size="sm" className="flex-1" onClick={() => setAddingNote(true)}>
-              <Plus className="h-3.5 w-3.5 mr-1.5" /> Add Note
-            </Button>
-            <Button variant="outline" size="sm" className="flex-1" onClick={() => setAddingTour(true)}>
-              <Eye className="h-3.5 w-3.5 mr-1.5" /> Log Tour
-            </Button>
-          </>
+          <Button variant="outline" size="sm" className="flex-1" onClick={() => setAddingNote(true)}>
+            <Plus className="h-3.5 w-3.5 mr-1.5" /> Add Note
+          </Button>
         )}
       </div>
 
