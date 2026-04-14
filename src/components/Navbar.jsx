@@ -96,6 +96,7 @@ function Navbar() {
             )}
           </li>
           <li><a href="#solution" onClick={handleHashLink('#solution')}>Features</a></li>
+          <li><a href="#services" onClick={handleHashLink('#services')}>Services</a></li>
           <li><a href="#outcome" onClick={handleHashLink('#outcome')}>Outcomes</a></li>
         </ul>
         <a href="https://calendly.com/jessie-trilio/30min" target="_blank" rel="noopener noreferrer" className="nav-cta">Book a demo</a>
@@ -117,6 +118,7 @@ function Navbar() {
           <Link to="/for/senior-living" onClick={() => setMobileMenuOpen(false)}>For Senior Living Communities</Link>
           <Link to="/for/home-care" onClick={() => setMobileMenuOpen(false)}>For Home Care Agencies</Link>
           <a href="#solution" onClick={handleHashLink('#solution')}>Features</a>
+          <a href="#services" onClick={handleHashLink('#services')}>Services</a>
           <a href="#outcome" onClick={handleHashLink('#outcome')}>Outcomes</a>
           <a
             href="https://calendly.com/jessie-trilio/30min"

@@ -90,6 +90,7 @@ function FlowChart() {
   return (
     <motion.div
       ref={ref}
+      id="services"
       className="outcome-flow-wrapper"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -253,7 +254,6 @@ function Outcome() {
 
   return (
     <motion.section
-      id="outcome"
       className="outcome"
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
@@ -263,7 +263,7 @@ function Outcome() {
       <div className="container">
         <FlowChart />
 
-        <div className="outcome-header">
+        <div id="outcome" className="outcome-header">
           <h3>Designed to Drive These Results</h3>
         </div>
         {/* Commented out: "Meet Trilio, Your Sales Team's Sidekick" block and flip cards
