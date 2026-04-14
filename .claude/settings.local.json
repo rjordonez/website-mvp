@@ -23,7 +23,12 @@
       "WebFetch(domain:ai-sdk.dev)",
       "WebSearch",
       "Bash(git -C /tmp/silver-stream-organizer branch -a 2>&1)",
-      "Bash(git -C /tmp/silver-stream-organizer log --oneline -5 2>&1; git -C /tmp/silver-stream-organizer remote -v 2>&1)"
+      "Bash(git -C /tmp/silver-stream-organizer log --oneline -5 2>&1; git -C /tmp/silver-stream-organizer remote -v 2>&1)",
+      "Bash(DEST=/Users/rexordonez/github-projects/trilio-crm && SRC=/Users/rexordonez/github-projects/website-mvp && \\\\\nmkdir -p $DEST/src/pages/DemoPage $DEST/src/pages/CRM $DEST/src/components/ui $DEST/src/components/add-lead $DEST/src/components/lead-detail $DEST/src/contexts $DEST/src/hooks $DEST/src/services $DEST/src/data $DEST/src/utils $DEST/src/lib $DEST/public && \\\\\necho \"Directories created\")",
+      "Read(//Users/rexordonez/github-projects/trilio-crm/**)",
+      "Bash(npm install:*)",
+      "Bash(DEST=/Users/rexordonez/github-projects/trilio-crm && SRC=/Users/rexordonez/github-projects/website-mvp && \\\\\ncp $SRC/server.js $DEST/server.js && \\\\\nmkdir -p $DEST/api && \\\\\ncp $SRC/api/chat.js $DEST/api/chat.js && \\\\\ncp $SRC/api/analyze-note.js $DEST/api/analyze-note.js && \\\\\ncp $SRC/.env.example $DEST/.env.example && \\\\\necho \"Server files copied\")",
+      "Bash(cd /Users/rexordonez/github-projects/trilio-crm && npx vite build 2>&1 | tail -5)"
     ],
     "deny": [],
     "ask": []

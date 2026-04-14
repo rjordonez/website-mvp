@@ -11,6 +11,88 @@
   margin-bottom: 3rem;
 }
 
+/* Flow chart */
+.outcome-flow-wrapper {
+  background: #faf9f4;
+  border: 1px solid #ededdf;
+  border-radius: 24px;
+  padding: 3rem 2rem 3.5rem;
+  margin: 0 auto 5rem;
+  max-width: 1100px;
+}
+
+.outcome-flow-heading {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.outcome-flow-heading h4 {
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: #1f2937;
+  font-family: 'Playfair Display', serif;
+  margin: 0 0 0.5rem;
+}
+
+.outcome-flow-heading p {
+  font-size: 1rem;
+  color: #6b7280;
+  margin: 0;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
+}
+
+.outcome-flow-chart {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.outcome-flow-svg {
+  width: 100%;
+  height: auto;
+  min-width: 720px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* CTA button */
+.outcome-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 4rem;
+}
+
+.outcome-cta-text {
+  font-size: 1.1rem;
+  color: #6b7280;
+  margin: 0;
+  text-align: center;
+}
+
+.outcome-cta-button {
+  display: inline-block;
+  padding: 1rem 2.75rem;
+  background: #4B6EF5;
+  color: white;
+  border-radius: 9999px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 1.05rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-shadow: 0 4px 14px rgba(75, 110, 245, 0.3);
+}
+
+.outcome-cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(75, 110, 245, 0.4);
+  background: #3d5ce0;
+}
+
 .outcome-header h3 {
   font-size: 2.5rem;
   color: #1f2937;
@@ -213,6 +295,40 @@
   .outcome-header p {
     text-wrap: balance;
     max-width: 90%;
+  }
+
+  .outcome-flow-wrapper {
+    padding: 2rem 1rem 2.5rem;
+    border-radius: 18px;
+    margin-bottom: 3.5rem;
+  }
+
+  .outcome-flow-heading h4 {
+    font-size: 1.3rem;
+  }
+
+  .outcome-flow-heading p {
+    font-size: 0.9rem;
+    text-wrap: balance;
+  }
+
+  .outcome-flow-svg {
+    min-width: 680px;
+  }
+
+  .outcome-cta {
+    margin-top: 3rem;
+  }
+
+  .outcome-cta-text {
+    font-size: 1rem;
+    text-wrap: balance;
+    max-width: 85%;
+  }
+
+  .outcome-cta-button {
+    padding: 0.875rem 2.25rem;
+    font-size: 1rem;
   }
 
   .outcome-stats-row {
